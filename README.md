@@ -30,10 +30,20 @@ Then open http://localhost:5500 in a browser.
 
 ## Deploy to GitHub Pages
 
-1. Create a public repository on GitHub named `KennethAW.github.io`.
-2. Push this folder to the `main` branch of that repository.
+The folder is already a git repository on branch `main` with the site committed.
+
+1. Create a public repository on GitHub named `KennethAW.github.io` (empty, no README).
+2. Connect and push:
+
+   ```bash
+   git remote add origin https://github.com/KennethAW/KennethAW.github.io.git
+   git push -u origin main
+   ```
+
 3. In the repository settings, under Pages, set the source to "Deploy from a branch", branch `main`, folder `/ (root)`.
-4. The site will be live at https://KennethAW.github.io within a minute or two.
+4. The site will be live at https://KennethAW.github.io within a minute or two. Every later `git push` redeploys it, and the "Site checks" workflow in `.github/workflows/check.yml` runs `tools/check_site.py` to catch a broken link or missing asset.
+
+Commits are authored as Kenneth Anthony Wijaya <w.kennethanthony@gmail.com> (set in this repository's git config). Change it with `git config user.email` if you prefer a GitHub no-reply address.
 
 ## Updating the embedded dashboard
 
