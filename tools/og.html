@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- Template for the social preview image (assets/og.png). Render at 1200x630:
+     chrome --headless=new --window-size=1200,630 --screenshot=assets/og.png tools/og.html -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0a0a0b; color: #f3f1ed; font-family: "Barlow", Arial, sans-serif; }
+    .wrap { position: relative; width: 1200px; height: 630px; }
+    .glow { position: absolute; inset: 0; background: radial-gradient(700px 400px at 18% 25%, rgba(224,163,90,0.14), transparent 60%); }
+    .rings { position: absolute; right: -260px; top: -120px; width: 900px; height: 900px; opacity: 0.9; }
+    .rings circle { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 1.2; }
+    .rings .arc { stroke: #e0a35a; stroke-width: 3; stroke-linecap: round; }
+    .rings .arc2 { stroke: #f4c98a; stroke-width: 2; opacity: 0.6; }
+    .chart { position: absolute; left: 0; right: 0; bottom: 0; height: 200px; opacity: 0.85; }
+    .top { position: absolute; left: 72px; top: 64px; display: flex; align-items: center; gap: 16px; }
+    .pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px 10px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: rgba(18,18,20,0.8); font-family: "JetBrains Mono", monospace; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .pill i { width: 9px; height: 9px; border-radius: 50%; background: #5fd39a; box-shadow: 0 0 12px #5fd39a; }
+    .mono { font-family: "JetBrains Mono", monospace; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #918f89; }
+    h1 { position: absolute; left: 72px; top: 150px; margin: 0; font-size: 118px; line-height: 0.92; letter-spacing: -0.045em; font-weight: 600; }
+    h1 b { color: #e0a35a; font-weight: 600; }
+    .sub { position: absolute; left: 72px; top: 418px; font-size: 24px; color: #b9b6ae; max-width: 760px; line-height: 1.35; }
+    .sub strong { color: #f3f1ed; font-weight: 500; }
+    .bar { position: absolute; left: 72px; right: 72px; bottom: 48px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 22px; }
+    .mark { display: inline-flex; align-items: center; gap: 12px; font-weight: 600; font-size: 20px; }
+    .mark span { width: 36px; height: 36px; border-radius: 9px; background: #e0a35a; color: #0a0a0b; display: grid; place-items: center; font-family: "JetBrains Mono", monospace; font-size: 14px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="glow"></div>
+    <svg class="rings" viewBox="0 0 1000 1000">
+      <circle cx="500" cy="500" r="480"/><circle cx="500" cy="500" r="420"/><circle cx="500" cy="500" r="360"/>
+      <circle cx="500" cy="500" r="300"/><circle cx="500" cy="500" r="240"/><circle cx="500" cy="500" r="180"/>
+      <circle class="arc" cx="500" cy="500" r="330" stroke-dasharray="620 1500" transform="rotate(-40 500 500)"/>
+      <circle class="arc2" cx="500" cy="500" r="450" stroke-dasharray="360 2400" transform="rotate(120 500 500)"/>
+    </svg>
+    <svg class="chart" viewBox="0 0 1200 240" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0a35a" stop-opacity="0.18"/><stop offset="1" stop-color="#e0a35a" stop-opacity="0"/></linearGradient>
+        <linearGradient id="l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0a35a" stop-opacity="0"/><stop offset="0.2" stop-color="#e0a35a"/><stop offset="1" stop-color="#f4c98a"/></linearGradient>
+      </defs>
+      <path id="area" fill="url(#a)" d=""/>
+      <path id="line" fill="none" stroke="url(#l)" stroke-width="2" vector-effect="non-scaling-stroke" d=""/>
+    </svg>
+    <div class="top">
+      <span class="pill"><i></i>Open to 2027 graduate roles</span>
+      <span class="mono">London &middot; Imperial College London</span>
+    </div>
+    <h1>Kenneth<br>Anthony Wijaya<b>.</b></h1>
+    <p class="sub"><strong>MSc Risk Management &amp; Financial Engineering.</strong> Investment banking experience, quant research, and a live ML trading dashboard.</p>
+    <div class="bar">
+      <span class="mark"><span>KW</span>kennethaw.github.io</span>
+      <span class="mono">Portfolio &middot; 2026</span>
+    </div>
+  </div>
+  <script>
+    // Same seeded random walk as the site hero, so the preview matches the page
+    var seed = 20260906;
+    function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
+    var n = 90, w = 1200, y = 200, pts = [];
+    for (var i = 0; i <= n; i++) {
+      var x = (i / n) * w; y = Math.max(70, Math.min(230, y - 1.2 + (rnd() - 0.5) * 20)); pts.push(x.toFixed(1) + " " + y.toFixed(1));
+    }
+    var d = "M" + pts.join(" L");
+    document.getElementById("line").setAttribute("d", d);
+    document.getElementById("area").setAttribute("d", d + " L1200 240 L0 240 Z");
+  </script>
+</body>
+</html>

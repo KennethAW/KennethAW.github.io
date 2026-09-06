@@ -1,0 +1,13 @@
+# Local editor and tooling state
+.claude/
+.vscode/
+.idea/
+
+# OS noise
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Logs and temp files
+*.log
+*.tmp
