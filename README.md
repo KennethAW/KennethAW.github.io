@@ -5,15 +5,17 @@ Single-page portfolio site. Plain HTML and CSS with a small JavaScript motion la
 ## Files
 
 - `index.html` - page content
-- `styles.css` - styling (dark theme, single accent colour, Barlow + JetBrains Mono from Google Fonts)
+- `styles.css` - styling (editorial dark theme: Geist, Instrument Serif italics, Geist Mono labels, one gold accent)
 - `script.js` - motion layer: smooth scrolling, hero intro, scroll-synced spine, section reveals, counters, parallax, mobile menu, copy-email buttons
-- `assets/` - resume PDF, project screenshot, and project PDFs
+- `assets/` - resume PDF, dashboard and slide screenshots for the gallery, project PDFs, and the social preview image
 - `dashboard/` - the Alpha Analytics dashboard from the final-year project, built as static files and embedded in the Projects section (visitors click "Launch interactive dashboard" to run it in place, or open `dashboard/index.html` full screen)
 - `tools/build_dashboard.py` - rebuilds `dashboard/` from the FYP repo's `dashboard-react` folder
 - `tools/og.html` - template for the social preview image; `assets/og.png` is rendered from it (see below)
 - `404.html` - styled not-found page that GitHub Pages serves automatically
 
-## Dependencies (loaded from CDNs, no install needed)
+## Dependencies
+
+Fonts are self-hosted in `assets/fonts/` (latin subsets of Geist, Geist Mono and Instrument Serif, with metric-matched fallbacks so text never shifts when they load). Two scripts load from CDNs, no install needed:
 
 - [anime.js 4.5](https://animejs.com/) for animations
 - [Lenis 1.3](https://lenis.darkroom.engineering/) for smooth scrolling

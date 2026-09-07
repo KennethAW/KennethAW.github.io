@@ -81,7 +81,7 @@
   }
 
   /* ---------- Copy email ---------- */
-  document.querySelectorAll(".copy[data-copy]").forEach(function (btn) {
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var text = btn.getAttribute("data-copy");
       var done = function () {
@@ -125,7 +125,7 @@
       media.classList.add("is-live");
       tools.hidden = false;
       live.hidden = false;
-      setTimeout(function () { scrollToTarget(win, -84); }, 60);
+      setTimeout(function () { scrollToTarget(win, -88); }, 60);
     }
     function shut() {
       media.classList.remove("is-live");
@@ -135,6 +135,19 @@
     if (launch) launch.addEventListener("click", open);
     if (close) close.addEventListener("click", shut);
   })();
+
+  /* ---------- Gallery arrows ---------- */
+  document.querySelectorAll(".gallery-wrap").forEach(function (wrap) {
+    var track = wrap.querySelector(".gallery");
+    if (!track) return;
+    wrap.querySelectorAll("[data-gallery-prev], [data-gallery-next]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var fig = track.querySelector("figure");
+        var step = fig ? fig.getBoundingClientRect().width + 16 : 400;
+        track.scrollBy({ left: btn.hasAttribute("data-gallery-next") ? step : -step, behavior: reduceMotion ? "auto" : "smooth" });
+      });
+    });
+  });
 
   /* ---------- Scroll: progress bar, nav hide/show, back-to-top ---------- */
   var ticking = false, lastY = window.scrollY;
@@ -206,8 +219,7 @@
 
   /* ---------- Pointer-driven micro-interactions (desktop only) ---------- */
   if (finePointer && !reduceMotion) {
-    // Magnetic buttons: nudge toward the cursor by up to 8px
-    document.querySelectorAll(".btn, .copy, .icon-link, .to-top").forEach(function (el) {
+    document.querySelectorAll(".btn, .icon-btn, .to-top").forEach(function (el) {
       el.addEventListener("mousemove", function (e) {
         var r = el.getBoundingClientRect();
         var dx = (e.clientX - (r.left + r.width / 2)) * 0.22;
@@ -221,7 +233,6 @@
       });
     });
 
-    // Spotlight cards: pass the pointer position to CSS
     document.querySelectorAll(".spot").forEach(function (el) {
       el.addEventListener("mousemove", function (e) {
         var r = el.getBoundingClientRect();
@@ -230,7 +241,6 @@
       });
     });
 
-    // Hero depth: rings and chart drift gently with the pointer while the hero is in view
     var hero = document.querySelector(".hero");
     if (hero) {
       var pending = false, px = 0, py = 0;
@@ -255,7 +265,6 @@
     var line = document.getElementById("heroLine");
     var area = document.getElementById("heroArea");
     if (!line) return null;
-    // Deterministic random walk with upward drift, so the shape is stable across visits
     var seed = 20260906;
     function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
     var n = 90, w = 1000, y = 238, pts = [];
@@ -286,22 +295,23 @@
 
   /* Intro timeline */
   var intro = createTimeline({ defaults: { ease: "outExpo", duration: 1100 } });
-  utils.set(".hero-title .word-inner", { y: "110%" });
-  utils.set([".hero-top", ".hero-lede", ".hero-actions", ".hero-social", ".hero-cue"], { opacity: 0, y: 18 });
-  utils.set(".hero-rings", { opacity: 0, scale: 0.92 });
+  utils.set(".hero-title .line-inner", { y: "110%" });
+  utils.set([".hero-top", ".hero-name", ".hero-lede", ".hero-actions", ".hero-links", ".hero-cue"], { opacity: 0, y: 16 });
+  utils.set(".hero-grid", { opacity: 0 });
 
   intro
-    .add(".hero-rings", { opacity: [0, 1], scale: [0.92, 1], duration: 1800, ease: "outQuart" }, 0)
-    .add(".hero-title .word-inner", { y: ["110%", "0%"], delay: stagger(110), duration: 1300 }, 150)
-    .add(".hero-top", { opacity: 1, y: 0 }, 350)
-    .add(".hero-lede", { opacity: 1, y: 0 }, 650)
-    .add(".hero-actions", { opacity: 1, y: 0 }, 800)
-    .add(".hero-social", { opacity: 1, y: 0 }, 900)
-    .add(".hero-cue", { opacity: 1, y: 0 }, 1200);
+    .add(".hero-grid", { opacity: [0, 0.55], duration: 1800, ease: "outQuad" }, 0)
+    .add(".hero-top", { opacity: 1, y: 0 }, 100)
+    .add(".hero-name", { opacity: 1, y: 0 }, 220)
+    .add(".hero-title .line-inner", { y: ["110%", "0%"], delay: stagger(120), duration: 1300 }, 300)
+    .add(".hero-lede", { opacity: 1, y: 0 }, 800)
+    .add(".hero-actions", { opacity: 1, y: 0 }, 950)
+    .add(".hero-links", { opacity: 1, y: 0 }, 1050)
+    .add(".hero-cue", { opacity: 1, y: 0 }, 1300);
 
   if (heroPath) {
-    intro.add(svg.createDrawable("#heroLine"), { draw: ["0 0", "0 1"], duration: 2600, ease: "inOutQuad" }, 400);
-    if (heroPath.area) intro.add("#heroArea", { opacity: [0, 1], duration: 1400, ease: "outQuad" }, 1800);
+    intro.add(svg.createDrawable("#heroLine"), { draw: ["0 0", "0 1"], duration: 2600, ease: "inOutQuad" }, 500);
+    if (heroPath.area) intro.add("#heroArea", { opacity: [0, 1], duration: 1400, ease: "outQuad" }, 1900);
   }
 
   /* Hero content recedes as you scroll away from it */
@@ -358,9 +368,9 @@
   document.querySelectorAll(".sec h2").forEach(function (h2) {
     var chars = splitChars(h2);
     if (!chars.length) return;
-    utils.set(chars, { opacity: 0, y: 22 });
+    utils.set(chars, { opacity: 0, y: 18 });
     animate(chars, {
-      opacity: 1, y: 0, duration: 900, ease: "outExpo", delay: stagger(16),
+      opacity: 1, y: 0, duration: 900, ease: "outExpo", delay: stagger(14),
       autoplay: onScroll({ target: h2, enter: "bottom-=60 top", repeat: false })
     });
   });
@@ -369,13 +379,13 @@
   document.querySelectorAll("[data-reveal]").forEach(function (el) {
     var targets = el.hasAttribute("data-stagger") ? Array.prototype.slice.call(el.children) : [el];
     if (!targets.length) return;
-    utils.set(targets, { opacity: 0, y: 26 });
+    utils.set(targets, { opacity: 0, y: 24 });
     animate(targets, {
       opacity: 1,
       y: 0,
       duration: 1100,
       ease: "outExpo",
-      delay: stagger(80),
+      delay: stagger(70),
       autoplay: onScroll({ target: el, enter: "bottom-=60 top", repeat: false })
     });
   });
