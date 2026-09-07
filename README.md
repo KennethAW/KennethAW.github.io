@@ -7,7 +7,7 @@ Single-page portfolio site. Plain HTML and CSS with a small JavaScript motion la
 - `index.html` - page content
 - `styles.css` - styling (editorial dark theme: Geist, Instrument Serif italics, Geist Mono labels, one gold accent)
 - `script.js` - motion layer: smooth scrolling, hero intro, scroll-synced spine, section reveals, counters, parallax, mobile menu, copy-email buttons
-- `assets/` - resume PDF, dashboard and slide screenshots for the gallery, project PDFs, and the social preview image
+- `assets/` - resume PDF, dashboard and slide screenshots for the gallery, project PDFs, the social preview image, and `fonts/` (self-hosted woff2 subsets plus metric-matched fallbacks, so no Google Fonts request and no layout shift)
 - `dashboard/` - the Alpha Analytics dashboard from the final-year project, built as static files and embedded in the Projects section (visitors click "Launch interactive dashboard" to run it in place, or open `dashboard/index.html` full screen)
 - `tools/build_dashboard.py` - rebuilds `dashboard/` from the FYP repo's `dashboard-react` folder
 - `tools/og.html` - template for the social preview image; `assets/og.png` is rendered from it (see below)
