@@ -4,15 +4,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/fonts/fonts.css">
   <style>
     html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0c0b0a; color: #f4efe6; font-family: "Geist", Arial, sans-serif; }
     .wrap { position: relative; width: 1200px; height: 630px; }
     .glow { position: absolute; inset: 0; background: radial-gradient(700px 400px at 14% 20%, rgba(216,163,91,0.16), transparent 60%); }
     .grid { position: absolute; inset: 0; opacity: .5; background-image: radial-gradient(rgba(244,239,230,0.12) 1px, transparent 1.2px); background-size: 28px 28px; -webkit-mask-image: radial-gradient(70% 70% at 60% 50%, #000 20%, transparent 80%); mask-image: radial-gradient(70% 70% at 60% 50%, #000 20%, transparent 80%); }
-    .chart { position: absolute; left: 0; right: 0; bottom: 0; height: 210px; opacity: 0.9; }
+    .chart { position: absolute; left: 0; right: 0; bottom: 0; height: 150px; opacity: 0.7; }
     .top { position: absolute; left: 72px; top: 64px; display: flex; align-items: center; gap: 18px; font-family: "Geist Mono", monospace; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; color: #a39d92; }
     .top i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #79c99a; box-shadow: 0 0 12px #79c99a; margin-right: 10px; vertical-align: middle; }
     .name { position: absolute; left: 72px; top: 118px; font-size: 26px; font-weight: 500; }
@@ -32,11 +30,9 @@
     <div class="grid"></div>
     <svg class="chart" viewBox="0 0 1200 240" preserveAspectRatio="none">
       <defs>
-        <linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8a35b" stop-opacity="0.16"/><stop offset="1" stop-color="#d8a35b" stop-opacity="0"/></linearGradient>
-        <linearGradient id="l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4efe6" stop-opacity="0"/><stop offset="0.2" stop-color="#f4efe6" stop-opacity="0.6"/><stop offset="1" stop-color="#f0cd93"/></linearGradient>
+                <linearGradient id="l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4efe6" stop-opacity="0"/><stop offset="0.2" stop-color="#f4efe6" stop-opacity="0.6"/><stop offset="1" stop-color="#f0cd93"/></linearGradient>
       </defs>
-      <path id="area" fill="url(#a)" d=""/>
-      <path id="line" fill="none" stroke="url(#l)" stroke-width="2" vector-effect="non-scaling-stroke" d=""/>
+            <path id="line" fill="none" stroke="url(#l)" stroke-width="2" vector-effect="non-scaling-stroke" d=""/>
     </svg>
     <div class="top"><span><i></i>Open to 2027 graduate roles</span><span>London</span></div>
     <div class="name">Kenneth Anthony Wijaya</div>
@@ -52,11 +48,10 @@
     function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
     var n = 90, w = 1200, y = 212, pts = [];
     for (var i = 0; i <= n; i++) {
-      var x = (i / n) * w; y = Math.max(128, Math.min(232, y - 0.9 + (rnd() - 0.5) * 18)); pts.push(x.toFixed(1) + " " + y.toFixed(1));
+      var x = (i / n) * w; y = Math.max(120, Math.min(230, y - 0.9 + (rnd() - 0.5) * 18)); pts.push(x.toFixed(1) + " " + y.toFixed(1));
     }
     var d = "M" + pts.join(" L");
     document.getElementById("line").setAttribute("d", d);
-    document.getElementById("area").setAttribute("d", d + " L1200 240 L0 240 Z");
   </script>
 </body>
 </html>

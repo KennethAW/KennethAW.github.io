@@ -35,8 +35,19 @@
     }
   }
 
-  /* ---------- Anchor links ---------- */
+  /* ---------- Anchor links ----------
+     Smooth-scrolling an anchor throws away the focus move a real jump performs,
+     which strands keyboard and screen-reader users at the top of the page.
+     Scroll, then place focus on the destination. The skip link opts out so it
+     behaves exactly as assistive technology expects. */
+  function focusTarget(target) {
+    if (!target) return;
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    if (a.hasAttribute("data-no-smooth")) return;
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
       if (id.length < 2) return;
@@ -46,6 +57,7 @@
       closeMenu();
       if (id === "#top") scrollToTarget(0); else scrollToTarget(target);
       history.replaceState(null, "", id);
+      setTimeout(function () { focusTarget(target); }, reduceMotion ? 0 : 700);
     });
   });
 
@@ -108,45 +120,92 @@
     var launch = win.querySelector("[data-dash-launch]");
     var close = win.querySelector("[data-dash-close]");
     var src = "dashboard/index.html";
+    var LOAD_TIMEOUT = 15000;
+
+    function fail() {
+      if (loading) loading.classList.remove("on");
+      media.classList.add("is-error");
+    }
+
     function open() {
       // The dashboard is built for wide screens; on phones open it in its own tab
       if (window.innerWidth < 820) { window.open(src, "_blank", "noopener"); return; }
       if (!frame.querySelector("iframe")) {
         var iframe = document.createElement("iframe");
-        iframe.src = src;
+        var timer = setTimeout(fail, LOAD_TIMEOUT);
         iframe.title = "Alpha Analytics interactive dashboard";
         iframe.setAttribute("allow", "fullscreen");
-        if (loading) {
-          loading.classList.add("on");
-          iframe.addEventListener("load", function () { loading.classList.remove("on"); }, { once: true });
-        }
+        iframe.addEventListener("load", function () {
+          clearTimeout(timer);
+          if (loading) loading.classList.remove("on");
+        }, { once: true });
+        iframe.addEventListener("error", function () { clearTimeout(timer); fail(); }, { once: true });
+        if (loading) loading.classList.add("on");
+        iframe.src = src;
         frame.appendChild(iframe);
       }
       media.classList.add("is-live");
       tools.hidden = false;
       live.hidden = false;
-      setTimeout(function () { scrollToTarget(win, -88); }, 60);
+      if (launch) launch.setAttribute("aria-expanded", "true");
+      setTimeout(function () {
+        scrollToTarget(win, -88);
+        // Put keyboard users inside the panel they just opened
+        frame.setAttribute("tabindex", "-1");
+        frame.focus({ preventScroll: true });
+      }, 60);
     }
+
     function shut() {
+      if (!media.classList.contains("is-live")) return;
       media.classList.remove("is-live");
+      media.classList.remove("is-error");
       tools.hidden = true;
       live.hidden = true;
+      if (launch) {
+        launch.setAttribute("aria-expanded", "false");
+        launch.focus({ preventScroll: true });
+      }
     }
+
     if (launch) launch.addEventListener("click", open);
     if (close) close.addEventListener("click", shut);
+    // Escape closes the panel, matching every other overlay on the page
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && media.classList.contains("is-live")) shut();
+    });
   })();
 
   /* ---------- Gallery arrows ---------- */
   document.querySelectorAll(".gallery-wrap").forEach(function (wrap) {
     var track = wrap.querySelector(".gallery");
     if (!track) return;
-    wrap.querySelectorAll("[data-gallery-prev], [data-gallery-next]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var fig = track.querySelector("figure");
-        var step = fig ? fig.getBoundingClientRect().width + 16 : 400;
-        track.scrollBy({ left: btn.hasAttribute("data-gallery-next") ? step : -step, behavior: reduceMotion ? "auto" : "smooth" });
-      });
+    var prev = wrap.querySelector("[data-gallery-prev]");
+    var next = wrap.querySelector("[data-gallery-next]");
+
+    function step() {
+      var fig = track.querySelector("figure");
+      return fig ? fig.getBoundingClientRect().width + 16 : 400;
+    }
+
+    // Dim the arrows at the ends, and hide them when nothing can scroll
+    function sync() {
+      var max = track.scrollWidth - track.clientWidth;
+      wrap.classList.toggle("no-scroll", max < 8);
+      if (prev) prev.disabled = track.scrollLeft < 8;
+      if (next) next.disabled = track.scrollLeft >= max - 8;
+    }
+
+    if (prev) prev.addEventListener("click", function () {
+      track.scrollBy({ left: -step(), behavior: reduceMotion ? "auto" : "smooth" });
     });
+    if (next) next.addEventListener("click", function () {
+      track.scrollBy({ left: step(), behavior: reduceMotion ? "auto" : "smooth" });
+    });
+    track.addEventListener("scroll", function () { requestAnimationFrame(sync); }, { passive: true });
+    window.addEventListener("resize", sync);
+    if (window.ResizeObserver) new ResizeObserver(sync).observe(track);
+    sync();
   });
 
   /* ---------- Scroll: progress bar, nav hide/show, back-to-top ---------- */
@@ -395,6 +454,9 @@
     var target = parseFloat(el.getAttribute("data-count"));
     var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
     var state = { v: 0 };
+    // The real figure ships in the HTML so it survives without JS. Reset it to
+    // zero only now that we know we can actually count it up.
+    el.textContent = state.v.toFixed(decimals);
     animate(state, {
       v: target,
       duration: 1800,

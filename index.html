@@ -45,7 +45,7 @@
   </script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main" data-no-smooth>Skip to content</a>
   <div class="progress" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
@@ -55,17 +55,20 @@
         <span class="brand-mark" aria-hidden="true">KW</span>
         <span class="brand-name">Kenneth Wijaya</span>
       </a>
+      <nav class="nav-primary" aria-label="Primary">
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Work</a></li>
         <li><a href="#education">Education</a></li>
         <li><a href="#skills">Skills</a></li>
+        <li><a href="#leadership">Leadership</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a class="btn" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a></li>
       </ul>
       <span class="nav-indicator" aria-hidden="true"></span>
+      </nav>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
       </button>
@@ -87,7 +90,7 @@
     </div>
   </nav>
 
-  <main id="main">
+  <main id="main" tabindex="-1">
     <!-- ================= HERO ================= -->
     <section class="hero" id="top">
       <div class="hero-grid" aria-hidden="true"></div>
@@ -142,19 +145,19 @@
     <div class="container">
       <div class="stats" data-reveal data-stagger>
         <div class="stat">
-          <div class="stat-num"><span data-count="4.85" data-decimals="2">0.00</span><span class="suffix">/5.00</span></div>
+          <div class="stat-num"><span data-count="4.85" data-decimals="2">4.85</span><span class="suffix">/5.00</span></div>
           <div class="stat-lbl">CGPA, First Class Honours, Electrical &amp; Electronic Engineering, NTU</div>
         </div>
         <div class="stat">
-          <div class="stat-num"><span data-count="3" data-decimals="0">0</span><span class="suffix">&times;</span></div>
+          <div class="stat-num"><span data-count="3" data-decimals="0">3</span><span class="suffix">&times;</span></div>
           <div class="stat-lbl">Dean&rsquo;s List, top 5% of the cohort, on the ASEAN Undergraduate Scholarship</div>
         </div>
         <div class="stat">
-          <div class="stat-num"><span data-count="8" data-decimals="0">0</span><span class="suffix">+</span></div>
+          <div class="stat-num"><span data-count="8" data-decimals="0">8</span><span class="suffix">+</span></div>
           <div class="stat-lbl">Live capital-markets transactions supported as an Investment Banking Summer Analyst</div>
         </div>
         <div class="stat">
-          <div class="stat-num"><span data-count="55.5" data-decimals="1">0.0</span><span class="suffix">%</span></div>
+          <div class="stat-num"><span data-count="55.5" data-decimals="1">55.5</span><span class="suffix">%</span></div>
           <div class="stat-lbl">Best next-day directional accuracy in my machine learning research across five large caps</div>
         </div>
       </div>
@@ -166,13 +169,13 @@
       <!-- ================= ABOUT ================= -->
       <section id="about" class="sec">
         <div class="container sec-grid">
-          <aside class="sec-aside">
+          <div class="sec-aside">
             <header class="sec-head" data-reveal>
               <span class="sec-node" aria-hidden="true"></span>
               <span class="sec-index mono">01 &mdash; About</span>
               <h2>Trained as an engineer. Drawn to <em>markets</em>.</h2>
             </header>
-          </aside>
+          </div>
           <div>
             <div class="lead" data-reveal data-stagger>
               <p>
@@ -224,14 +227,14 @@
       <!-- ================= EXPERIENCE ================= -->
       <section id="experience" class="sec">
         <div class="container sec-grid">
-          <aside class="sec-aside">
+          <div class="sec-aside">
             <header class="sec-head" data-reveal>
               <span class="sec-node" aria-hidden="true"></span>
               <span class="sec-index mono">02 &mdash; Experience</span>
               <h2>Deals, credit and the numbers behind them.</h2>
               <p class="sec-sub">Capital markets execution, counterparty credit and financial evaluation across Jakarta and Singapore.</p>
             </header>
-          </aside>
+          </div>
           <div class="rows" data-reveal data-stagger>
             <article class="row">
               <div class="row-meta"><span class="mono">Jun &ndash; Aug 2026</span><span class="mono place">Jakarta, Indonesia</span></div>
@@ -269,14 +272,14 @@
       <!-- ================= WORK ================= -->
       <section id="projects" class="sec">
         <div class="container sec-grid">
-          <aside class="sec-aside">
+          <div class="sec-aside">
             <header class="sec-head" data-reveal>
               <span class="sec-node" aria-hidden="true"></span>
               <span class="sec-index mono">03 &mdash; Selected work</span>
-              <h2>Research that reports its results <em>honestly</em>.</h2>
-              <p class="sec-sub">A full quant pipeline with a live dashboard, and a market-making bot from a trading competition.</p>
+              <h2>Built end to end. Reported <em>honestly</em>.</h2>
+              <p class="sec-sub">A full quant research pipeline with a dashboard you can drive, and a market-making bot from a trading competition.</p>
             </header>
-          </aside>
+          </div>
           <div class="case">
             <div class="case-head" data-reveal>
               <span class="mono">Final-year project &middot; NTU EEE &middot; Aug 2025 &ndash; May 2026</span>
@@ -297,13 +300,19 @@
               </div>
               <div class="window-media">
                 <div class="window-loading" aria-hidden="true"></div>
-                <img class="parallax" src="assets/fyp-dashboard.jpg" alt="Alpha Analytics dashboard showing an XGBoost forecast overlaid on AAPL price, top feature importances, an execution ledger and backtest risk metrics" loading="lazy">
+                <img class="parallax" src="assets/fyp-dashboard.jpg" width="1600" height="1000" decoding="async" alt="Alpha Analytics dashboard showing an XGBoost forecast overlaid on AAPL price, top feature importances, an execution ledger and backtest risk metrics" loading="lazy">
                 <div class="window-launch">
-                  <button class="btn btn-primary" type="button" data-dash-launch>Launch the dashboard
+                  <button class="btn btn-primary" type="button" data-dash-launch aria-expanded="false" aria-controls="dash-frame">Launch the dashboard
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
                   <span>Runs here on the page. Switch tickers and models, explore signals, backtests and features.</span>
                 </div>
-                <div class="window-frame" data-lenis-prevent></div>
+                <div class="window-frame" id="dash-frame" data-lenis-prevent></div>
+                <div class="window-error">
+                  <p class="mono">The dashboard could not load here</p>
+                  <p>It may be blocked in this browser. You can open it in its own tab instead.</p>
+                  <a class="btn" href="dashboard/index.html" target="_blank" rel="noopener">Open in a new tab
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+                </div>
               </div>
             </div>
 
@@ -330,7 +339,7 @@
             </div>
 
             <div data-reveal>
-              <h4 class="mono" style="margin-bottom:1.1rem">Four findings</h4>
+              <h4 class="mono group-label">Four findings</h4>
               <ul class="findings">
                 <li><strong>Simpler models won.</strong> On low signal-to-noise daily data, the inductive bias of gradient boosting beat raw capacity.</li>
                 <li><strong>Signal is asset-specific.</strong> Feature importance split differently per ticker, so per-ticker tuning beat one universal feature set.</li>
@@ -340,18 +349,18 @@
             </div>
 
             <div class="gallery-wrap" data-reveal>
-              <div class="gallery" tabindex="0" aria-label="Screens from the dashboard and the presentation">
-                <figure class="spot"><div class="frame"><img src="assets/dash-1.jpg" alt="Dashboard overview with predictive overlay, signal drivers, execution ledger and risk assessment" loading="lazy"></div><figcaption><span class="mono">01</span>Dashboard: forecast overlay, signal drivers, execution ledger</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/dash-4.jpg" alt="Backtest results page with equity curve against buy and hold and a full trade log" loading="lazy"></div><figcaption><span class="mono">02</span>Backtest results: equity curve against buy-and-hold, full trade log</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/dash-5.jpg" alt="Feature analysis page ranking feature importance" loading="lazy"></div><figcaption><span class="mono">03</span>Feature analysis: importance rankings per model and ticker</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/dash-2.jpg" alt="Model comparison page with accuracy, directional accuracy and ROC AUC per model and ticker" loading="lazy"></div><figcaption><span class="mono">04</span>Model comparison across all twenty model-ticker pairs</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/deck-5.jpg" alt="Presentation slide describing the end-to-end pipeline" loading="lazy"></div><figcaption><span class="mono">05</span>From the deck: the end-to-end pipeline</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/deck-14.jpg" alt="Presentation slide showing profit across all strategies" loading="lazy"></div><figcaption><span class="mono">06</span>From the deck: profit across the board</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/deck-15.jpg" alt="Presentation slide summarising four key findings" loading="lazy"></div><figcaption><span class="mono">07</span>From the deck: four key findings</figcaption></figure>
+              <div class="gallery" id="case-gallery" role="group" tabindex="0" aria-label="Screens from the dashboard and the presentation. Use the arrow keys to scroll.">
+                <figure class="spot"><div class="frame"><img src="assets/dash-1.jpg" width="1400" height="875" decoding="async" alt="Dashboard overview with predictive overlay, signal drivers, execution ledger and risk assessment" loading="lazy"></div><figcaption><span class="mono">01</span>Dashboard: forecast overlay, signal drivers, execution ledger</figcaption></figure>
+                <figure class="spot"><div class="frame"><img src="assets/dash-4.jpg" width="1400" height="875" decoding="async" alt="Backtest results page with equity curve against buy and hold and a full trade log" loading="lazy"></div><figcaption><span class="mono">02</span>Backtest results: equity curve against buy-and-hold, full trade log</figcaption></figure>
+                <figure class="spot"><div class="frame"><img src="assets/dash-5.jpg" width="1400" height="875" decoding="async" alt="Feature analysis page ranking feature importance" loading="lazy"></div><figcaption><span class="mono">03</span>Feature analysis: importance rankings per model and ticker</figcaption></figure>
+                <figure class="spot"><div class="frame"><img src="assets/dash-2.jpg" width="1400" height="875" decoding="async" alt="Model comparison page with accuracy, directional accuracy and ROC AUC per model and ticker" loading="lazy"></div><figcaption><span class="mono">04</span>Model comparison across all twenty model-ticker pairs</figcaption></figure>
+                <figure class="spot"><div class="frame"><img src="assets/deck-5.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide describing the end-to-end pipeline" loading="lazy"></div><figcaption><span class="mono">05</span>From the deck: the end-to-end pipeline</figcaption></figure>
+                <figure class="spot"><div class="frame"><img src="assets/deck-14.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide showing profit across all strategies" loading="lazy"></div><figcaption><span class="mono">06</span>From the deck: profit across the board</figcaption></figure>
+                <figure class="spot"><div class="frame"><img src="assets/deck-15.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide summarising four key findings" loading="lazy"></div><figcaption><span class="mono">07</span>From the deck: four key findings</figcaption></figure>
               </div>
               <div class="gallery-nav">
-                <button class="icon-btn" type="button" data-gallery-prev aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
-                <button class="icon-btn" type="button" data-gallery-next aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+                <button class="icon-btn" type="button" data-gallery-prev aria-controls="case-gallery" aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
+                <button class="icon-btn" type="button" data-gallery-next aria-controls="case-gallery" aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
               </div>
             </div>
 
@@ -412,13 +421,13 @@
       <!-- ================= EDUCATION ================= -->
       <section id="education" class="sec">
         <div class="container sec-grid">
-          <aside class="sec-aside">
+          <div class="sec-aside">
             <header class="sec-head" data-reveal>
               <span class="sec-node" aria-hidden="true"></span>
               <span class="sec-index mono">04 &mdash; Education</span>
               <h2>Singapore, then London.</h2>
             </header>
-          </aside>
+          </div>
           <div class="rows" data-reveal data-stagger>
             <article class="row">
               <div class="row-meta"><span class="mono">2026 &ndash; 2027</span><span class="mono place">London, United Kingdom</span></div>
@@ -448,13 +457,13 @@
       <!-- ================= SKILLS ================= -->
       <section id="skills" class="sec">
         <div class="container sec-grid">
-          <aside class="sec-aside">
+          <div class="sec-aside">
             <header class="sec-head" data-reveal>
               <span class="sec-node" aria-hidden="true"></span>
               <span class="sec-index mono">05 &mdash; Skills</span>
               <h2>The toolkit.</h2>
             </header>
-          </aside>
+          </div>
           <div class="skills" data-reveal data-stagger>
             <div>
               <h3 class="mono">Programming &amp; tools</h3>
@@ -479,13 +488,13 @@
       <!-- ================= LEADERSHIP ================= -->
       <section id="leadership" class="sec">
         <div class="container sec-grid">
-          <aside class="sec-aside">
+          <div class="sec-aside">
             <header class="sec-head" data-reveal>
               <span class="sec-node" aria-hidden="true"></span>
               <span class="sec-index mono">06 &mdash; Leadership</span>
               <h2>Beyond the classroom.</h2>
             </header>
-          </aside>
+          </div>
           <div class="rows" data-reveal data-stagger>
             <article class="row compact">
               <div class="row-meta"><span class="mono">Aug 2024 &ndash; Aug 2025</span></div>
@@ -503,31 +512,35 @@
 
       <!-- ================= CONTACT ================= -->
       <section id="contact" class="sec contact">
-        <div class="container">
-          <header class="sec-head" data-reveal>
-            <span class="sec-node" aria-hidden="true"></span>
-            <span class="sec-index mono">07 &mdash; Contact</span>
-            <h2>Start a <em>conversation</em>.</h2>
-          </header>
-          <div data-reveal data-stagger>
-            <p class="contact-sub">Graduate opportunities, quant research, or anything on this page. Email is the fastest way to reach me.</p>
-            <div class="contact-row">
-              <a class="tlink contact-email" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
-              <button class="icon-btn" type="button" data-copy="w.kennethanthony@gmail.com" aria-label="Copy w.kennethanthony@gmail.com to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
-                <span class="copied">OK</span>
-              </button>
-            </div>
-            <div class="contact-links">
-              <a class="tlink quiet" href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn</a>
-              <a class="tlink quiet" href="https://github.com/KennethAW" target="_blank" rel="noopener">GitHub</a>
-              <a class="tlink quiet" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
-            </div>
-            <div class="contact-meta mono">
-              <span>London &middot; <span class="clock" id="clock">&ndash;&ndash;:&ndash;&ndash;</span></span>
-              <span>Open to 2027 graduate roles</span>
+        <div class="container contact-grid">
+          <div>
+            <header class="sec-head" data-reveal>
+              <span class="sec-node" aria-hidden="true"></span>
+              <span class="sec-index mono">07 &mdash; Contact</span>
+              <h2>Start a <em>conversation</em>.</h2>
+            </header>
+            <div data-reveal data-stagger>
+              <p class="contact-sub">Graduate opportunities, quant research, or anything on this page. Email is the fastest way to reach me, and I reply to everything.</p>
+              <div class="contact-row">
+                <a class="tlink contact-email" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
+                <button class="icon-btn" type="button" data-copy="w.kennethanthony@gmail.com" aria-label="Copy w.kennethanthony@gmail.com to clipboard">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                  <span class="copied">OK</span>
+                </button>
+              </div>
+              <div class="contact-links">
+                <a class="tlink quiet" href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn</a>
+                <a class="tlink quiet" href="https://github.com/KennethAW" target="_blank" rel="noopener">GitHub</a>
+                <a class="tlink quiet" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+              </div>
             </div>
           </div>
+          <dl class="facts contact-facts" data-reveal data-stagger>
+            <div class="fact"><dt class="mono">Where</dt><dd>London &middot; <span class="clock" id="clock">&ndash;&ndash;:&ndash;&ndash;</span></dd></div>
+            <div class="fact"><dt class="mono">Status</dt><dd><span class="status"><i aria-hidden="true"></i>Open to 2027 graduate roles</span></dd></div>
+            <div class="fact"><dt class="mono">Looking for</dt><dd>Investment banking, markets and quantitative finance</dd></div>
+            <div class="fact"><dt class="mono">Languages</dt><dd>English, Bahasa Indonesia, Mandarin</dd></div>
+          </dl>
         </div>
       </section>
     </div>
@@ -544,8 +557,12 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
   </button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/4.5.0/anime.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
-  <script src="script.js"></script>
+  <!-- Vendored locally so the page makes no third-party requests and cannot be
+       broken by a CDN outage. defer keeps all three out of the parser's way
+       while preserving execution order, so anime and Lenis are defined before
+       script.js runs. anime.js 4.5.0 and Lenis 1.3.26, both MIT. -->
+  <script defer src="assets/vendor/anime-4.5.0.umd.min.js"></script>
+  <script defer src="assets/vendor/lenis-1.3.26.min.js"></script>
+  <script defer src="script.js"></script>
 </body>
 </html>

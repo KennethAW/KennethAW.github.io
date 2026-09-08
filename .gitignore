@@ -11,3 +11,4 @@ desktop.ini
 # Logs and temp files
 *.log
 *.tmp
+_verify_out/

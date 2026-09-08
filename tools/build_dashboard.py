@@ -45,4 +45,11 @@ if out.exists():
     shutil.rmtree(out)
 shutil.copytree(work / "dist", out)
 shutil.rmtree(tmp, ignore_errors=True)
+
+# Vite emits Google Fonts links; swap them for self-hosted subsets so the
+# dashboard makes no third-party requests and works offline.
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from localise_dashboard_fonts import localise  # noqa: E402
+
+localise(str(out))
 print(f"Dashboard rebuilt into {out}")
