@@ -466,6 +466,7 @@
   });
 
   /* Counters */
+  var snapCounters = [];
   document.querySelectorAll("[data-count]").forEach(function (el) {
     var target = parseFloat(el.getAttribute("data-count"));
     var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
@@ -473,6 +474,7 @@
     // The real figure ships in the HTML so it survives without JS. Reset it to
     // zero only now that we know we can actually count it up.
     el.textContent = state.v.toFixed(decimals);
+    snapCounters.push(function () { el.textContent = target.toFixed(decimals); });
     animate(state, {
       v: target,
       duration: 1800,
@@ -481,6 +483,24 @@
       autoplay: onScroll({ target: el, enter: "bottom-=40 top", repeat: false })
     });
   });
+
+  /* Printing captures whatever is on screen at that moment, and these counters
+     spend most of their life showing something other than the truth: zero until
+     they are scrolled into view, and a partial figure while they count up. A
+     visitor who loads the page and prints it without scrolling was getting a
+     CGPA of 0.00 out of 5.00; one who printed during the animation got 2.66.
+     Put the real figures back before the snapshot is taken. beforeprint covers
+     Chrome, Firefox and Edge; the print media query covers Safari. */
+  function snapCountersToFinal() {
+    snapCounters.forEach(function (snap) { snap(); });
+  }
+  window.addEventListener("beforeprint", snapCountersToFinal);
+  if (window.matchMedia) {
+    var printMq = window.matchMedia("print");
+    var onPrintMq = function (e) { if (e.matches) snapCountersToFinal(); };
+    if (printMq.addEventListener) printMq.addEventListener("change", onPrintMq);
+    else if (printMq.addListener) printMq.addListener(onPrintMq);
+  }
 
   /* Parallax on the featured screenshot */
   var parallax = document.querySelector(".parallax");

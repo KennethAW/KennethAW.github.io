@@ -161,6 +161,19 @@ r = ev("""JSON.stringify({ secTop: Math.round(document.querySelector('#skills').
   navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
 check("section top below the nav", r["secTop"] >= r["navH"], True)
 
+print("\n== printing captures the real figures ==")
+# The counters read zero until they are scrolled into view and a partial number
+# while they count up, and printing snapshots whatever is on screen. Loading the
+# page and printing it without scrolling used to put a CGPA of 0.00 out of 5.00
+# on paper; printing mid-animation put 2.66 there.
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+check("counters still start at zero for the animation",
+      ev("document.querySelector('[data-count]').textContent"), "0.00")
+call("Page.printToPDF", {"paperWidth": 8.27, "paperHeight": 11.69})
+check("printing puts the true figures back",
+      ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
+      ["4.85/5.00", "3×", "8+", "55.5%"])
+
 print("\n== the mobile menu contains focus ==")
 # The open menu covers the page with an opaque panel. If what is behind it stays
 # focusable, Tab walks off the last menu link onto hero buttons the visitor
