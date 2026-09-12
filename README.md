@@ -64,8 +64,11 @@ python tools/verify_site.py
   sticky heading on the left and content on the right, with a scroll-synced
   spine and a node per section down the far left.
 - **Fonts.** Self-hosted latin subsets, with `@font-face` fallbacks whose
-  `size-adjust` and vertical metrics were measured from the real fonts, so
-  nothing reflows while they load. Cumulative layout shift is 0.
+  `size-adjust` and vertical metrics were measured from the real fonts. This
+  shrinks the reflow when the real font swaps in; it does not abolish it, and
+  the claim to check is the measured one: cumulative layout shift is 0. Do not
+  re-tune `size-adjust` by eye — a plausible-looking 105.43% once moved the
+  page nearly four times as much as having no fallback at all.
 - **Motion.** Micro-interactions run 150–350ms with an ease-out curve on
   transform and opacity only. Reduced-motion visitors get a static page.
   Pointer effects (magnetic buttons, spotlight, hero depth) only run on
@@ -78,9 +81,12 @@ python tools/verify_site.py
   and the final-year project as a case study with question, approach, result,
   findings and stated limitations.
 
-Measured with Lighthouse against the live site: 100 performance / 100
-accessibility / 100 best practices / 100 SEO on both desktop and mobile,
-cumulative layout shift 0, 145 KB transferred.
+Measured with Lighthouse against the live site, three runs per preset:
+desktop 100 / 100 / 100 / 100; mobile performance 97 (range 97-99) with
+accessibility, best practices and SEO all 100. Cumulative layout shift 0,
+145 KB transferred. Mobile performance is scored far more harshly than
+desktop and varies by a couple of points between runs, so `tools/audit.py`
+sets its floors per preset rather than demanding 100 everywhere.
 
 ## The embedded dashboard
 
