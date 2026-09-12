@@ -25,6 +25,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -33,6 +34,10 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = os.path.join(ROOT, "tools")
+# Node ships npx as npx.cmd on Windows, and CreateProcess only ever appends
+# .exe, so a bare "npx" raises WinError 2 here. shutil.which honours PATHEXT
+# and gives the real path on every platform.
+NPX = shutil.which("npx") or "npx"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
 
@@ -72,7 +77,7 @@ def behavioural(url):
 def lighthouse(url, preset):
     out = os.path.join(TOOLS, "_verify_out", f"lh-{preset}.json")
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    cmd = ["npx", "--yes", "lighthouse@12", url, "--quiet",
+    cmd = [NPX, "--yes", "lighthouse@12", url, "--quiet",
            "--chrome-flags=--headless=new --no-sandbox",
            "--only-categories=performance,accessibility,best-practices,seo",
            "--output=json", "--output-path=" + out]
@@ -82,6 +87,10 @@ def lighthouse(url, preset):
         run(cmd, timeout=600)
     except subprocess.TimeoutExpired:
         return {"error": "lighthouse timed out"}
+    except OSError as e:
+        # A missing Node must fail the audit loudly, not abort it with a
+        # traceback that leaves no report behind to compare against.
+        return {"error": f"could not launch lighthouse ({NPX}): {e}"}
     if not os.path.exists(out):
         return {"error": "lighthouse produced no report"}
     d = json.load(open(out, encoding="utf-8"))
