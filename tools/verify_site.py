@@ -63,10 +63,14 @@ def key(k, kc=0):
         call("Input.dispatchKeyEvent", {"type": t, "key": k, "code": k, "windowsVirtualKeyCode": kc, "nativeVirtualKeyCode": kc})
 
 
+checks = []
+
+
 def check(name, got, want):
     ok = got == want
     if not ok:
         fails.append(name)
+    checks.append({"name": name, "pass": ok, "got": repr(got), "want": repr(want)})
     print(("  PASS  " if ok else "  FAIL  ") + name + "  got=" + repr(got) + ("" if ok else "  want=" + repr(want)))
 
 
@@ -161,5 +165,12 @@ print("\nconsole entries:", len(console))
 for c in console[:6]:
     print("   ", c)
 print("\nFAILURES:", fails if fails else "none")
+
+# Machine-readable result so tools/audit.py can score a run without parsing text
+json.dump({"url": BASE, "passed": sum(1 for c in checks if c["pass"]),
+           "failures": fails, "checks": checks,
+           "console_entries": len(console)},
+          open(os.path.join(S, "result.json"), "w", encoding="utf-8"), indent=2)
+
 ws.close(); proc.terminate()
 sys.exit(1 if fails else 0)
