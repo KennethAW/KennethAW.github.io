@@ -563,11 +563,22 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
   .skills { grid-template-columns: 1fr 1fr; }
   .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
 }
+/* ---------- Nav: the gap between the two navigations ----------
+   The mobile menu stops at 820px, but the full nav needs 920px to lay out: the
+   seven links plus the Resume button are 682px wide, and with the name beside
+   the mark the brand is another 166px. Between those two widths the Resume
+   button was pushed past the right edge of the page (clipped by 11px at 821px)
+   and the brand name wrapped onto a second line inside a 72px bar. An iPad Pro
+   11 in portrait is 834px, squarely inside that band, as is any window snapped
+   to half of a 1680px screen. Fall back to the KW mark alone until the name
+   has room; 939 rather than 919 leaves a little air for font variation. */
+@media (max-width: 939px) {
+  .brand-name { display: none; }
+}
 @media (max-width: 820px) {
   :root { --inset: 2.25rem; --nav-h: 64px; }
   .nav-primary { display: none; }
   .nav-toggle { display: inline-flex; }
-  .brand-name { display: none; }
   .hero { padding-bottom: 7rem; }
   .hero-title { max-width: none; }
   .hero-path { height: 36%; }

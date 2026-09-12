@@ -161,6 +161,22 @@ r = ev("""JSON.stringify({ secTop: Math.round(document.querySelector('#skills').
   navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
 check("section top below the nav", r["secTop"] >= r["navH"], True)
 
+print("\n== the desktop nav fits the moment it appears ==")
+# The mobile menu stops at 820px but the full nav needs 920px to lay out, so
+# 821-919px used to clip the Resume button off the right edge and wrap the
+# brand name onto a second line. 834px is an iPad Pro 11 in portrait.
+for width in (821, 834, 900):
+    call("Emulation.setDeviceMetricsOverride", {"width": width, "height": 700, "deviceScaleFactor": 1, "mobile": False})
+    call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.4)
+    r = ev("""JSON.stringify({
+      resumeRight: Math.round(document.querySelector('.nav-links li:last-child a').getBoundingClientRect().right),
+      innerRight: Math.round(document.querySelector('.nav-inner').getBoundingClientRect().right),
+      brandH: Math.round(document.querySelector('.brand').getBoundingClientRect().height),
+      navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
+    check(f"resume button inside the container at {width}px", r["resumeRight"] <= r["innerRight"], True)
+    check(f"brand stays on one line at {width}px", r["brandH"] <= 40, True)
+call("Emulation.clearDeviceMetricsOverride")
+
 print("\n== reflow at 320px (WCAG 1.4.10) ==")
 # 400% browser zoom on a 1280px screen is a 320px viewport, and at that width
 # content must not need scrolling in two directions. The contact email address
