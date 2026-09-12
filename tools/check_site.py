@@ -88,6 +88,49 @@ for required in REQUIRED:
         fail(f"required file missing: {required}")
 
 
+# ------------------------------------------------------------------ stylesheets
+# A declaration that sits outside any rule does not fail loudly. The CSS parser
+# treats it as the start of a selector and keeps swallowing tokens until the next
+# "{", which means it eats the whole rule that follows it. A stray duplicated
+# unicode-range line in fonts.css silently removed the "Geist Fallback"
+# @font-face this way, and nothing anywhere reported a problem.
+def css_structure(path):
+    src = read(path)
+    stripped = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
+    depth = 0
+    for n, line in enumerate(stripped.splitlines(), 1):
+        text = line.strip()
+        if depth == 0 and re.match(r"^[-a-z]+\s*:", text):
+            fail(f"{path}:{n}: declaration outside any rule; it will swallow the rule after it")
+        if depth == 0 and text.startswith("}"):
+            fail(f"{path}:{n}: closing brace with nothing open")
+        depth += line.count("{") - line.count("}")
+    if depth != 0:
+        fail(f"{path}: braces do not balance (ends at depth {depth})")
+
+
+for sheet in ("styles.css", "assets/fonts/fonts.css"):
+    css_structure(sheet)
+
+# Every metric-matched fallback the design system names must actually be defined.
+# If it is not, the browser skips silently past it to the next family in the
+# stack and the size-adjust that stops text reflowing never applies. System
+# families further down the stack (Arial, Georgia and friends) are not ours to
+# define, so only the "... Fallback" ones are checked.
+fonts_css = read("assets/fonts/fonts.css")
+defined_families = {m.strip("\"' ") for m in
+                    re.findall(r"@font-face\s*\{[^}]*?font-family:\s*([^;]+?);", fonts_css, re.S)}
+stacks = re.findall(r"--(?:sans|serif|mono):\s*([^;]+);", read("styles.css"))
+for family in sorted({f for stack in stacks for f in re.findall(r'"([^"]+ Fallback)"', stack)}):
+    if family not in defined_families:
+        fail(f'styles.css falls back to "{family}", which no @font-face in '
+             f"assets/fonts/fonts.css defines")
+for family in sorted(f for f in defined_families if not f.endswith(" Fallback")):
+    if f"{family} Fallback" not in defined_families:
+        fail(f'assets/fonts/fonts.css defines "{family}" but not "{family} Fallback"; '
+             "text will reflow when the real font arrives")
+
+
 # ------------------------------------------------- content must survive without JS
 index = read("index.html")
 
