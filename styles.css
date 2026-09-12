@@ -490,7 +490,13 @@ em.serif, .serif { font-family: var(--serif); font-style: italic; font-weight: 4
 .contact-facts .fact { grid-template-columns: 8rem 1fr; }
 .contact-facts .status { font-size: 1rem; }
 .contact-row { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; align-items: center; }
-.contact-email { font-size: clamp(1.3rem, 2.4vw, 1.9rem); font-weight: 500; letter-spacing: -0.02em; }
+/* An email address is one unbreakable word. At a 320px viewport, which is what
+   400% zoom gives on a 1280px screen, it is wider than the column and pushes
+   the whole page sideways (WCAG 1.4.10). "anywhere" rather than "break-word"
+   because this is a flex item: only "anywhere" lowers the min-content width
+   enough for the item to actually shrink. It has no effect above ~350px, where
+   the address already fits on one line. */
+.contact-email { font-size: clamp(1.3rem, 2.4vw, 1.9rem); font-weight: 500; letter-spacing: -0.02em; overflow-wrap: anywhere; }
 .contact-links { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2.5rem; }
 .contact-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; margin-top: 2rem; }
 .contact-meta .clock { color: var(--text); font-variant-numeric: tabular-nums; }

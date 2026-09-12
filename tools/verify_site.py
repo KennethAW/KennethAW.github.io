@@ -161,6 +161,19 @@ r = ev("""JSON.stringify({ secTop: Math.round(document.querySelector('#skills').
   navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
 check("section top below the nav", r["secTop"] >= r["navH"], True)
 
+print("\n== reflow at 320px (WCAG 1.4.10) ==")
+# 400% browser zoom on a 1280px screen is a 320px viewport, and at that width
+# content must not need scrolling in two directions. The contact email address
+# is one unbreakable word and used to push the whole page 16px sideways.
+call("Emulation.setDeviceMetricsOverride", {"width": 320, "height": 800, "deviceScaleFactor": 1, "mobile": True})
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+r = ev("""JSON.stringify({ scrollW: document.documentElement.scrollWidth,
+  clientW: document.documentElement.clientWidth,
+  email: Math.round(document.querySelector('.contact-email').getBoundingClientRect().right) })""")
+check("no horizontal scrolling at 320px", r["scrollW"] <= r["clientW"] + 1, True)
+check("email address stays inside 320px", r["email"] <= r["clientW"] + 1, True)
+call("Emulation.clearDeviceMetricsOverride")
+
 print("\nconsole entries:", len(console))
 for c in console[:6]:
     print("   ", c)
