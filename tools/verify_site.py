@@ -161,6 +161,26 @@ r = ev("""JSON.stringify({ secTop: Math.round(document.querySelector('#skills').
   navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
 check("section top below the nav", r["secTop"] >= r["navH"], True)
 
+print("\n== the mobile menu contains focus ==")
+# The open menu covers the page with an opaque panel. If what is behind it stays
+# focusable, Tab walks off the last menu link onto hero buttons the visitor
+# cannot see and the focus ring disappears entirely.
+call("Emulation.setDeviceMetricsOverride", {"width": 390, "height": 844, "deviceScaleFactor": 1, "mobile": True})
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+check("page behind the closed menu is reachable", ev("document.getElementById('main').inert === true"), False)
+ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
+check("opening the menu hides the page behind it", ev("document.getElementById('main').inert === true"), True)
+for _ in range(13):   # past the ten menu links and round the cycle
+    for t in ("rawKeyDown", "keyUp"):
+        call("Input.dispatchKeyEvent", {"type": t, "key": "Tab", "code": "Tab",
+                                        "windowsVirtualKeyCode": 9, "nativeVirtualKeyCode": 9})
+    time.sleep(0.05)
+check("tabbing never reaches the covered page",
+      ev("!!document.activeElement.closest('#main, footer, .to-top')"), False)
+key("Escape", 27); time.sleep(0.5)
+check("closing the menu gives the page back", ev("document.getElementById('main').inert === true"), False)
+call("Emulation.clearDeviceMetricsOverride")
+
 print("\n== the desktop nav fits the moment it appears ==")
 # The mobile menu stops at 820px but the full nav needs 920px to lay out, so
 # 821-919px used to clip the Resume button off the right edge and wrap the

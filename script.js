@@ -65,10 +65,25 @@
   var toggle = document.querySelector(".nav-toggle");
   var menu = document.getElementById("menu");
   var nav = document.querySelector(".nav");
+
+  /* The open menu is an opaque panel over the whole screen, but the page
+     underneath stays in the tab order. Tabbing past the last menu link used to
+     land on the hero's buttons, which are completely hidden behind it: focus
+     vanished with no visible indicator, and a screen reader could wander into
+     content the visitor could not see. inert removes them from both the tab
+     order and the accessibility tree. The brand and the toggle sit above the
+     panel and stay reachable, so there is always a way back out. */
+  var behindMenu = [document.getElementById("main"), document.querySelector("footer"),
+                    document.querySelector(".to-top"), document.querySelector(".skip-link")];
+  function hideBehindMenu(hidden) {
+    behindMenu.forEach(function (el) { if (el) el.inert = hidden; });
+  }
+
   function closeMenu() {
     if (!menu || !menu.classList.contains("open")) return;
     menu.classList.remove("open");
     toggle.setAttribute("aria-expanded", "false");
+    hideBehindMenu(false);
     if (lenis) lenis.start();
   }
   if (toggle && menu) {
@@ -76,6 +91,7 @@
       var open = !menu.classList.contains("open");
       menu.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      hideBehindMenu(open);
       if (lenis) { open ? lenis.stop() : lenis.start(); }
       if (open) {
         nav.classList.remove("is-hidden");
