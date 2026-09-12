@@ -3,7 +3,7 @@
 A single-page portfolio. Plain HTML, CSS and JavaScript with a small motion
 layer. No build step, no framework, no third-party requests at runtime.
 
-Live at <https://kennethaw.github.io> once deployed.
+**Live at <https://kennethaw.github.io>.** Every push to `main` redeploys it.
 
 ## Files
 
@@ -114,21 +114,15 @@ chrome --headless=new --window-size=1200,630 --screenshot=assets/og.png http://l
 
 ## Deploy to GitHub Pages
 
-The folder is a git repository on branch `main` with the site committed.
+Already deployed. The repository is <https://github.com/KennethAW/KennethAW.github.io>
+and Pages serves it from the root of `main`, so publishing a change is just:
 
-1. Create a public repository on GitHub named `KennethAW.github.io` (empty, no README).
-2. Connect and push:
+```bash
+git add -A && git commit -m "..." && git push
+```
 
-   ```bash
-   git remote add origin https://github.com/KennethAW/KennethAW.github.io.git
-   git push -u origin main
-   ```
-
-3. In the repository settings, under Pages, set the source to "Deploy from a
-   branch", branch `main`, folder `/ (root)`.
-4. The site goes live at <https://kennethaw.github.io> within a minute or two.
-   Every later `git push` redeploys it, and the "Site checks" workflow runs
-   `tools/check_site.py` to catch a broken link or missing asset.
+The site updates within a minute. The "Site checks" workflow runs
+`tools/check_site.py` on every push to catch a broken link or missing asset.
 
 If a custom domain is added later, update the `canonical`, `og:url` and
 `og:image` URLs in `index.html`, the URLs in `sitemap.xml` and `robots.txt`,
