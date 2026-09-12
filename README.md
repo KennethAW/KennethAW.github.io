@@ -78,8 +78,9 @@ python tools/verify_site.py
   and the final-year project as a case study with question, approach, result,
   findings and stated limitations.
 
-Measured with Lighthouse: 100 performance / 100 accessibility / 100 best
-practices / 100 SEO on desktop, and 98 / 100 / 100 / 100 on mobile.
+Measured with Lighthouse against the live site: 100 performance / 100
+accessibility / 100 best practices / 100 SEO on both desktop and mobile,
+cumulative layout shift 0, 145 KB transferred.
 
 ## The embedded dashboard
 
