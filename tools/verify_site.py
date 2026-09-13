@@ -167,6 +167,24 @@ check("escape closes", r2.get("live"), False)
 check("escape restores aria-expanded", r2.get("expanded"), "false")
 check("focus returns to the launch button", r2.get("focus"), "btn")
 
+print("\n== escape works from inside the dashboard as well ==")
+# Tabbing past the edge of the panel puts focus in the dashboard's own document,
+# and a key pressed there is delivered to that document, not this one. Escape
+# did nothing there, so a keyboard visitor's only way back out of a 15-control
+# app was to tab through the whole of it.
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+  document.querySelector('#projects').scrollIntoView(); await w(1600);
+  document.querySelector('[data-dash-launch]').click(); await w(5000); return 1; })()""")
+key("Tab", 9); time.sleep(0.3)
+check("tab from the panel edge lands inside the dashboard",
+      ev("document.activeElement.tagName"), "IFRAME")
+key("Escape", 27); time.sleep(0.8)
+check("escape from inside the dashboard closes the panel",
+      ev("document.querySelector('#dash-window .window-media').classList.contains('is-live')"), False)
+check("and focus comes back to the launch button",
+      ev("String(document.activeElement.className).split(' ')[0]"), "btn")
+
 print("\n== a frame that cannot load says so ==")
 # A subframe blocked by an extension, a proxy or a corporate policy still fires
 # the iframe's load event, with the browser's error page inside it, and never

@@ -179,7 +179,14 @@
         iframe.addEventListener("load", function () {
           clearTimeout(timer);
           if (loading) loading.classList.remove("on");
-          if (!frameHasDashboard()) fail();
+          if (!frameHasDashboard()) { fail(); return; }
+          // Tabbing past the panel edge takes you into the dashboard, and a key
+          // pressed in there is delivered to its document, not this one, so the
+          // Escape below never fired and the only way back out was to tab
+          // through the whole app. The frame is same-origin: listen in it too.
+          try {
+            iframe.contentDocument.addEventListener("keydown", onKeydown);
+          } catch (e) { /* a frame we cannot reach into is already an error */ }
         }, { once: true });
         iframe.addEventListener("error", function () { clearTimeout(timer); fail(); }, { once: true });
         if (loading) loading.classList.add("on");
@@ -212,12 +219,14 @@
       }
     }
 
+    // Escape closes the panel, matching every other overlay on the page
+    function onKeydown(e) {
+      if (e.key === "Escape" && media.classList.contains("is-live")) shut();
+    }
+
     if (launch) launch.addEventListener("click", open);
     if (close) close.addEventListener("click", shut);
-    // Escape closes the panel, matching every other overlay on the page
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && media.classList.contains("is-live")) shut();
-    });
+    document.addEventListener("keydown", onKeydown);
   })();
 
   /* ---------- Gallery arrows ---------- */
