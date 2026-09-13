@@ -426,6 +426,21 @@ for label, width, height, embed in (("landscape phone 844x390", 844, 390, False)
         check(f"the embedded frame clears the first chart, {label}", isinstance(h, int) and h >= 480, True)
 call("Emulation.clearDeviceMetricsOverride")
 
+print("\n== section headings finish revealing ==")
+# The headings are sticky, so their box stops moving while the page keeps
+# going, and scroll-threshold triggers read that as entering and leaving over
+# and over. The character stagger used to be left frozen part way through -
+# the largest type on the page, permanently half drawn.
+call("Emulation.clearDeviceMetricsOverride")
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+doc_h = ev("document.documentElement.scrollHeight") or 12000
+for _y in range(0, int(doc_h), 500):
+    ev("window.scrollTo(0, %d); 1" % _y); time.sleep(0.12)
+time.sleep(2.5)
+check("every section heading is fully revealed after scrolling the page",
+      ev("(function(){var bad=[];document.querySelectorAll('.sec h2').forEach(function(h){var n=0;h.querySelectorAll('.ch').forEach(function(c){if(parseFloat(getComputedStyle(c).opacity)<0.95)n++;});if(n)bad.push(h.closest('section').id+':'+n+'/'+h.querySelectorAll('.ch').length);});return JSON.stringify(bad);})()"),
+      [])
+
 print("\n== the desktop nav fits the moment it appears ==")
 # The mobile menu stops at 820px but the full nav needs 920px to lay out, so
 # 821-919px used to clip the Resume button off the right edge and wrap the

@@ -433,10 +433,32 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 @keyframes cue { 0% { top: -100%; } 60% { top: 100%; } 100% { top: 100%; } }
 
 /* ---------- Stats strip ---------- */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 3rem 0; border-top: 1px solid var(--line); }
-.stat-num { font-size: 2.6rem; font-weight: 500; letter-spacing: -0.04em; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
-.stat-num .suffix { color: var(--accent); font-size: 1.2rem; margin-left: 0.15rem; font-weight: 500; }
-.stat-lbl { color: var(--muted); font-size: 0.95rem; line-height: 1.45; margin-top: 0.7rem; max-width: 16rem; }
+/* The four figures are the strongest thing on the page and they were set at
+   2.6rem in a gutter-spaced grid, which reads as a caption row. Full-bleed
+   band, ruled cells, numerals at display scale. */
+.stats {
+  /* minmax(0, 1fr), not 1fr: a column's automatic minimum is its min-content,
+     and the cell padding plus a word like "Undergraduate" floors that around
+     165px. Four or even two of those will not fit a 320px screen, and the grid
+     silently widens the whole document rather than shrink. */
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  padding: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.stat { padding: 3.25rem 2rem 3rem; border-left: 1px solid var(--line); position: relative; min-width: 0; }
+.stat:first-child { border-left: 0; }
+.stat-num {
+  font-size: clamp(2.9rem, 5.6vw, 5.25rem); font-weight: 500; letter-spacing: -0.055em;
+  line-height: 0.92; color: var(--text); font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline;
+}
+.stat-num .suffix { color: var(--accent); font-size: 0.34em; margin-left: 0.22rem; font-weight: 500; letter-spacing: -0.02em; }
+.stat-lbl { color: var(--muted); font-size: 0.92rem; line-height: 1.45; margin-top: 1.1rem; max-width: 17rem; }
+@media (max-width: 560px) {
+  .stats { grid-template-columns: minmax(0, 1fr); }
+  .stat { border-left: 0; border-top: 1px solid var(--line); padding: 1.9rem 0; }
+  .stat:first-child { border-top: 0; }
+  .stat-lbl { max-width: none; }
+}
 
 /* ---------- Thread and sections ---------- */
 .thread { position: relative; }
@@ -452,7 +474,7 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 }
 .sec { padding: 7rem 0; border-top: 1px solid var(--line); counter-increment: sec; }
 .sec > .container { padding-left: var(--inset); }
-.sec-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 4rem; align-items: start; }
+.sec-grid { display: grid; grid-template-columns: minmax(0, 4.6fr) minmax(0, 7.4fr); gap: 3.5rem; align-items: start; }
 .sec-grid > *, .case > *, .case-cols > *, .numbers > *, .project > * { min-width: 0; }
 .sec-aside { position: sticky; top: calc(var(--nav-h) + 2.5rem); }
 .sec-head { position: relative; margin-bottom: 1.25rem; }
@@ -484,7 +506,7 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 }
 .sec-node.on { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim), 0 0 18px rgba(216, 163, 91, 0.55); }
 .sec-index { display: block; margin-bottom: 1.25rem; color: var(--accent); }
-.sec h2 { font-size: clamp(2.15rem, 4.2vw, 3.5rem); line-height: 1.0; letter-spacing: -0.042em; font-weight: 500; }
+.sec h2 { font-size: clamp(2.4rem, 5.2vw, 4.6rem); line-height: 0.95; letter-spacing: -0.05em; font-weight: 500; }
 .sec h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent-2); }
 .sec h2 .wd { display: inline-block; white-space: nowrap; }
 .sec h2 .ch { display: inline-block; }
@@ -519,6 +541,24 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 }
 .sec-invert { position: relative; }
 .sec-invert ::selection { background: var(--accent); color: #f4efe6; }
+/* The terminal stays a terminal. It keeps a near-black surface on the ivory,
+   which is the point - a dark device on paper - but everything inside it is
+   drawn with the same tokens as the rest of the page, and those are flipped
+   here. Flip them back within the window or its own text goes dark on dark. */
+.sec-invert .window {
+  --text: #f4efe6;
+  --muted: #a39d92;
+  --dim: #8f8a80;
+  --line: rgba(244, 239, 230, 0.08);
+  --line-2: rgba(244, 239, 230, 0.16);
+  --accent: #d8a35b;
+  --accent-2: #f0cd93;
+  --bg: #0c0b0a;
+  --bg-3: #1b1917;
+  color: var(--text);
+  border-color: rgba(20, 18, 15, 0.18);
+  box-shadow: 0 30px 70px -30px rgba(20, 18, 15, 0.45);
+}
 /* The spine crosses the ivory, so give it something it can be seen against */
 .sec-invert + .sec .spine, .spine { mix-blend-mode: normal; }
 
@@ -763,7 +803,10 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
 @media (max-width: 1000px) {
   .sec-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .sec-aside { position: static; }
-  .stats { grid-template-columns: 1fr 1fr; gap: 2rem 1.5rem; }
+  .stats { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; }
+  .stat { padding: 2.25rem 1.25rem; }
+  .stat:nth-child(3) { border-left: 0; }
+  .stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .case-cols { grid-template-columns: 1fr; gap: 1.75rem; }
   .numbers { grid-template-columns: 1fr 1fr; }
   .findings { grid-template-columns: 1fr; }

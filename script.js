@@ -512,14 +512,37 @@
     walk(el);
     return el.querySelectorAll(".ch");
   }
+  /* Section headings are sticky, so their box stops moving with the scroll
+     while the page keeps going. onScroll thresholds read that as entering and
+     leaving over and over, and the character stagger was left frozen part way
+     through: measured after a normal scroll of the whole page, about had 19 of
+     35 characters under full opacity, experience 22 of 36, and jumping
+     straight to a section left its heading at opacity 0 while on screen. The
+     largest type on the page never finished arriving.
+
+     An IntersectionObserver does not care that the element is sticky, fires
+     for something already on screen the moment it is observed, and is
+     disconnected after the one reveal it owes. */
   document.querySelectorAll(".sec h2").forEach(function (h2) {
     var chars = splitChars(h2);
     if (!chars.length) return;
     utils.set(chars, { opacity: 0, y: 18 });
-    animate(chars, {
-      opacity: 1, y: 0, duration: 900, ease: "outExpo", delay: stagger(14),
-      autoplay: onScroll({ target: h2, enter: "bottom-=60 top", repeat: false })
-    });
+    var played = false;
+    function reveal() {
+      if (played) return;
+      played = true;
+      animate(chars, { opacity: 1, y: 0, duration: 900, ease: "outExpo", delay: stagger(14) });
+    }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) { reveal(); io.disconnect(); return; }
+        }
+      }, { threshold: 0.01 });
+      io.observe(h2);
+    } else {
+      reveal();
+    }
   });
 
   /* Reveal groups */
