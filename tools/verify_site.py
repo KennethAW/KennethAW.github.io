@@ -31,15 +31,36 @@ console = []
 fails = []
 
 
+# Requests whose URL contains one of these are failed with the same error a
+# content blocker or a corporate proxy produces. Empty for every other check.
+blocked_urls = []
+
+
+def answer_paused(p):
+    """Fetch.requestPaused has to be answered while we are waiting on something
+    else, or the page simply stalls on that request."""
+    global mid
+    mid += 1
+    hit = any(b in p["request"]["url"] for b in blocked_urls)
+    ws.send(json.dumps({"id": mid,
+                        "method": "Fetch.failRequest" if hit else "Fetch.continueRequest",
+                        "params": {"requestId": p["requestId"], "errorReason": "BlockedByClient"}
+                        if hit else {"requestId": p["requestId"]}}))
+
+
 def call(method, params=None):
     global mid
     mid += 1
-    ws.send(json.dumps({"id": mid, "method": method, "params": params or {}}))
+    my = mid
+    ws.send(json.dumps({"id": my, "method": method, "params": params or {}}))
     while True:
         msg = json.loads(ws.recv())
         if msg.get("method") in ("Runtime.exceptionThrown", "Log.entryAdded"):
             console.append(json.dumps(msg["params"])[:220])
-        if msg.get("id") == mid:
+        if msg.get("method") == "Fetch.requestPaused":
+            answer_paused(msg["params"])
+            continue
+        if msg.get("id") == my:
             return msg.get("result", msg)
 
 
@@ -121,12 +142,17 @@ r = ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
   b.click(); await w(5000);
   const m = document.querySelector('#dash-window .window-media');
   return JSON.stringify({ live: m.classList.contains('is-live'), expanded: b.getAttribute('aria-expanded'),
-    focus: document.activeElement.className, loadingOff: !document.querySelector('.window-loading').classList.contains('on') });
+    focus: document.activeElement.className, loadingOff: !document.querySelector('.window-loading').classList.contains('on'),
+    error: m.classList.contains('is-error'), badge: !document.querySelector('#dash-window .live').hidden });
 })()""")
 print("   ", json.dumps(r))
 check("launch sets aria-expanded", r.get("expanded"), "true")
 check("focus moves into the frame", r.get("focus"), "window-frame")
 check("loading bar stops after load", r.get("loadingOff"), True)
+# The other side of the check below: a dashboard that does load must not be
+# mistaken for one that did not
+check("a dashboard that loads is not called an error", r.get("error"), False)
+check("a dashboard that loads is announced live", r.get("badge"), True)
 shot("dash-live")
 key("Escape", 27); time.sleep(0.6)
 r2 = ev("""JSON.stringify({ live: document.querySelector('#dash-window .window-media').classList.contains('is-live'),
@@ -135,6 +161,35 @@ r2 = ev("""JSON.stringify({ live: document.querySelector('#dash-window .window-m
 check("escape closes", r2.get("live"), False)
 check("escape restores aria-expanded", r2.get("expanded"), "false")
 check("focus returns to the launch button", r2.get("focus"), "btn")
+
+print("\n== a frame that cannot load says so ==")
+# A subframe blocked by an extension, a proxy or a corporate policy still fires
+# the iframe's load event, with the browser's error page inside it, and never
+# fires error. The panel took that as success: it hid the screenshot, showed a
+# blank grey box, announced "Live" in green and never offered the way out it
+# carries for exactly this case. Fail the request the way a blocker does.
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+blocked_urls.append("/dashboard/")
+call("Fetch.enable", {"patterns": [{"urlPattern": "*/dashboard/*"}]})
+r = ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+  document.querySelector('.nav-links a[href="#projects"]').click(); await w(2600);
+  document.querySelector('[data-dash-launch]').click(); await w(4000);
+  const m = document.querySelector('#dash-window .window-media');
+  return JSON.stringify({ error: m.classList.contains('is-error'),
+    errorPanel: getComputedStyle(document.querySelector('.window-error')).display,
+    frameHidden: getComputedStyle(document.querySelector('.window-frame')).display,
+    badge: !document.querySelector('#dash-window .live').hidden,
+    wayOut: !!document.querySelector('.window-error a[href="dashboard/index.html"]'),
+    loadingOff: !document.querySelector('.window-loading').classList.contains('on') });
+})()""")
+print("   ", json.dumps(r))
+check("a blocked frame is recognised as a failure", r.get("error"), True)
+check("the explanation is on screen", r.get("errorPanel"), "flex")
+check("nothing claims to be live", r.get("badge"), False)
+check("the way out is offered", r.get("wayOut"), True)
+check("the loading bar stops", r.get("loadingOff"), True)
+call("Fetch.disable")
+del blocked_urls[:]
 
 print("\n== gallery arrow states ==")
 r = ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));

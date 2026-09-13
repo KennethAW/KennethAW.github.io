@@ -140,13 +140,31 @@
 
     function fail() {
       if (loading) loading.classList.remove("on");
+      // Nothing is live, so the bar must not say so
+      if (live) live.hidden = true;
       media.classList.add("is-error");
+    }
+
+    /* A subframe that an extension or a proxy blocks, or that 404s, still fires
+       load - with the browser's error page or the site's own 404 inside it -
+       and never fires error. The load event alone is therefore not evidence
+       that the dashboard is there, and the panel used to announce "Live" over
+       a blank grey box. The frame is same-origin, so look inside: the real
+       document has #root, an error page has nothing readable at all. */
+    function frameHasDashboard() {
+      var iframe = frame.querySelector("iframe");
+      try {
+        return !!(iframe && iframe.contentDocument && iframe.contentDocument.getElementById("root"));
+      } catch (e) {
+        return false;
+      }
     }
 
     function open() {
       // The dashboard is built for wide screens; on phones open it in its own tab
       if (window.innerWidth < 820) { window.open(src, "_blank", "noopener"); return; }
-      if (!frame.querySelector("iframe")) {
+      var existing = frame.querySelector("iframe");
+      if (!existing) {
         var iframe = document.createElement("iframe");
         var timer = setTimeout(fail, LOAD_TIMEOUT);
         iframe.title = "Alpha Analytics interactive dashboard";
@@ -154,6 +172,7 @@
         iframe.addEventListener("load", function () {
           clearTimeout(timer);
           if (loading) loading.classList.remove("on");
+          if (!frameHasDashboard()) fail();
         }, { once: true });
         iframe.addEventListener("error", function () { clearTimeout(timer); fail(); }, { once: true });
         if (loading) loading.classList.add("on");
@@ -163,6 +182,8 @@
       media.classList.add("is-live");
       tools.hidden = false;
       live.hidden = false;
+      // Re-launching after a failure must not quietly show the broken frame
+      if (existing && !frameHasDashboard()) fail();
       if (launch) launch.setAttribute("aria-expanded", "true");
       setTimeout(function () {
         scrollToTarget(win, -88);
