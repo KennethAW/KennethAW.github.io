@@ -106,6 +106,17 @@
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && menu.classList.contains("open")) { closeMenu(); toggle.focus(); }
     });
+    /* Above 820px the full navigation takes over and the toggle is hidden, so a
+       tablet rotated from portrait to landscape with the menu open was left
+       with both navigations on screen, the page behind still inert, and no
+       toggle to close the panel with. Close it when the breakpoint is crossed;
+       the full nav is right there. */
+    if (window.matchMedia) {
+      var wide = window.matchMedia("(min-width: 821px)");
+      var onWide = function (e) { if (e.matches) closeMenu(); };
+      if (wide.addEventListener) wide.addEventListener("change", onWide);
+      else if (wide.addListener) wide.addListener(onWide);
+    }
   }
 
   /* ---------- Copy email ---------- */

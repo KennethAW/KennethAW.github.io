@@ -366,6 +366,34 @@ check("a wheel gesture scrolls the open menu",
 shot("menu-short-scrolled")
 call("Emulation.clearDeviceMetricsOverride")
 
+print("\n== rotating with the menu open does not strand the page ==")
+# Above 820px the full navigation takes over and the toggle is hidden. A tablet
+# rotated from portrait to landscape with the menu open was left showing both
+# navigations at once, with the page behind still inert and no toggle left to
+# close the panel: the only ways out were Escape, which a touch device does not
+# have, or following a link.
+call("Emulation.setDeviceMetricsOverride", {"width": 768, "height": 1024, "deviceScaleFactor": 1, "mobile": True})
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
+check("the menu opens in portrait", ev("document.getElementById('menu').classList.contains('open')"), True)
+call("Emulation.setDeviceMetricsOverride", {"width": 1024, "height": 768, "deviceScaleFactor": 1, "mobile": True})
+time.sleep(1.2)
+r = ev("""JSON.stringify({ open: document.getElementById('menu').classList.contains('open'),
+  expanded: document.querySelector('.nav-toggle').getAttribute('aria-expanded'),
+  inert: document.getElementById('main').inert === true,
+  toggle: getComputedStyle(document.querySelector('.nav-toggle')).display })""")
+print("   ", json.dumps(r))
+check("rotating to landscape closes the menu", r["open"], False)
+check("the hidden toggle stops claiming it is expanded", r["expanded"], "false")
+check("the page behind is given back", r["inert"], False)
+# and the page has to scroll again, which it does not if Lenis was left stopped
+ev("window.scrollTo(0, 0); 1"); time.sleep(0.4)
+call("Input.synthesizeScrollGesture", {"x": 512, "y": 400, "xDistance": 0, "yDistance": -500,
+                                       "gestureSourceType": "mouse", "speed": 800})
+time.sleep(1.2)
+check("the page scrolls again after the rotation", ev("window.scrollY > 0"), True)
+call("Emulation.clearDeviceMetricsOverride")
+
 print("\n== the desktop nav fits the moment it appears ==")
 # The mobile menu stops at 820px but the full nav needs 920px to lay out, so
 # 821-919px used to clip the Resume button off the right edge and wrap the
