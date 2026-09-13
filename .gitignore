@@ -1,7 +1,13 @@
 # Local editor and tooling state
-.claude/
+.claude/*
 .vscode/
 .idea/
+
+# ...but the agent definition and the dev-server config are project
+# infrastructure, not local state: tools/ is tracked, so the agent that drives
+# tools/audit.py has to be too, or a fresh clone loses it.
+!.claude/agents/
+!.claude/launch.json
 
 # OS noise
 Thumbs.db
