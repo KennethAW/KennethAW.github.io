@@ -19,7 +19,12 @@
   --bg-3: #1b1917;
   --text: #f4efe6;
   --muted: #a39d92;
-  --dim: #7d776d;
+  /* Clears WCAG 1.4.3 AA against the brightest point the ambient field can
+     reach, measured by stepping the blobs through their phases rather than
+     trusting one screenshot. The previous #7d776d measured 4.35:1 on flat
+     black and was already under the 4.5 line before the field existed. Kept
+     darker than --muted so the three greys stay a hierarchy. */
+  --dim: #8f8a80;
   --line: rgba(244, 239, 230, 0.08);
   --line-2: rgba(244, 239, 230, 0.16);
   --accent: #d8a35b;
@@ -50,7 +55,10 @@ body {
   font-size: 17px;
   line-height: 1.65;
   color: var(--text);
-  background: var(--bg);
+  /* transparent, not --bg: the ambient field sits at z-index -1, and an opaque
+     body background paints over negative-z-index children. html carries the
+     base colour instead, so there is still never a flash of white. */
+  background: transparent;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -97,6 +105,114 @@ em.serif, .serif { font-family: var(--serif); font-style: italic; font-weight: 4
 .sr-only {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* ---------- Ambient field ----------
+   Flat black went dead below the hero. Three very large, very soft light
+   sources drift behind the whole page instead, at wavelengths that never
+   loop in sync, with a faint graticule over them and the film grain on top
+   to stop big gradients banding.
+
+   The cool blob is the point of the thing: an all-warm palette over black
+   reads muddy and cheap, while a slate-blue counterweight makes the black
+   read as depth and the gold as light rather than paint. Everything here is
+   decorative - transform and opacity only, no layout, no paint on scroll. */
+.field {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  background: var(--bg);
+}
+.field i {
+  position: absolute; display: block; border-radius: 50%;
+  transition: opacity 1200ms var(--ease-out);
+}
+.field .f-gold {
+  width: 90vmax; height: 62vmax; top: -22vmax; left: -18vmax; opacity: 0.9;
+  background: radial-gradient(closest-side, rgba(216, 163, 91, 0.165), rgba(216, 163, 91, 0.06) 55%, transparent 78%);
+  animation: drift-a 68s var(--ease-out) infinite alternate;
+}
+.field .f-ember {
+  width: 76vmax; height: 60vmax; right: -24vmax; bottom: -26vmax; opacity: 0.8;
+  background: radial-gradient(closest-side, rgba(191, 98, 57, 0.135), rgba(191, 98, 57, 0.05) 55%, transparent 78%);
+  animation: drift-b 91s var(--ease-out) infinite alternate;
+}
+.field .f-cool {
+  width: 84vmax; height: 58vmax; right: -14vmax; top: 6vmax; opacity: 0.75;
+  background: radial-gradient(closest-side, rgba(86, 122, 168, 0.14), rgba(86, 122, 168, 0.05) 55%, transparent 78%);
+  animation: drift-c 77s var(--ease-out) infinite alternate;
+}
+.field .f-sheen {
+  width: 140vmax; height: 140vmax; top: 50%; left: 50%; margin: -70vmax 0 0 -70vmax;
+  border-radius: 50%; opacity: 0.5;
+  background: conic-gradient(from 0deg,
+    transparent 0deg, rgba(240, 205, 147, 0.06) 42deg, transparent 104deg,
+    transparent 190deg, rgba(86, 122, 168, 0.06) 246deg, transparent 310deg);
+  animation: sheen 150s linear infinite;
+}
+
+/* A price axis, not a graph-paper grid: horizontal hairlines only, fading out
+   top and bottom so they never frame the text. Every fourth line is a shade
+   stronger, the way a real graticule marks its majors, so the rhythm reads as
+   deliberate instead of as gradient banding. */
+.field::after {
+  content: ""; position: absolute; inset: 0; opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(to bottom, rgba(244, 239, 230, 0.055) 0 1px, transparent 1px 30rem),
+    repeating-linear-gradient(to bottom, rgba(244, 239, 230, 0.028) 0 1px, transparent 1px 7.5rem);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 72%, transparent);
+}
+/* Vignette: keeps the corners at full depth so no blob can erode text contrast */
+.field::before {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 40%, rgba(12, 11, 10, 0.55) 100%);
+}
+
+@keyframes sheen {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(14vmax, 9vmax, 0) scale(1.16); }
+}
+@keyframes drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.08); }
+  to   { transform: translate3d(-16vmax, -11vmax, 0) scale(1); }
+}
+@keyframes drift-c {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-11vmax, 15vmax, 0) scale(1.2); }
+}
+
+/* Each section gets its own weather, so scrolling feels like moving through
+   rooms rather than down one flat wall. Opacity only, 1.2s, so the change is
+   felt and not seen. */
+body[data-sec="top"]   .f-cool  { opacity: 0.85; }
+body[data-sec="about"] .f-gold  { opacity: 0.6; }
+body[data-sec="about"] .f-cool  { opacity: 0.95; }
+body[data-sec="about"] .f-ember { opacity: 0.55; }
+body[data-sec="experience"] .f-gold,
+body[data-sec="education"]  .f-gold { opacity: 0.45; }
+body[data-sec="experience"] .f-cool,
+body[data-sec="education"]  .f-cool { opacity: 1; }
+body[data-sec="projects"]   .f-gold { opacity: 1; }
+body[data-sec="projects"]   .f-cool { opacity: 0.4; }
+body[data-sec="skills"]     .f-ember { opacity: 1; }
+body[data-sec="leadership"] .f-cool { opacity: 0.95; }
+body[data-sec="leadership"] .f-ember { opacity: 0.5; }
+body[data-sec="contact"]    .f-ember { opacity: 1; }
+body[data-sec="contact"]    .f-gold { opacity: 1; }
+body[data-sec="contact"]    .f-cool { opacity: 0.35; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Matched class-for-class with the rules above: ".field i" is specificity
+     0,1,1 and loses to ".field .f-gold" at 0,2,0, so the media query had no
+     effect at all and the blobs kept drifting. */
+  .field .f-gold, .field .f-ember, .field .f-cool, .field .f-sheen { animation: none; }
+  .field .f-sheen { opacity: 0.32; }
+}
+@media (forced-colors: active) {
+  .field { display: none; }
 }
 
 /* Film grain, very low opacity, purely decorative */
@@ -627,7 +743,7 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
   }
   html, body { background: #fff !important; color: #111 !important; }
   .nav, .progress, .grain, .to-top, .menu, .hero-grid, .hero-path, .hero-cue, .spine, .window-launch,
-  .window-tools, .window-frame, .window-loading, .sec-node, .hero::before, .contact::before, .status i, .gallery-nav { display: none !important; }
+  .window-tools, .window-frame, .window-loading, .sec-node, .hero::before, .contact::before, .status i, .gallery-nav, .field { display: none !important; }
   .hero { min-height: auto; padding: 1rem 0 2rem; }
   .hero-title { font-size: 3rem; }
   .sec { padding: 2rem 0; }

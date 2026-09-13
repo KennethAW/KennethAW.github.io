@@ -334,6 +334,8 @@
         });
         var node = entry.target.querySelector(".sec-node");
         if (node) node.classList.add("on");
+        // The ambient field reads this to shift its weather per section
+        document.body.setAttribute("data-sec", entry.target.id);
         moveIndicator();
       });
     }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });

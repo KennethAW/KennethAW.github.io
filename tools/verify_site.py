@@ -108,6 +108,12 @@ call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 ev("window.scrollTo(0, 900); 1"); time.sleep(1.2)
 check("reduced-motion stats", ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
       ["4.85/5.00", "3\u00d7", "8+", "55.5%"])
+# The ambient field must hold still too. ".field i" is specificity 0,1,1 and
+# loses to ".field .f-gold" at 0,2,0, so the obvious way to write that rule is
+# silently ignored and the blobs keep drifting. Assert the computed value.
+check("the ambient field stops drifting under reduced motion",
+      ev("JSON.stringify(['f-gold','f-ember','f-cool','f-sheen'].map(function(c){var e=document.querySelector('.field .'+c);return e?getComputedStyle(e).animationName:'missing';}))"),
+      ["none", "none", "none", "none"])
 call("Emulation.setEmulatedMedia", {"features": []})
 
 call("Network.enable")
