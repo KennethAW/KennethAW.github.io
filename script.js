@@ -504,6 +504,11 @@
 
   /* Counters */
   var snapCounters = [];
+  // Once the figures have been snapped for a print they stay snapped. Switching
+  // to print media relays the page out, which makes the scroll observer below
+  // start the count-up, and every frame of it overwrote the real figure that
+  // had just been put back.
+  var countersSnapped = false;
   document.querySelectorAll("[data-count]").forEach(function (el) {
     var target = parseFloat(el.getAttribute("data-count"));
     var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
@@ -516,7 +521,7 @@
       v: target,
       duration: 1800,
       ease: "outExpo",
-      onUpdate: function () { el.textContent = state.v.toFixed(decimals); },
+      onUpdate: function () { if (!countersSnapped) el.textContent = state.v.toFixed(decimals); },
       autoplay: onScroll({ target: el, enter: "bottom-=40 top", repeat: false })
     });
   });
@@ -529,6 +534,7 @@
      Put the real figures back before the snapshot is taken. beforeprint covers
      Chrome, Firefox and Edge; the print media query covers Safari. */
   function snapCountersToFinal() {
+    countersSnapped = true;
     snapCounters.forEach(function (snap) { snap(); });
   }
   window.addEventListener("beforeprint", snapCountersToFinal);

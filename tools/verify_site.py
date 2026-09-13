@@ -252,6 +252,20 @@ check("printing puts the true figures back",
       ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
       ["4.85/5.00", "3×", "8+", "55.5%"])
 
+# Safari fires only the print media query, not beforeprint. Switching to print
+# media also relays the page out, which starts the count-up that the scroll
+# observer had been holding, and every frame of it overwrote the figure the
+# snap had just put back: 0.77/5.00 at 0.3s, 3.56/5.00 at 0.6s, 4.81/5.00 at
+# 1.2s. The snapped figures have to win for as long as the print lasts.
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+call("Emulation.setEmulatedMedia", {"media": "print"})
+for delay in (0.4, 0.8):
+    time.sleep(delay)
+    check(f"the print media query alone holds the true figures ({delay}s)",
+          ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
+          ["4.85/5.00", "3×", "8+", "55.5%"])
+call("Emulation.setEmulatedMedia", {"media": ""})
+
 print("\n== copying the address says so out loud ==")
 # The button swaps its icon for a tick, which is the only confirmation there is
 # and which a screen reader cannot see. WCAG 2.2 SC 4.1.3 asks for a status
