@@ -2,9 +2,11 @@
 
 Combines four independent signals into a single JSON scorecard:
 
-  gates        check_site.py (static) and verify_site.py (behavioural, 21
-               assertions in a real browser). These are pass/fail. A change
-               that breaks one is a regression, full stop.
+  gates        check_site.py (static) and verify_site.py (behavioural, in a
+               real browser). These are pass/fail. A change that breaks one is
+               a regression, full stop. The report carries the assertion count
+               of the run rather than a number written down here, which was
+               21 when this was written and is 66 now.
   lighthouse   performance / accessibility / best-practices / SEO plus the
                core web vitals, on both desktop and mobile presets.
   weight       bytes and request count for the initial page load.
