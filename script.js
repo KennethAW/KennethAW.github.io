@@ -155,6 +155,11 @@
     var close = win.querySelector("[data-dash-close]");
     var src = "dashboard/index.html";
     var LOAD_TIMEOUT = 15000;
+    // The panel is 78vh tall, so a viewport can be wide enough for the embed and
+    // still far too short to drive it. Below these the dashboard opens in its own
+    // tab instead, where it gets the whole screen.
+    var MIN_WIDTH = 820;
+    var MIN_HEIGHT = 520;
 
     function fail() {
       if (loading) loading.classList.remove("on");
@@ -179,8 +184,15 @@
     }
 
     function open() {
-      // The dashboard is built for wide screens; on phones open it in its own tab
-      if (window.innerWidth < 820) { window.open(src, "_blank", "noopener"); return; }
+      /* The dashboard is built for wide screens, and width alone did not catch a
+         phone held sideways: 844x390 is past the width gate, but 78vh of 390 is a
+         304px frame, and the dashboard's own header ends 170px in with a 310px
+         chart below it. The chart - the entire point of embedding it - is left as
+         a sliver. Check both dimensions. */
+      if (window.innerWidth < MIN_WIDTH || window.innerHeight < MIN_HEIGHT) {
+        window.open(src, "_blank", "noopener");
+        return;
+      }
       var existing = frame.querySelector("iframe");
       if (!existing) {
         var iframe = document.createElement("iframe");

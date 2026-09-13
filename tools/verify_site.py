@@ -394,6 +394,32 @@ time.sleep(1.2)
 check("the page scrolls again after the rotation", ev("window.scrollY > 0"), True)
 call("Emulation.clearDeviceMetricsOverride")
 
+print("\n== a viewport too short to drive the dashboard gets its own tab ==")
+# The panel is 78vh, so width alone was not enough: a phone held sideways is
+# 844px across - past the width gate - but 390px tall, which is a 304px frame.
+# The dashboard's own header ends 170px in and its first chart is 310px tall,
+# so the chart was clipped to a sliver in a frame you then had to scroll inside
+# a page that was also scrolling. Short viewports open it full screen instead.
+for label, width, height, embed in (("landscape phone 844x390", 844, 390, False),
+                                    ("landscape phone 926x428", 926, 428, False),
+                                    ("wide but short 1280x500", 1280, 500, False),
+                                    ("iPad landscape 1194x834", 1194, 834, True),
+                                    ("laptop 1280x800", 1280, 800, True)):
+    call("Emulation.setDeviceMetricsOverride", {"width": width, "height": height,
+                                                "deviceScaleFactor": 1, "mobile": width < 900})
+    call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+    ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+      document.getElementById('dash-window').scrollIntoView({block:'center'}); await w(600);
+      document.querySelector('[data-dash-launch]').click(); await w(2500); return 1; })()""")
+    embedded = ev("!!document.querySelector('.window-frame iframe')")
+    check(f"dashboard embeds only where it can be driven, {label}", embedded, embed)
+    if embed:
+        # where it does embed, the frame must clear the dashboard's own chrome
+        # (170px) plus the whole of its first chart (310px)
+        h = ev("Math.round(document.querySelector('.window-media').getBoundingClientRect().height)")
+        check(f"the embedded frame clears the first chart, {label}", isinstance(h, int) and h >= 480, True)
+call("Emulation.clearDeviceMetricsOverride")
+
 print("\n== the desktop nav fits the moment it appears ==")
 # The mobile menu stops at 820px but the full nav needs 920px to lay out, so
 # 821-919px used to clip the Resume button off the right edge and wrap the
