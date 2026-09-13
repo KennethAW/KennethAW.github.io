@@ -234,6 +234,35 @@ check("printing puts the true figures back",
       ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
       ["4.85/5.00", "3×", "8+", "55.5%"])
 
+print("\n== copying the address says so out loud ==")
+# The button swaps its icon for a tick, which is the only confirmation there is
+# and which a screen reader cannot see. WCAG 2.2 SC 4.1.3 asks for a status
+# message that assistive technology can pick up without moving focus. Chrome
+# needs the document focused and the clipboard permission granted, or writeText
+# rejects and the page falls back to opening a mail client instead.
+call("Browser.grantPermissions", {"origin": BASE,
+                                  "permissions": ["clipboardReadWrite", "clipboardSanitizedWrite"]})
+call("Emulation.setFocusEmulationEnabled", {"enabled": True})
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+check("a status live region is there before anything is copied",
+      ev("""JSON.stringify((() => { const s = document.querySelector('[data-copy-status]');
+        return s ? { role: s.getAttribute('role'), text: s.textContent } : null; })())"""),
+      {"role": "status", "text": ""})
+r = ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+  document.querySelector('#contact').scrollIntoView(); await w(1200);
+  document.querySelector('[data-copy]').click(); await w(700);
+  const s = document.querySelector('[data-copy-status]');
+  const said = s.textContent;
+  const clip = await navigator.clipboard.readText().catch(function () { return 'unreadable'; });
+  await w(1700);
+  return JSON.stringify({ said: said, clip: clip, cleared: s.textContent === '' });
+})()""")
+print("   ", json.dumps(r))
+check("copying announces itself", bool(r.get("said")), True)
+check("the address really reached the clipboard", r.get("clip"), "w.kennethanthony@gmail.com")
+check("the announcement clears again", r.get("cleared"), True)
+call("Emulation.setFocusEmulationEnabled", {"enabled": False})
+
 print("\n== the mobile menu contains focus ==")
 # The open menu covers the page with an opaque panel. If what is behind it stays
 # focusable, Tab walks off the last menu link onto hero buttons the visitor

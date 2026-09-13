@@ -109,12 +109,19 @@
   }
 
   /* ---------- Copy email ---------- */
+  var copyStatus = document.querySelector("[data-copy-status]");
   document.querySelectorAll("[data-copy]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var text = btn.getAttribute("data-copy");
       var done = function () {
         btn.classList.add("is-copied");
-        setTimeout(function () { btn.classList.remove("is-copied"); }, 1800);
+        // The button swaps its icon for a tick, which tells a screen reader
+        // nothing. Put the same confirmation in the live region.
+        if (copyStatus) copyStatus.textContent = "Email address copied";
+        setTimeout(function () {
+          btn.classList.remove("is-copied");
+          if (copyStatus) copyStatus.textContent = "";
+        }, 1800);
       };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(done, function () { window.location.href = "mailto:" + text; });

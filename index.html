@@ -527,8 +527,11 @@
                 <a class="tlink contact-email" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
                 <button class="icon-btn" type="button" data-copy="w.kennethanthony@gmail.com" aria-label="Copy w.kennethanthony@gmail.com to clipboard">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
-                  <span class="copied">OK</span>
+                  <span class="copied" aria-hidden="true">OK</span>
                 </button>
+                <!-- The tick inside the button is visible feedback only. This
+                     says the same thing to a screen reader (WCAG 4.1.3). -->
+                <span class="sr-only" role="status" data-copy-status></span>
               </div>
               <div class="contact-links">
                 <a class="tlink quiet" href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn</a>
