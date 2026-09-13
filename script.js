@@ -443,12 +443,12 @@
   /* Intro timeline */
   var intro = createTimeline({ defaults: { ease: "outExpo", duration: 1100 } });
   utils.set(".hero-title .line-inner", { y: "110%" });
-  utils.set([".hero-top", ".hero-name", ".hero-lede", ".hero-actions", ".hero-links", ".hero-cue"], { opacity: 0, y: 16 });
+  utils.set([".hero-rail-top", ".hero-name", ".hero-lede", ".hero-actions", ".hero-links", ".hero-cue"], { opacity: 0, y: 16 });
   utils.set(".hero-grid", { opacity: 0 });
 
   intro
     .add(".hero-grid", { opacity: [0, 0.55], duration: 1800, ease: "outQuad" }, 0)
-    .add(".hero-top", { opacity: 1, y: 0 }, 100)
+    .add(".hero-rail-top", { opacity: 1, y: 0 }, 100)
     .add(".hero-name", { opacity: 1, y: 0 }, 220)
     .add(".hero-title .line-inner", { y: ["110%", "0%"], delay: stagger(120), duration: 1300 }, 300)
     .add(".hero-lede", { opacity: 1, y: 0 }, 800)
