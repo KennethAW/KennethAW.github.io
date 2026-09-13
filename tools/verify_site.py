@@ -13,6 +13,11 @@ Exit code 1 if any check fails.
 """
 import json, time, urllib.request, websocket, base64, os, subprocess, sys
 
+# A failure message carrying text from the page must not kill the run: the
+# Windows console is cp1252 and the page has arrows and dashes in its links.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 BASE = sys.argv[1].rstrip("/") if len(sys.argv) > 1 else "http://localhost:5500"
 S = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_verify_out")
 OUT = S
@@ -247,6 +252,57 @@ check("tabbing never reaches the covered page",
       ev("!!document.activeElement.closest('#main, footer, .to-top')"), False)
 key("Escape", 27); time.sleep(0.5)
 check("closing the menu gives the page back", ev("document.getElementById('main').inert === true"), False)
+call("Emulation.clearDeviceMetricsOverride")
+
+print("\n== the mobile menu fits a short viewport ==")
+# The panel is the height of the viewport and its ten items need 684px. On an
+# iPhone SE in portrait (667px) that put Resume, LinkedIn and GitHub below the
+# fold; in landscape (360-375px) it hid everything from Education down. The
+# page behind is scroll-locked while the menu is open and a fixed box does not
+# scroll its own overflow, so none of it could be reached by touch, and tabbing
+# to it moved focus off screen.
+for label, width, height in (("phone in landscape", 740, 360), ("iPhone SE portrait", 375, 667)):
+    call("Emulation.setDeviceMetricsOverride", {"width": width, "height": height, "deviceScaleFactor": 1, "mobile": True})
+    call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+    ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
+    r = ev("""JSON.stringify((() => { const m = document.getElementById('menu');
+      const needed = m.scrollHeight > m.clientHeight;
+      m.scrollTop = 9999;
+      const last = m.querySelector('.menu-foot a:last-child').getBoundingClientRect();
+      const vh = document.documentElement.clientHeight;
+      return { needed: needed, scrolled: m.scrollTop > 0,
+               lastReachable: last.top >= 0 && last.bottom <= vh,
+               pageMoved: Math.round(window.scrollY) }; })())""")
+    print("   ", label, json.dumps(r))
+    check(f"the menu scrolls when it overflows, {label}", r["needed"] and r["scrolled"], True)
+    check(f"the last menu link can be brought on screen, {label}", r["lastReachable"], True)
+    check(f"scrolling the menu leaves the page behind, {label}", r["pageMoved"], 0)
+    # and every tab stop has to be somewhere the visitor can see
+    ev("document.getElementById('menu').scrollTop = 0; document.querySelector('.menu a').focus(); 1")
+    offscreen = []
+    for _ in range(9):
+        key("Tab", 9)
+        time.sleep(0.08)
+        where = ev("""JSON.stringify((() => { const r = document.activeElement.getBoundingClientRect();
+          return { off: r.top >= document.documentElement.clientHeight || r.bottom <= 0,
+                   what: document.activeElement.getAttribute('href') || document.activeElement.tagName }; })())""")
+        if where["off"]:
+            offscreen.append(where["what"])
+    check(f"no menu item takes focus off screen, {label}", offscreen, [])
+
+# A wheel gesture has to reach the panel too: Lenis is stopped while the menu is
+# open, and a stopped Lenis calls preventDefault on wheel and touch unless an
+# ancestor of the target carries data-lenis-prevent. Without that attribute the
+# panel is scrollable and still will not scroll.
+call("Emulation.setDeviceMetricsOverride", {"width": 740, "height": 360, "deviceScaleFactor": 1, "mobile": False})
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
+ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
+call("Input.synthesizeScrollGesture", {"x": 370, "y": 180, "xDistance": 0, "yDistance": -400,
+                                       "gestureSourceType": "mouse", "speed": 800})
+time.sleep(1.2)
+check("a wheel gesture scrolls the open menu",
+      ev("document.getElementById('menu').scrollTop > 0"), True)
+shot("menu-short-scrolled")
 call("Emulation.clearDeviceMetricsOverride")
 
 print("\n== the desktop nav fits the moment it appears ==")

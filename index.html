@@ -75,7 +75,9 @@
     </div>
   </header>
 
-  <nav class="menu" id="menu" aria-label="Mobile">
+  <!-- data-lenis-prevent: the panel scrolls natively when it is taller than a
+       short viewport, and Lenis must not swallow the wheel event -->
+  <nav class="menu" id="menu" aria-label="Mobile" data-lenis-prevent>
     <a href="#about">About<span class="idx">01</span></a>
     <a href="#experience">Experience<span class="idx">02</span></a>
     <a href="#projects">Work<span class="idx">03</span></a>

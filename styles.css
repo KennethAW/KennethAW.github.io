@@ -143,10 +143,18 @@ em.serif, .serif { font-family: var(--serif); font-style: italic; font-weight: 4
 }
 .nav-toggle svg { width: 20px; height: 20px; }
 
+/* The panel is exactly as tall as the viewport, but its ten items need 684px.
+   On an iPhone SE in portrait (667px) that put Resume, LinkedIn and GitHub
+   below the fold; in landscape (360-375px) it hid everything from Education
+   down. The page behind is scroll-locked while the menu is open and a fixed
+   box does not scroll its own overflow, so those items could not be reached by
+   touch at all, and tabbing to them moved focus off screen. Let the panel
+   scroll, and keep that scroll from chaining to the page behind it. */
 .menu {
   position: fixed; inset: 0; z-index: 90; display: none; flex-direction: column;
   padding: calc(var(--nav-h) + 1.5rem) 1.5rem max(2rem, env(safe-area-inset-bottom));
   background: var(--bg);
+  overflow-y: auto; overscroll-behavior: contain;
 }
 .menu.open { display: flex; }
 .menu a {
