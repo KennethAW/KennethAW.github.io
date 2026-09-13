@@ -45,6 +45,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; background: var(--bg); }
+main { counter-reset: sec; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
@@ -425,7 +426,7 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 /* ---------- Thread and sections ---------- */
 .thread { position: relative; }
 .spine {
-  position: absolute; top: 0; bottom: 0; width: 1px;
+  position: absolute; top: 0; bottom: 0; width: 1px; z-index: 2;
   left: max(1.5rem, calc((100% - var(--max)) / 2));
   background: var(--line);
 }
@@ -434,12 +435,32 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
   background: linear-gradient(to bottom, var(--accent), var(--accent-2));
   box-shadow: 0 0 14px rgba(216, 163, 91, 0.35);
 }
-.sec { padding: 7rem 0; border-top: 1px solid var(--line); }
+.sec { padding: 7rem 0; border-top: 1px solid var(--line); counter-increment: sec; }
 .sec > .container { padding-left: var(--inset); }
 .sec-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 4rem; align-items: start; }
 .sec-grid > *, .case > *, .case-cols > *, .numbers > *, .project > * { min-width: 0; }
 .sec-aside { position: sticky; top: calc(var(--nav-h) + 2.5rem); }
 .sec-head { position: relative; margin-bottom: 1.25rem; }
+/* The section number at editorial scale, hollow, bleeding off the left edge
+   into the container inset and sitting behind the heading. A counter, so the
+   markup does not have to repeat itself, and decimal-leading-zero to match the
+   "01 - About" label that stays for screen readers. */
+.sec-head::before {
+  content: counter(sec, decimal-leading-zero);
+  position: absolute; z-index: 0;
+  left: calc(var(--inset) * -1 - 1.1rem); top: -5.6rem;
+  font-family: var(--sans); font-weight: 600;
+  font-size: clamp(6rem, 11vw, 11.5rem); line-height: 0.8; letter-spacing: -0.06em;
+  color: transparent; -webkit-text-stroke: 1px var(--line-2);
+  pointer-events: none; user-select: none;
+  transform: translateY(calc(var(--vel, 0) * 16px));
+  transition: transform 450ms var(--ease-out);
+}
+/* Everything real sits above the numeral */
+.sec-head > * { position: relative; z-index: 1; }
+@media (forced-colors: active) {
+  .sec-head::before { display: none; }
+}
 .sec-node {
   position: absolute; left: calc(-1 * var(--inset) - 5px); top: 0.55rem;
   width: 11px; height: 11px; border-radius: 50%;
@@ -448,11 +469,43 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 }
 .sec-node.on { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim), 0 0 18px rgba(216, 163, 91, 0.55); }
 .sec-index { display: block; margin-bottom: 1.25rem; color: var(--accent); }
-.sec h2 { font-size: clamp(2rem, 3.6vw, 2.9rem); line-height: 1.05; letter-spacing: -0.035em; font-weight: 500; }
+.sec h2 { font-size: clamp(2.15rem, 4.2vw, 3.5rem); line-height: 1.0; letter-spacing: -0.042em; font-weight: 500; }
 .sec h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent-2); }
 .sec h2 .wd { display: inline-block; white-space: nowrap; }
 .sec h2 .ch { display: inline-block; }
 .sec-sub { color: var(--muted); font-size: 1.05rem; margin: 1.25rem 0 0; max-width: 24rem; }
+
+/* ---------- Inverted band ----------
+   Seven dark sections in a row is one rhythm repeated, which is what made the
+   page read as flat however good the type was. One section flips to ivory
+   mid-page, so the dark ones around it start to look chosen rather than
+   default.
+
+   The whole design system is tokens, so this only has to redefine the tokens
+   in scope and every component below follows - hairlines, nodes, hovers and
+   all. The accent is the one value that cannot carry over: #d8a35b is 1.7:1 on
+   ivory. These are the measured substitutes, all past 4.5:1 on #f4efe6. */
+.sec-invert {
+  --bg: #f4efe6;
+  --bg-2: #ece5d9;
+  --bg-3: #e2d9ca;
+  --text: #14120f;      /* 16.3:1 */
+  --muted: #4a463f;     /*  8.2:1 */
+  --dim: #6b665d;       /*  5.0:1 */
+  --line: rgba(20, 18, 15, 0.13);
+  --line-2: rgba(20, 18, 15, 0.24);
+  --accent: #7a4f16;    /*  6.2:1 */
+  --accent-2: #5f3c0f;
+  --accent-dim: rgba(122, 79, 22, 0.16);
+  background: var(--bg);
+  color: var(--text);
+  border-top: 0;
+  color-scheme: light;
+}
+.sec-invert { position: relative; }
+.sec-invert ::selection { background: var(--accent); color: #f4efe6; }
+/* The spine crosses the ivory, so give it something it can be seen against */
+.sec-invert + .sec .spine, .spine { mix-blend-mode: normal; }
 
 /* ---------- Editorial lists ---------- */
 .lead { font-size: clamp(1.25rem, 1.8vw, 1.5rem); line-height: 1.5; color: var(--muted); letter-spacing: -0.012em; }
@@ -706,6 +759,7 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
 }
 @media (max-width: 820px) {
   :root { --inset: 2.25rem; --nav-h: 64px; }
+  .sec-head::before { font-size: clamp(4.2rem, 19vw, 7rem); left: calc(var(--inset) * -1 - 0.2rem); top: -3.6rem; }
   .nav-primary { display: none; }
   .nav-toggle { display: inline-flex; }
   .hero { padding-bottom: 7rem; }
@@ -744,6 +798,7 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
   html, body { background: #fff !important; color: #111 !important; }
   .nav, .progress, .grain, .to-top, .menu, .hero-grid, .hero-path, .hero-cue, .spine, .window-launch,
   .window-tools, .window-frame, .window-loading, .sec-node, .hero::before, .contact::before, .status i, .gallery-nav, .field { display: none !important; }
+  .sec-head::before { display: none !important; }
   .hero { min-height: auto; padding: 1rem 0 2rem; }
   .hero-title { font-size: 3rem; }
   .sec { padding: 2rem 0; }

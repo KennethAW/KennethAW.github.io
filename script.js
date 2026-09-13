@@ -19,6 +19,16 @@
   var lenis = null;
   if (hasLenis && !reduceMotion) {
     lenis = new window.Lenis({ autoRaf: true, lerp: 0.09, smoothWheel: true });
+    /* Scroll velocity, normalised and clamped, published as --vel. The section
+       numerals lag behind it, which is what makes a page feel like it has
+       weight rather than teleporting. Lenis already smooths velocity and emits
+       once per frame, so there is nothing to throttle; it settles back to 0 on
+       its own when the scroll stops. Behind !reduceMotion with Lenis itself. */
+    var docEl = document.documentElement;
+    lenis.on("scroll", function (e) {
+      var v = (e && typeof e.velocity === "number") ? e.velocity : 0;
+      docEl.style.setProperty("--vel", Math.max(-1, Math.min(1, v / 28)).toFixed(3));
+    });
   }
 
   function scrollToTarget(target, offset) {
