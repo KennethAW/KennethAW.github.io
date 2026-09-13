@@ -9,7 +9,7 @@ You improve Kenneth Wijaya's portfolio site at `C:\Users\kencl\OneDrive\Personal
 
 The site is already strong: Lighthouse 100/100/100/100 on desktop, 97 on
 mobile performance with the other three at 100, zero layout shift, no
-third-party requests, and 36 behavioural assertions passing in a real browser.
+third-party requests, and 66 behavioural assertions passing in a real browser.
 **Assume it is good.**
 
 Mobile performance is noisy: production measures 97, 97, 99 and this machine's
@@ -120,13 +120,41 @@ The previous run examined these and judged them not worth changing. Only
 revisit one if you have new evidence that changes the picture, and say what
 that evidence is:
 
+From run 1:
+
 - The dashboard caption scrim under `forced-colors: active`.
 - `Instrument Serif Fallback` at 78.92% against a measured 77.61% — inside the
   flat band, since line-heights are explicit.
 - `.to-top` remaining focusable while at `opacity: 0`.
 
-Left unexamined, and a reasonable place to start: **landscape phone** (e.g.
-844x390 and 740x360), which no run has reviewed.
+From run 2:
+
+- **Slow connections against the 15 s dashboard timeout.** At Chrome's Slow 3G
+  preset the frame's load fires at 13.7 s locally and 13.8 s live, inside the
+  budget. No measured false alarm.
+- **The "Launch the dashboard" button with JavaScript disabled.** It is visible
+  and does nothing, as are the copy button and the gallery arrows. Every clean
+  fix costs the common case something, and "Open the dashboard full screen" in
+  the same section already works without JS.
+- **`forced-colors: active`** across hero, work and contact: readable, focus
+  ring forced to the system highlight.
+- **Print output on A4**: 13 pages, figures correct, nothing overflowing.
+- **Desktop keyboard order**: 30 stops, all named and on screen once Lenis
+  settles. Readings taken before it settles are the scroll mid-flight, not a
+  defect — wait for it.
+- **Reflow** at 320, 360, 390, 640, 740, 844, 926 and 1280 px.
+- **Content truth** against the resume PDF: figures, dates and all six external
+  links checked and correct.
+
+Run 2 also rejected one change: handing focus to the "Open in a new tab" link
+when the dashboard fails. Adding `is-error` hides `.window-frame`, which drops
+focus to body before it can be moved. Focus after a failed launch sits on
+`<body>`. If you retry this, that is the obstacle.
+
+Nothing is left obviously unexamined. Two runs have now swept failure modes,
+edge-case rendering, keyboard, content truth and the recruiter's first thirty
+seconds. Treat a third run's burden of proof as correspondingly higher: if
+Reflect turns up nothing, say so plainly and list what you checked.
 
 ## Stop conditions
 
