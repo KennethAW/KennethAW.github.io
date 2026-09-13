@@ -643,10 +643,15 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 .case-cols p { color: var(--muted); font-size: 1rem; margin: 0; }
 .case-cols p strong { color: var(--text); font-weight: 500; }
 
-.numbers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 1.75rem 0; }
-.numbers .n { font-size: 2rem; font-weight: 500; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
-.numbers .n b { color: var(--accent); font-weight: 500; font-size: 1.1rem; margin-left: 0.1rem; }
-.numbers .l { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.4; }
+.numbers {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 0;
+}
+.numbers > * { padding: 1.9rem 1.4rem; border-left: 1px solid var(--line); min-width: 0; }
+.numbers > *:first-child { border-left: 0; padding-left: 0; }
+.numbers .n { font-size: clamp(2.1rem, 3.4vw, 3.1rem); font-weight: 500; letter-spacing: -0.05em; line-height: 0.95; font-variant-numeric: tabular-nums; }
+.numbers .n b { color: var(--accent); font-weight: 500; font-size: 0.38em; margin-left: 0.12rem; }
+.numbers .l { color: var(--muted); font-size: 0.88rem; margin-top: 0.7rem; line-height: 1.4; }
 
 .findings { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 2.5rem; }
 .findings li { position: relative; padding-left: 1.5rem; color: var(--muted); font-size: 1rem; }
@@ -704,12 +709,27 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 .also .d { color: var(--muted); font-size: 0.95rem; }
 
 /* ---------- Skills ---------- */
-.skills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem 2rem; }
-.skills h3 { font-size: 0.72rem; margin-bottom: 1rem; }
+.skills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+.skills > * { padding: 0 1.75rem; border-left: 1px solid var(--line); min-width: 0; }
+.skills > *:first-child { border-left: 0; padding-left: 0; }
+.skills h3 { font-size: 0.72rem; margin-bottom: 1.15rem; }
 .skills ul { list-style: none; padding: 0; margin: 0; }
-.skills li { padding: 0.45rem 0; border-bottom: 1px solid var(--line); font-size: 1rem; transition: color 0.2s ease, padding-left 0.25s var(--ease-out); }
+.skills li { padding: 0.55rem 0; border-bottom: 1px solid var(--line); font-size: 1.02rem; transition: color 0.2s ease, padding-left 0.25s var(--ease-out); }
 .skills li:hover { color: var(--accent-2); padding-left: 0.35rem; }
+/* Not every section wants a sticky heading beside a reading column. The
+   toolkit is a reference table: it reads better as a heading with four ruled
+   columns under it running the full width, and it varies the page's rhythm
+   again on the way past. */
+.sec-wide .sec-grid { grid-template-columns: minmax(0, 1fr); gap: 2.25rem; }
+.sec-wide .sec-aside { position: static; }
+.sec-wide .sec-head { margin-bottom: 0; }
+
 .skills .now h3 { color: var(--accent); }
+.skills .now { position: relative; }
+.skills .now::before {
+  content: ""; position: absolute; left: -1px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+}
 .skills .now li { border-color: rgba(216, 163, 91, 0.25); }
 
 /* ---------- Contact ---------- */
@@ -808,10 +828,16 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
   .stat:nth-child(3) { border-left: 0; }
   .stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .case-cols { grid-template-columns: 1fr; gap: 1.75rem; }
-  .numbers { grid-template-columns: 1fr 1fr; }
+  .numbers { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .numbers > * { padding: 1.5rem 1.1rem; }
+  .numbers > *:nth-child(3) { border-left: 0; padding-left: 0; }
+  .numbers > *:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .findings { grid-template-columns: 1fr; }
   .project { grid-template-columns: 1fr; }
-  .skills { grid-template-columns: 1fr 1fr; }
+  .skills { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .skills > * { padding: 0 1.1rem; }
+  .skills > *:nth-child(3) { border-left: 0; padding-left: 0; }
+  .skills > *:nth-child(n + 3) { margin-top: 2.25rem; }
   .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
 }
 /* ---------- Nav: the gap between the two navigations ----------
@@ -843,7 +869,10 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
   .window-launch span { display: none; }
   .window-bar .right { display: none; }
   .gallery figure { flex-basis: 86%; }
-  .skills { grid-template-columns: 1fr; }
+  .skills { grid-template-columns: minmax(0, 1fr); }
+  .skills > * { padding: 0; border-left: 0; }
+  .skills > * + * { margin-top: 2.25rem; }
+  .skills .now::before { display: none; }
   .contact { padding: 6rem 0 4rem; }
   .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   /* Label above value: an 8rem label column leaves too little room for the text */
