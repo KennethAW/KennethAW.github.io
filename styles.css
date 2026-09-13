@@ -580,18 +580,32 @@ body[data-sec="contact"]    .f-cool { opacity: 0.35; }
 
 /* Rows (experience, leadership, education) */
 .rows { border-top: 1px solid var(--line); }
-.row { position: relative; padding: 2.5rem 0; border-bottom: 1px solid var(--line); }
-.row-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-bottom: 0.9rem; }
-.row-meta .place { text-transform: none; letter-spacing: 0.02em; color: var(--dim); }
+/* A ledger, not a stack. The dates move into a rail of their own on the left
+   so the eye can run down the timeline without reading every entry, which is
+   how a recruiter actually scans a career, and the employer names get the
+   scale they deserve. */
+.row {
+  position: relative; padding: 2.75rem 0; border-bottom: 1px solid var(--line);
+  display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr); gap: 0 2.5rem;
+  align-items: start;
+}
+.row > *:not(.row-meta) { grid-column: 2; }
+.row-meta {
+  grid-column: 1; grid-row: 1 / span 99;
+  display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0;
+  padding-top: 0.45rem;
+}
+.row-meta .place { color: var(--dim); }
+.row-meta .place { text-transform: none; letter-spacing: 0.02em; }
 .row-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1rem; }
-.row h3 { font-size: 1.6rem; letter-spacing: -0.03em; font-weight: 500; transition: color 0.2s ease; }
+.row h3 { font-size: clamp(1.7rem, 2.3vw, 2.15rem); letter-spacing: -0.035em; line-height: 1.05; font-weight: 500; transition: color 0.2s ease; }
 .row:hover h3 { color: var(--accent-2); }
 .row-role { color: var(--accent); font-weight: 500; font-size: 1rem; }
 .row-sum { font-size: 1.15rem; color: var(--text); margin: 0.9rem 0 1rem; max-width: 40rem; }
 .row ul { color: var(--muted); display: grid; gap: 0.5rem; max-width: 44rem; }
 .row p { color: var(--muted); margin: 0; max-width: 44rem; }
-.row.compact { padding: 1.6rem 0; }
-.row.compact h3 { font-size: 1.25rem; }
+.row.compact { padding: 1.9rem 0; }
+.row.compact h3 { font-size: clamp(1.2rem, 1.7vw, 1.5rem); }
 
 /* ---------- Case study ---------- */
 .case { display: grid; gap: 3rem; }
@@ -869,6 +883,10 @@ footer { border-top: 1px solid var(--line); padding: 2rem 0; }
   .window-launch span { display: none; }
   .window-bar .right { display: none; }
   .gallery figure { flex-basis: 86%; }
+  .row { grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
+  .row > *:not(.row-meta) { grid-column: 1; }
+  .row-meta { grid-column: 1; grid-row: auto; flex-direction: row; flex-wrap: wrap;
+              gap: 0.4rem 1.25rem; padding-top: 0; margin-bottom: 0.35rem; }
   .skills { grid-template-columns: minmax(0, 1fr); }
   .skills > * { padding: 0; border-left: 0; }
   .skills > * + * { margin-top: 2.25rem; }
