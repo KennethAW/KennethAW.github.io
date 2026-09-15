@@ -9,6 +9,11 @@
 !.claude/agents/
 !.claude/launch.json
 
+# Build output and dependencies
+node_modules/
+dist/
+dist-ssr/
+
 # OS noise
 Thumbs.db
 .DS_Store

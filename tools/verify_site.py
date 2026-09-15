@@ -117,8 +117,11 @@ check("the ambient field stops drifting under reduced motion",
 call("Emulation.setEmulatedMedia", {"features": []})
 
 call("Network.enable")
-# The libraries are vendored now, so simulate them failing to load at all
-call("Network.setBlockedURLs", {"urls": ["*assets/vendor/*"]})
+# The motion libraries are bundled into the app script now rather than loaded
+# from assets/vendor, so blocking that path would block nothing and quietly
+# turn this check green for the wrong reason. Block the bundle itself: the page
+# is prerendered, so the figures have to survive React never hydrating at all.
+call("Network.setBlockedURLs", {"urls": ["*/assets/index-*.js", "*assets/vendor/*"]})
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 ev("window.scrollTo(0, 900); 1"); time.sleep(1.0)
 check("stats when the motion libraries fail", ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),

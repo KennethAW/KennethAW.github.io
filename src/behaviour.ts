@@ -1,24 +1,38 @@
-// Kenneth Anthony Wijaya - portfolio
-// Motion and interaction layer. Lenis handles smooth scrolling, anime.js v4
-// handles the intro, scroll-synced spine, reveals, counters, and parallax.
-// Every feature checks for its library and for prefers-reduced-motion, so the
-// page still works as plain HTML if a CDN is blocked.
+/* The motion and interaction layer, lifted from the hand-written script and
+   given real imports instead of globals sniffed off window. Still imperative
+   and still DOM-driven, because that is what Lenis and anime.js actually are:
+   wrapping a scroll engine in component state would add indirection without
+   adding correctness. React owns the markup; this owns the motion.
 
-(function () {
-  "use strict";
+   Returns a teardown so React's effect can unwind it cleanly, which the old
+   page never had to think about because it only ever loaded once. */
+import Lenis from "lenis";
+import { animate, createTimeline, stagger, onScroll, utils, svg } from "animejs";
+
+export function startBehaviour(): () => void {
+  const teardown: Array<() => void> = [];
+  // Defined up front because the reduced-motion path returns early, and that
+  // exit still has to hand React something to unwind.
+  const cleanup = () => {
+    teardown.forEach((fn) => {
+      try { fn(); } catch { /* unwinding must not throw */ }
+    });
+    if (lenis) lenis.destroy();
+  };
+
 
   var doc = document.documentElement;
   doc.classList.add("js");
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var hasAnime = typeof window.anime !== "undefined";
-  var hasLenis = typeof window.Lenis !== "undefined";
+  var hasAnime = true;
+  var hasLenis = true;
 
   /* ---------- Smooth scrolling ---------- */
   var lenis = null;
   if (hasLenis && !reduceMotion) {
-    lenis = new window.Lenis({ autoRaf: true, lerp: 0.09, smoothWheel: true });
+    lenis = new Lenis({ autoRaf: true, lerp: 0.09, smoothWheel: true });
     /* Scroll velocity, normalised and clamped, published as --vel. The section
        numerals lag behind it, which is what makes a page feel like it has
        weight rather than teleporting. Lenis already smooths velocity and emits
@@ -433,12 +447,8 @@
   if (!hasAnime || reduceMotion) {
     if (heroPath && heroPath.area) heroPath.area.setAttribute("opacity", "1");
     document.querySelectorAll(".spine-fill").forEach(function (el) { el.style.transform = "none"; });
-    return;
+    return cleanup;
   }
-
-  var anime = window.anime;
-  var animate = anime.animate, createTimeline = anime.createTimeline, stagger = anime.stagger,
-      onScroll = anime.onScroll, utils = anime.utils, svg = anime.svg;
 
   /* Intro timeline */
   var intro = createTimeline({ defaults: { ease: "outExpo", duration: 1100 } });
@@ -621,4 +631,6 @@
       autoplay: onScroll({ target: el, enter: "bottom-=80 top", repeat: false })
     });
   });
-})();
+
+  return cleanup;
+}

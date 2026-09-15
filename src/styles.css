@@ -1,3 +1,61 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Tailwind v4 reads @theme at build time to generate utilities
+   (bg-bg, text-ink, font-serif...), so the literals live here. The legacy
+   names below alias to them, which keeps the bespoke layer readable and lets
+   .sec-invert keep flipping the whole palette by redefining a handful of
+   variables in scope - the thing that made the ivory band a ten-line change
+   rather than a rewrite of every component.
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-bg: #0c0b0a;
+  --color-bg-2: #131211;
+  --color-bg-3: #1b1917;
+  --color-ink: #f4efe6;
+  --color-muted: #a39d92;
+  --color-dim: #8f8a80;
+  --color-accent: #d8a35b;
+  --color-accent-2: #f0cd93;
+  --color-ok: #79c99a;
+
+  --font-sans: "Geist", "Geist Fallback", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Instrument Serif", "Instrument Serif Fallback", Georgia, "Times New Roman", serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, Menlo, Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --container-page: 1200px;
+}
+
+:root {
+
+  --bg: var(--color-bg);
+  --bg-2: var(--color-bg-2);
+  --bg-3: var(--color-bg-3);
+  --text: var(--color-ink);
+  --muted: var(--color-muted);
+  /* Clears WCAG 1.4.3 AA against the brightest point the ambient field can
+     reach, measured by stepping the blobs through their phases rather than
+     trusting one screenshot. The previous #7d776d measured 4.35:1 on flat
+     black and was already under the 4.5 line before the field existed. Kept
+     darker than --muted so the three greys stay a hierarchy. */
+  --dim: var(--color-dim);
+  --line: rgba(244, 239, 230, 0.08);
+  --line-2: rgba(244, 239, 230, 0.16);
+  --accent: var(--color-accent);
+  --accent-2: var(--color-accent-2);
+  --accent-dim: rgba(216, 163, 91, 0.14);
+  --ok: var(--color-ok);
+  --sans: var(--font-sans);
+  --serif: var(--font-serif);
+  --mono: var(--font-mono);
+  --max: 1200px;
+  --nav-h: 72px;
+  --inset: 4.5rem;
+  --radius: 16px;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  color-scheme: dark;
+}
 /* ==========================================================================
    Kenneth Anthony Wijaya - Portfolio
    Editorial dark design. Plain CSS, no build step. Motion is layered on by
@@ -13,34 +71,7 @@
      everything respects prefers-reduced-motion.
    ========================================================================== */
 
-:root {
-  --bg: #0c0b0a;
-  --bg-2: #131211;
-  --bg-3: #1b1917;
-  --text: #f4efe6;
-  --muted: #a39d92;
-  /* Clears WCAG 1.4.3 AA against the brightest point the ambient field can
-     reach, measured by stepping the blobs through their phases rather than
-     trusting one screenshot. The previous #7d776d measured 4.35:1 on flat
-     black and was already under the 4.5 line before the field existed. Kept
-     darker than --muted so the three greys stay a hierarchy. */
-  --dim: #8f8a80;
-  --line: rgba(244, 239, 230, 0.08);
-  --line-2: rgba(244, 239, 230, 0.16);
-  --accent: #d8a35b;
-  --accent-2: #f0cd93;
-  --accent-dim: rgba(216, 163, 91, 0.14);
-  --ok: #79c99a;
-  --sans: "Geist", "Geist Fallback", "Helvetica Neue", Arial, sans-serif;
-  --serif: "Instrument Serif", "Instrument Serif Fallback", Georgia, "Times New Roman", serif;
-  --mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, Menlo, Consolas, monospace;
-  --max: 1200px;
-  --nav-h: 72px;
-  --inset: 4.5rem;
-  --radius: 16px;
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  color-scheme: dark;
-}
+
 
 *, *::before, *::after { box-sizing: border-box; }
 

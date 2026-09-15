@@ -27,7 +27,12 @@ import os
 import socketserver
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The site is a build now, so serve what actually ships. SITE_ROOT overrides it
+# for anyone wanting to point the checks at something else.
+ROOT = os.environ.get("SITE_ROOT") or (
+    os.path.join(_REPO, "dist") if os.path.isdir(os.path.join(_REPO, "dist")) else _REPO
+)
 # What GitHub Pages compresses. Images, fonts and PDFs are already compressed
 # and gzipping them again only costs time.
 TEXT_TYPES = (".html", ".htm", ".css", ".js", ".mjs", ".json", ".svg", ".xml",

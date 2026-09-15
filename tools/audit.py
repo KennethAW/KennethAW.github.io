@@ -34,8 +34,13 @@ import time
 import urllib.error
 import urllib.request
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TOOLS = os.path.join(ROOT, "tools")
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The site is built now, so every static check runs against what actually
+# ships, not against the Vite template at the repo root.
+ROOT = os.environ.get("SITE_ROOT") or (
+    os.path.join(_REPO, "dist") if os.path.isdir(os.path.join(_REPO, "dist")) else _REPO
+)
+TOOLS = os.path.join(_REPO, "tools")
 # Node ships npx as npx.cmd on Windows, and CreateProcess only ever appends
 # .exe, so a bare "npx" raises WinError 2 here. shutil.which honours PATHEXT
 # and gives the real path on every platform.
@@ -60,7 +65,7 @@ FLOORS = {
 CLS_CEILING = 0.02
 
 
-def run(cmd, timeout=600, cwd=ROOT):
+def run(cmd, timeout=600, cwd=_REPO):
     return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
                           timeout=timeout, shell=False)
 

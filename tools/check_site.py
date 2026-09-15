@@ -12,17 +12,28 @@ import os
 import re
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The site is built now, so every static check runs against what actually
+# ships, not against the Vite template at the repo root.
+ROOT = os.environ.get("SITE_ROOT") or (
+    os.path.join(_REPO, "dist") if os.path.isdir(os.path.join(_REPO, "dist")) else _REPO
+)
 PAGES = ["index.html", "404.html"]
+
+def _bundled(ext):
+    d = os.path.join(ROOT, "assets")
+    return [f for f in os.listdir(d) if f.endswith(ext)] if os.path.isdir(d) else []
+
 TAGS = ["section", "article", "div", "ul", "ol", "li", "a", "main", "header", "nav", "footer",
         "span", "svg", "g", "button", "dl", "p", "h1", "h2", "h3", "h4", "figure", "figcaption"]
+# The stylesheet and the script are bundled under hashed names now, so they are
+# checked by pattern below rather than by exact path.
 REQUIRED = [
-    "styles.css", "script.js", "robots.txt", "sitemap.xml", ".nojekyll",
+    "robots.txt", "sitemap.xml", ".nojekyll",
     "assets/Kenneth_Wijaya_Resume.pdf", "assets/og.png",
     "assets/fonts/fonts.css", "assets/fonts/geist-latin.woff2",
     "dashboard/index.html", "dashboard/data/baselines.json",
     "dashboard/assets/fonts/fonts.css",
-    "assets/vendor/anime-4.5.0.umd.min.js", "assets/vendor/lenis-1.3.26.min.js",
 ]
 
 failures = []
@@ -69,7 +80,7 @@ for page in PAGES:
     # Scripts and styles are vendored, so nothing on the page should reach a CDN
     for host in ("cdnjs.cloudflare.com", "cdn.jsdelivr.net", "unpkg.com"):
         if host in html:
-            fail(f"{page}: loads from {host}; vendor it into assets/vendor instead")
+            fail(f"{page}: loads from {host}; add it as a dependency and bundle it instead")
 
     # Scripts must not block the parser
     for tag in re.findall(r"<script[^>]*src=[^>]*>", html):
@@ -109,8 +120,31 @@ def css_structure(path):
         fail(f"{path}: braces do not balance (ends at depth {depth})")
 
 
-for sheet in ("styles.css", "assets/fonts/fonts.css"):
-    css_structure(sheet)
+# The page stylesheet is authored in src/ and bundled into a hashed file, so the
+# structure check runs against the source a human actually edits. fonts.css
+# ships as-is and is checked where it lands.
+def _source_sheet(rel):
+    cand = os.path.join(_REPO, rel)
+    return cand if os.path.exists(cand) else os.path.join(ROOT, rel)
+
+
+for sheet, base in (("src/styles.css", _REPO), ("assets/fonts/fonts.css", ROOT)):
+    _path = os.path.join(base, sheet)
+    if not os.path.exists(_path):
+        fail(f"{sheet}: expected stylesheet is missing")
+        continue
+    _src = open(_path, encoding="utf-8").read()
+    _stripped = re.sub(r"/\*.*?\*/", "", _src, flags=re.S)
+    _depth = 0
+    for _n, _line in enumerate(_stripped.splitlines(), 1):
+        _text = _line.strip()
+        if _depth == 0 and re.match(r"^[-a-z]+\s*:", _text):
+            fail(f"{sheet}:{_n}: declaration outside any rule; it will swallow the rule after it")
+        if _depth == 0 and _text.startswith("}"):
+            fail(f"{sheet}:{_n}: closing brace with nothing open")
+        _depth += _line.count("{") - _line.count("}")
+    if _depth != 0:
+        fail(f"{sheet}: braces do not balance (ends at depth {_depth})")
 
 # Every metric-matched fallback the design system names must actually be defined.
 # If it is not, the browser skips silently past it to the next family in the
@@ -120,7 +154,15 @@ for sheet in ("styles.css", "assets/fonts/fonts.css"):
 fonts_css = read("assets/fonts/fonts.css")
 defined_families = {m.strip("\"' ") for m in
                     re.findall(r"@font-face\s*\{[^}]*?font-family:\s*([^;]+?);", fonts_css, re.S)}
-stacks = re.findall(r"--(?:sans|serif|mono):\s*([^;]+);", read("styles.css"))
+# The font stacks are Tailwind theme tokens in the source sheet now.
+_theme_sheet = os.path.join(_REPO, "src", "styles.css")
+if not _bundled(".css"):
+    fail("the build emitted no stylesheet into assets/")
+if not _bundled(".js"):
+    fail("the build emitted no script into assets/")
+
+stacks = re.findall(r"--font-(?:sans|serif|mono):\s*([^;]+);",
+                    open(_theme_sheet, encoding="utf-8").read())
 for family in sorted({f for stack in stacks for f in re.findall(r'"([^"]+ Fallback)"', stack)}):
     if family not in defined_families:
         fail(f'styles.css falls back to "{family}", which no @font-face in '
