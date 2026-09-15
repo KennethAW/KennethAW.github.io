@@ -5,6 +5,17 @@ layer. No build step, no framework, no third-party requests at runtime.
 
 **Live at <https://kennethaw.github.io>.** Every push to `main` redeploys it.
 
+> **Stack note.** This site is built with React 19, Vite, Tailwind CSS 4 and
+> TypeScript, and is prerendered to static HTML at build time. The prerender is
+> not optional polish: a client-rendered SPA ships an empty `<div id="root">`,
+> which loses the content for anyone with JavaScript off, for link previews,
+> and for anything that reads HTML rather than running it.
+>
+> `npm run build` typechecks, builds the client, renders the app to HTML and
+> injects it into the template. It fails rather than publishes if the render
+> comes back empty. Deployment is GitHub Actions, because Pages can no longer
+> serve the repository root - the root is a build template now.
+
 ## Files
 
 | Path | What it is |

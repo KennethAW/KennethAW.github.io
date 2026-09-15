@@ -1,0 +1,56 @@
+name: Build and deploy
+
+# The site is a build now, so Pages cannot serve the repo root any more: the
+# root holds a Vite template with an empty <div id="root">. This builds it and
+# publishes dist/.
+#
+# Switching to this requires one setting change in the repository: Settings ->
+# Pages -> Build and deployment -> Source: "GitHub Actions". Until that is
+# changed, Pages keeps serving the old branch content and this workflow's
+# deploy step will fail, which is the safe direction to fail in.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      # build runs tsc first, so a type error fails the deploy rather than
+      # shipping past it
+      - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Static checks against what will actually ship
+        run: python tools/check_site.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
