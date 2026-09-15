@@ -156,6 +156,13 @@ defined_families = {m.strip("\"' ") for m in
                     re.findall(r"@font-face\s*\{[^}]*?font-family:\s*([^;]+?);", fonts_css, re.S)}
 # The font stacks are Tailwind theme tokens in the source sheet now.
 _theme_sheet = os.path.join(_REPO, "src", "styles.css")
+# JSX decodes HTML entities through Babel's table, and that table does not carry
+# every named entity - &nearr; reached the page as the literal text "&nearr;".
+# Nothing should survive into the output looking like an undecoded entity.
+for page in PAGES:
+    for stray in set(re.findall(r"&amp;([a-zA-Z]{2,10});", read(page))):
+        fail(f"{page}: &{stray}; reached the page as literal text; use the character itself")
+
 if not _bundled(".css"):
     fail("the build emitted no stylesheet into assets/")
 if not _bundled(".js"):

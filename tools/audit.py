@@ -112,6 +112,12 @@ def lighthouse(url, preset):
     if not os.path.exists(out):
         return {"error": "lighthouse produced no report"}
     d = json.load(open(out, encoding="utf-8"))
+    # A category whose score is null means Lighthouse could not evaluate it -
+    # usually a runtime error in that run. Report that as a failure to measure,
+    # rather than crashing the audit and leaving no report to compare against.
+    missing = sorted(k for k, v in d["categories"].items() if v.get("score") is None)
+    if missing:
+        return {"error": "lighthouse returned no score for: " + ", ".join(missing)}
     cats = {k: round(v["score"] * 100) for k, v in d["categories"].items()}
     a = d["audits"]
 
