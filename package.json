@@ -4,7 +4,7 @@
   "description": "A single-page portfolio. Plain HTML, CSS and JavaScript with a small motion\r layer. No build step, no framework, no third-party requests at runtime.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
+    "build": "tsc --noEmit && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },

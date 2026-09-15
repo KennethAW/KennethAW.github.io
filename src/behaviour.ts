@@ -11,6 +11,22 @@ import { animate, createTimeline, stagger, onScroll, utils, svg } from "animejs"
 
 export function startBehaviour(): () => void {
   const teardown: Array<() => void> = [];
+
+  /* Typed query helpers. querySelector returns Element | null, which is honest
+     but means every .style, .hidden and .focus() below is a type error and
+     every result is nullable. These narrow once, here, instead of scattering
+     assertions through the file. */
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document): T | null =>
+    root.querySelector<T>(sel);
+  const $all = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document): T[] =>
+    Array.from(root.querySelectorAll<T>(sel));
+  /* For the handful of elements the markup always contains; if one of these is
+     ever missing the page is broken in a way a null check would only hide. */
+  const need = <T extends HTMLElement = HTMLElement>(sel: string): T => {
+    const el = $<T>(sel);
+    if (!el) throw new Error(`behaviour: required element ${sel} is missing`);
+    return el;
+  };
   // Defined up front because the reduced-motion path returns early, and that
   // exit still has to hand React something to unwind.
   const cleanup = () => {
@@ -30,7 +46,7 @@ export function startBehaviour(): () => void {
   var hasLenis = true;
 
   /* ---------- Smooth scrolling ---------- */
-  var lenis = null;
+  let lenis: Lenis | null = null;
   if (hasLenis && !reduceMotion) {
     lenis = new Lenis({ autoRaf: true, lerp: 0.09, smoothWheel: true });
     /* Scroll velocity, normalised and clamped, published as --vel. The section
@@ -39,13 +55,13 @@ export function startBehaviour(): () => void {
        once per frame, so there is nothing to throttle; it settles back to 0 on
        its own when the scroll stops. Behind !reduceMotion with Lenis itself. */
     var docEl = document.documentElement;
-    lenis.on("scroll", function (e) {
+    lenis.on("scroll", function (e: { velocity?: number }) {
       var v = (e && typeof e.velocity === "number") ? e.velocity : 0;
       docEl.style.setProperty("--vel", Math.max(-1, Math.min(1, v / 28)).toFixed(3));
     });
   }
 
-  function scrollToTarget(target, offset) {
+  function scrollToTarget(target: HTMLElement | 0 | null, offset?: number) {
     if (target === 0) {
       if (lenis) lenis.scrollTo(0, { duration: 1.2 });
       else window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -64,18 +80,18 @@ export function startBehaviour(): () => void {
      which strands keyboard and screen-reader users at the top of the page.
      Scroll, then place focus on the destination. The skip link opts out so it
      behaves exactly as assistive technology expects. */
-  function focusTarget(target) {
+  function focusTarget(target: HTMLElement | null) {
     if (!target) return;
     if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });
   }
 
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+  $all('a[href^="#"]').forEach(function (a) {
     if (a.hasAttribute("data-no-smooth")) return;
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
-      if (id.length < 2) return;
-      var target = document.querySelector(id);
+      if (!id || id.length < 2) return;
+      var target = $(id);
       if (!target) return;
       e.preventDefault();
       closeMenu();
@@ -86,9 +102,9 @@ export function startBehaviour(): () => void {
   });
 
   /* ---------- Mobile menu ---------- */
-  var toggle = document.querySelector(".nav-toggle");
-  var menu = document.getElementById("menu");
-  var nav = document.querySelector(".nav");
+  var toggle = need(".nav-toggle");
+  var menu = need<HTMLElement>("#menu");
+  var nav = need(".nav");
 
   /* The open menu is an opaque panel over the whole screen, but the page
      underneath stays in the tab order. Tabbing past the last menu link used to
@@ -97,9 +113,9 @@ export function startBehaviour(): () => void {
      content the visitor could not see. inert removes them from both the tab
      order and the accessibility tree. The brand and the toggle sit above the
      panel and stay reachable, so there is always a way back out. */
-  var behindMenu = [document.getElementById("main"), document.querySelector("footer"),
-                    document.querySelector(".to-top"), document.querySelector(".skip-link")];
-  function hideBehindMenu(hidden) {
+  var behindMenu = [document.getElementById("main"), need("footer"),
+                    need(".to-top"), need(".skip-link")];
+  function hideBehindMenu(hidden: boolean) {
     behindMenu.forEach(function (el) { if (el) el.inert = hidden; });
   }
 
@@ -120,11 +136,11 @@ export function startBehaviour(): () => void {
       if (open) {
         nav.classList.remove("is-hidden");
         if (hasAnime && !reduceMotion) {
-          window.anime.animate(menu.querySelectorAll("a"), {
-            opacity: [0, 1], y: [18, 0], delay: window.anime.stagger(50), duration: 600, ease: "outExpo"
+          animate($all("a", menu), {
+            opacity: [0, 1], y: [18, 0], delay: stagger(50), duration: 600, ease: "outExpo"
           });
         }
-        setTimeout(function () { var first = menu.querySelector("a"); if (first) first.focus(); }, 60);
+        setTimeout(function () { var first = $("a", menu); if (first) first.focus(); }, 60);
       }
     });
     document.addEventListener("keydown", function (e) {
@@ -137,17 +153,20 @@ export function startBehaviour(): () => void {
        the full nav is right there. */
     if (window.matchMedia) {
       var wide = window.matchMedia("(min-width: 821px)");
-      var onWide = function (e) { if (e.matches) closeMenu(); };
+      var onWide = function (e: MediaQueryListEvent) { if (e.matches) closeMenu(); };
       if (wide.addEventListener) wide.addEventListener("change", onWide);
       else if (wide.addListener) wide.addListener(onWide);
     }
   }
 
   /* ---------- Copy email ---------- */
-  var copyStatus = document.querySelector("[data-copy-status]");
-  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+  var copyStatus = $("[data-copy-status]");
+  $all("[data-copy]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var text = btn.getAttribute("data-copy");
+      // Nothing to copy means nothing to do; without this the fallback would
+      // navigate to "mailto:null".
+      if (!text) return;
       var done = function () {
         btn.classList.add("is-copied");
         // The button swaps its icon for a tick, which tells a screen reader
@@ -170,13 +189,13 @@ export function startBehaviour(): () => void {
   (function () {
     var win = document.getElementById("dash-window");
     if (!win) return;
-    var media = win.querySelector(".window-media");
-    var frame = win.querySelector(".window-frame");
-    var tools = win.querySelector(".window-tools");
-    var live = win.querySelector(".live");
-    var loading = win.querySelector(".window-loading");
-    var launch = win.querySelector("[data-dash-launch]");
-    var close = win.querySelector("[data-dash-close]");
+    var media = need<HTMLElement>(".window-media");
+    var frame = need<HTMLElement>(".window-frame");
+    var tools = need<HTMLElement>(".window-tools");
+    var live = need<HTMLElement>(".live");
+    var loading = $(".window-loading", win);
+    var launch = $("[data-dash-launch]", win);
+    var close = $("[data-dash-close]", win);
     var src = "dashboard/index.html";
     var LOAD_TIMEOUT = 15000;
     // The panel is 78vh tall, so a viewport can be wide enough for the embed and
@@ -199,7 +218,7 @@ export function startBehaviour(): () => void {
        a blank grey box. The frame is same-origin, so look inside: the real
        document has #root, an error page has nothing readable at all. */
     function frameHasDashboard() {
-      var iframe = frame.querySelector("iframe");
+      var iframe = $<HTMLIFrameElement>("iframe", frame);
       try {
         return !!(iframe && iframe.contentDocument && iframe.contentDocument.getElementById("root"));
       } catch (e) {
@@ -217,7 +236,7 @@ export function startBehaviour(): () => void {
         window.open(src, "_blank", "noopener");
         return;
       }
-      var existing = frame.querySelector("iframe");
+      var existing = $("iframe", frame);
       if (!existing) {
         var iframe = document.createElement("iframe");
         var timer = setTimeout(fail, LOAD_TIMEOUT);
@@ -232,7 +251,7 @@ export function startBehaviour(): () => void {
           // Escape below never fired and the only way back out was to tab
           // through the whole app. The frame is same-origin: listen in it too.
           try {
-            iframe.contentDocument.addEventListener("keydown", onKeydown);
+            iframe.contentDocument!.addEventListener("keydown", onKeydown);
           } catch (e) { /* a frame we cannot reach into is already an error */ }
         }, { once: true });
         iframe.addEventListener("error", function () { clearTimeout(timer); fail(); }, { once: true });
@@ -267,7 +286,7 @@ export function startBehaviour(): () => void {
     }
 
     // Escape closes the panel, matching every other overlay on the page
-    function onKeydown(e) {
+    function onKeydown(e: KeyboardEvent) {
       if (e.key === "Escape" && media.classList.contains("is-live")) shut();
     }
 
@@ -277,14 +296,14 @@ export function startBehaviour(): () => void {
   })();
 
   /* ---------- Gallery arrows ---------- */
-  document.querySelectorAll(".gallery-wrap").forEach(function (wrap) {
-    var track = wrap.querySelector(".gallery");
+  $all(".gallery-wrap").forEach(function (wrap) {
+    var track = need<HTMLElement>(".gallery");
     if (!track) return;
-    var prev = wrap.querySelector("[data-gallery-prev]");
-    var next = wrap.querySelector("[data-gallery-next]");
+    var prev = $<HTMLButtonElement>("[data-gallery-prev]", wrap);
+    var next = $<HTMLButtonElement>("[data-gallery-next]", wrap);
 
     function step() {
-      var fig = track.querySelector("figure");
+      var fig = $("figure", track);
       return fig ? fig.getBoundingClientRect().width + 16 : 400;
     }
 
@@ -310,7 +329,7 @@ export function startBehaviour(): () => void {
 
   /* ---------- Scroll: progress bar, nav hide/show, back-to-top ---------- */
   var ticking = false, lastY = window.scrollY;
-  var toTop = document.querySelector(".to-top");
+  var toTop = need(".to-top");
   function handleScroll() {
     var y = window.scrollY;
     var max = doc.scrollHeight - window.innerHeight;
@@ -331,14 +350,14 @@ export function startBehaviour(): () => void {
   if (toTop) toTop.addEventListener("click", function () { scrollToTarget(0); });
 
   /* ---------- Active section: nav links, sliding indicator, spine nodes ---------- */
-  var navAnchors = Array.prototype.slice.call(document.querySelectorAll(".nav-links a[href^='#']"));
-  var navInner = document.querySelector(".nav-inner");
-  var indicator = document.querySelector(".nav-indicator");
-  var sections = Array.prototype.slice.call(document.querySelectorAll("main section[id]"));
+  var navAnchors = Array.prototype.slice.call($all(".nav-links a[href^='#']"));
+  var navInner = need(".nav-inner");
+  var indicator = $(".nav-indicator");
+  var sections = Array.prototype.slice.call($all("main section[id]"));
 
   function moveIndicator() {
     if (!indicator || !navInner) return;
-    var active = document.querySelector(".nav-links a.active");
+    var active = $(".nav-links a.active");
     if (!active || window.innerWidth <= 820) { indicator.style.opacity = "0"; return; }
     var r = active.getBoundingClientRect(), n = navInner.getBoundingClientRect();
     indicator.style.left = (r.left - n.left) + "px";
@@ -356,7 +375,7 @@ export function startBehaviour(): () => void {
           a.classList.toggle("active", on);
           if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
         });
-        var node = entry.target.querySelector(".sec-node");
+        var node = $(".sec-node", entry.target);
         if (node) node.classList.add("on");
         // The ambient field reads this to shift its weather per section
         document.body.setAttribute("data-sec", entry.target.id);
@@ -368,10 +387,11 @@ export function startBehaviour(): () => void {
   window.addEventListener("resize", moveIndicator);
 
   /* ---------- Clock (London) and footer year ---------- */
-  var clock = document.getElementById("clock");
+  var clock = $<HTMLElement>("#clock");
   if (clock && window.Intl && Intl.DateTimeFormat) {
     var fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
-    var tick = function () { clock.textContent = fmt.format(new Date()); };
+    var el = clock;
+    var tick = function () { el.textContent = fmt.format(new Date()); };
     tick();
     setInterval(tick, 30000);
   }
@@ -380,7 +400,7 @@ export function startBehaviour(): () => void {
 
   /* ---------- Pointer-driven micro-interactions (desktop only) ---------- */
   if (finePointer && !reduceMotion) {
-    document.querySelectorAll(".btn, .icon-btn, .to-top").forEach(function (el) {
+    $all(".btn, .icon-btn, .to-top").forEach(function (el) {
       el.addEventListener("mousemove", function (e) {
         var r = el.getBoundingClientRect();
         var dx = (e.clientX - (r.left + r.width / 2)) * 0.22;
@@ -394,7 +414,7 @@ export function startBehaviour(): () => void {
       });
     });
 
-    document.querySelectorAll(".spot").forEach(function (el) {
+    $all(".spot").forEach(function (el) {
       el.addEventListener("mousemove", function (e) {
         var r = el.getBoundingClientRect();
         el.style.setProperty("--x", (e.clientX - r.left) + "px");
@@ -402,7 +422,7 @@ export function startBehaviour(): () => void {
       });
     });
 
-    var hero = document.querySelector(".hero");
+    var hero = need<HTMLElement>(".hero");
     if (hero) {
       var pending = false, px = 0, py = 0;
       window.addEventListener("mousemove", function (e) {
@@ -446,7 +466,7 @@ export function startBehaviour(): () => void {
   /* ---------- Everything below needs anime.js and motion allowed ---------- */
   if (!hasAnime || reduceMotion) {
     if (heroPath && heroPath.area) heroPath.area.setAttribute("opacity", "1");
-    document.querySelectorAll(".spine-fill").forEach(function (el) { el.style.transform = "none"; });
+    $all(".spine-fill").forEach(function (el) { el.style.transform = "none"; });
     return cleanup;
   }
 
@@ -472,7 +492,7 @@ export function startBehaviour(): () => void {
   }
 
   /* Hero content recedes as you scroll away from it */
-  var heroInner = document.querySelector(".hero-inner");
+  var heroInner = need<HTMLElement>(".hero-inner");
   if (heroInner) {
     animate(heroInner, {
       y: [0, -70],
@@ -483,7 +503,7 @@ export function startBehaviour(): () => void {
   }
 
   /* Spine fill synced to scroll through the thread */
-  var thread = document.querySelector(".thread");
+  var thread = $(".thread");
   if (thread) {
     animate(".spine-fill", {
       scaleY: [0, 1],
@@ -493,18 +513,18 @@ export function startBehaviour(): () => void {
   }
 
   /* Section headings: split into words and letters, then rise in with a stagger */
-  function splitChars(el) {
+  function splitChars(el: HTMLElement) {
     el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
-    function walk(node) {
+    function walk(node: Node) {
       Array.prototype.slice.call(node.childNodes).forEach(function (child) {
         if (child.nodeType === 3) {
           var frag = document.createDocumentFragment();
-          child.textContent.split(/(\s+)/).forEach(function (part) {
+          child.textContent.split(/(\s+)/).forEach(function (part: string) {
             if (!part) return;
             if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
             var wd = document.createElement("span");
             wd.className = "wd";
-            part.split("").forEach(function (c) {
+            part.split("").forEach(function (c: string) {
               var s = document.createElement("span");
               s.className = "ch";
               s.textContent = c;
@@ -520,7 +540,7 @@ export function startBehaviour(): () => void {
       });
     }
     walk(el);
-    return el.querySelectorAll(".ch");
+    return $all(".ch", el);
   }
   /* Section headings are sticky, so their box stops moving with the scroll
      while the page keeps going. onScroll thresholds read that as entering and
@@ -533,7 +553,7 @@ export function startBehaviour(): () => void {
      An IntersectionObserver does not care that the element is sticky, fires
      for something already on screen the moment it is observed, and is
      disconnected after the one reveal it owes. */
-  document.querySelectorAll(".sec h2").forEach(function (h2) {
+  $all(".sec h2").forEach(function (h2) {
     var chars = splitChars(h2);
     if (!chars.length) return;
     utils.set(chars, { opacity: 0, y: 18 });
@@ -556,7 +576,7 @@ export function startBehaviour(): () => void {
   });
 
   /* Reveal groups */
-  document.querySelectorAll("[data-reveal]").forEach(function (el) {
+  $all("[data-reveal]").forEach(function (el) {
     var targets = el.hasAttribute("data-stagger") ? Array.prototype.slice.call(el.children) : [el];
     if (!targets.length) return;
     utils.set(targets, { opacity: 0, y: 24 });
@@ -571,14 +591,14 @@ export function startBehaviour(): () => void {
   });
 
   /* Counters */
-  var snapCounters = [];
+  var snapCounters: Array<() => void> = [];
   // Once the figures have been snapped for a print they stay snapped. Switching
   // to print media relays the page out, which makes the scroll observer below
   // start the count-up, and every frame of it overwrote the real figure that
   // had just been put back.
   var countersSnapped = false;
-  document.querySelectorAll("[data-count]").forEach(function (el) {
-    var target = parseFloat(el.getAttribute("data-count"));
+  $all("[data-count]").forEach(function (el) {
+    var target = parseFloat(el.getAttribute("data-count") || "0");
     var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
     var state = { v: 0 };
     // The real figure ships in the HTML so it survives without JS. Reset it to
@@ -608,23 +628,23 @@ export function startBehaviour(): () => void {
   window.addEventListener("beforeprint", snapCountersToFinal);
   if (window.matchMedia) {
     var printMq = window.matchMedia("print");
-    var onPrintMq = function (e) { if (e.matches) snapCountersToFinal(); };
+    var onPrintMq = function (e: MediaQueryListEvent) { if (e.matches) snapCountersToFinal(); };
     if (printMq.addEventListener) printMq.addEventListener("change", onPrintMq);
     else if (printMq.addListener) printMq.addListener(onPrintMq);
   }
 
   /* Parallax on the featured screenshot */
-  var parallax = document.querySelector(".parallax");
+  var parallax = $(".parallax");
   if (parallax) {
     animate(parallax, {
       y: ["0%", "-14%"],
       ease: "linear",
-      autoplay: onScroll({ target: parallax.parentElement, enter: "bottom top", leave: "top bottom", sync: true })
+      autoplay: onScroll({ target: parallax.parentElement!, enter: "bottom top", leave: "top bottom", sync: true })
     });
   }
 
   /* Section index ticks in with the heading */
-  document.querySelectorAll(".sec-index").forEach(function (el) {
+  $all(".sec-index").forEach(function (el) {
     utils.set(el, { opacity: 0, x: -10 });
     animate(el, {
       opacity: 1, x: 0, duration: 900, ease: "outExpo",
