@@ -109,17 +109,11 @@ sets its floors per preset rather than demanding 100 everywhere.
 
 ## The profile photo
 
-The frame in the hero's profile panel shows a `KW` monogram until there is a
-photo. To add one, save a portrait (4:5, at least 400x500) as
-`assets/photo.jpg` and replace the monogram inside `.portrait-frame` in
-`index.html` with:
-
-```html
-<img src="assets/photo.jpg" width="400" height="500" alt="Kenneth Anthony Wijaya" decoding="async">
-```
-
-Then drop `aria-hidden="true"` from the `<figure class="portrait">`, so the
-photo and its alt text are announced.
+`assets/photo.jpg` sits in the hero's profile panel. It is cropped to the
+frame's 4:5 and sized 480x600 (the frame is at most 200px wide, so that covers
+2x screens) at about 35 KB. To replace it, crop and export a new one at the
+same size, rather than dropping in a camera original: the first upload was
+3 MB.
 
 ## The embedded dashboard
 

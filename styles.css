@@ -341,11 +341,11 @@ em { font-style: normal; color: var(--amber); }
     var(--bg-3);
 }
 .portrait-frame::before, .portrait-frame::after {
-  content: ""; position: absolute; width: 16px; height: 16px; border: 2px solid var(--amber);
+  content: ""; position: absolute; z-index: 1; width: 16px; height: 16px; border: 2px solid var(--amber);
 }
 .portrait-frame::before { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
 .portrait-frame::after { right: 8px; bottom: 8px; border-left: 0; border-top: 0; }
-.portrait-frame img { width: 100%; height: 100%; object-fit: cover; }
+.portrait-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
 .portrait-mono { font: 700 64px/1 var(--mono); letter-spacing: -0.06em; color: var(--amber); opacity: 0.85; }
 .portrait figcaption { margin-top: 0.55rem; font: 500 10.5px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
 
@@ -737,6 +737,8 @@ footer .status { color: var(--green); }
   .portrait { display: flex; align-items: center; gap: 0.9rem; }
   .portrait-frame { width: 76px; flex: none; }
   .portrait-mono { font-size: 26px; }
+  /* At 76px wide the full head-and-shoulders crop leaves the face tiny */
+  .portrait-frame img { transform: scale(1.45); transform-origin: 50% 18%; }
   .portrait-frame::before, .portrait-frame::after { width: 9px; height: 9px; }
   .portrait-frame::before { top: 5px; left: 5px; } .portrait-frame::after { right: 5px; bottom: 5px; }
   .portrait figcaption { margin: 0; }
