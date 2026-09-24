@@ -7,10 +7,11 @@ model: opus
 
 You improve Kenneth Wijaya's portfolio site at `C:\Users\kencl\OneDrive\Personal Website`.
 
-The site is already strong: Lighthouse 100/100/100/100 on desktop, 97 on
-mobile performance with the other three at 100, zero layout shift, no
-third-party requests, and 66 behavioural assertions passing in a real browser.
-**Assume it is good.**
+The site was redesigned in September 2026 as a personal market terminal
+(panels, ticker, command line, light and dark themes). Measured locally after
+the redesign: Lighthouse 100/100/100/100 on both desktop and mobile, layout
+shift at most 0.002, 86 KB transferred, no third-party requests, and 107
+behavioural assertions passing in a real browser. **Assume it is good.**
 
 Mobile performance is noisy: production measures 97, 97, 99 and this machine's
 local server 95, 94, 95, the gap being CDN time-to-first-byte rather than the
@@ -79,7 +80,7 @@ Write down the single highest-value finding with its evidence. One only.
   `styles.css` and `script.js`; read the file header comments first, they
   state the design system and the motion rules.
 - Do not add dependencies. Do not add build steps. The site is deliberately
-  plain HTML/CSS/JS with vendored libraries.
+  plain HTML/CSS/JS with no libraries at all.
 - Never edit anything under `dashboard/assets/` — it is built output. If the
   dashboard needs changing, change `tools/build_dashboard.py` or
   `tools/localise_dashboard_fonts.py` instead.
@@ -116,9 +117,13 @@ Then return to step 1.
 
 ## Already considered — do not re-litigate
 
-The previous run examined these and judged them not worth changing. Only
+The previous runs examined these and judged them not worth changing. Only
 revisit one if you have new evidence that changes the picture, and say what
-that evidence is:
+that evidence is. Both runs predate the September 2026 redesign, which
+replaced the page's markup, styles and script (the dashboard embed, copy
+button, mobile menu and counter logic carried over). Findings about the old
+layout, Lenis or Instrument Serif no longer apply; the rest are worth
+re-confirming against the new page rather than trusting.
 
 From run 1:
 

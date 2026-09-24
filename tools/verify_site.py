@@ -2,8 +2,9 @@
 
 tools/check_site.py covers what can be seen in the source. This covers what can
 only be seen by running the thing: that focus moves where it should, that the
-dashboard opens and closes, that headline figures survive with the motion
-libraries blocked, and that deep links clear the fixed header.
+dashboard opens and closes, that the command line, theme toggle and ticker
+do what they say, that headline figures survive with the script blocked, and
+that deep links clear the fixed header.
 
 Requires Chrome and websocket-client (pip install websocket-client), plus a
 local server:  python -m http.server 5500
@@ -102,36 +103,47 @@ def check(name, got, want):
 
 call("Page.enable"); call("Runtime.enable"); call("Log.enable")
 
-print("== counters survive without motion / without the CDN ==")
+STATS = ["4.85/5.00", "3\u00d7", "8+", "55.5%"]
+STATS_JS = "JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"
+# On a phone the key figures sit below the profile panel, so they are the one
+# viewport where a counter is still waiting to be scrolled to.
+PHONE = {"width": 390, "height": 844, "deviceScaleFactor": 1, "mobile": True}
+
+print("== counters survive without motion / without script ==")
 call("Emulation.setEmulatedMedia", {"features": [{"name": "prefers-reduced-motion", "value": "reduce"}]})
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 ev("window.scrollTo(0, 900); 1"); time.sleep(1.2)
-check("reduced-motion stats", ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
-      ["4.85/5.00", "3\u00d7", "8+", "55.5%"])
-# The ambient field must hold still too. ".field i" is specificity 0,1,1 and
-# loses to ".field .f-gold" at 0,2,0, so the obvious way to write that rule is
-# silently ignored and the blobs keep drifting. Assert the computed value.
-check("the ambient field stops drifting under reduced motion",
-      ev("JSON.stringify(['f-gold','f-ember','f-cool','f-sheen'].map(function(c){var e=document.querySelector('.field .'+c);return e?getComputedStyle(e).animationName:'missing';}))"),
-      ["none", "none", "none", "none"])
+check("reduced-motion stats", ev(STATS_JS), STATS)
+# Moving content has to hold still: the ticker, the hero boot and the chart draw
+check("the ticker stops under reduced motion",
+      ev("getComputedStyle(document.querySelector('.ticker-track')).animationName"), "none")
+check("the chart line is fully drawn under reduced motion",
+      ev("getComputedStyle(document.querySelector('.c-line')).strokeDashoffset"), "0px")
+check("nothing waits to be revealed under reduced motion",
+      ev("[...document.querySelectorAll('[data-reveal]')].every(e => getComputedStyle(e).opacity === '1')"), True)
 call("Emulation.setEmulatedMedia", {"features": []})
 
 call("Network.enable")
-# The libraries are vendored now, so simulate them failing to load at all
-call("Network.setBlockedURLs", {"urls": ["*assets/vendor/*"]})
+# If script.js never arrives, every figure and sentence must still be there
+call("Network.setBlockedURLs", {"urls": ["*script.js*"]})
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 ev("window.scrollTo(0, 900); 1"); time.sleep(1.0)
-check("stats when the motion libraries fail", ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
-      ["4.85/5.00", "3\u00d7", "8+", "55.5%"])
-check("page still readable without them", ev("getComputedStyle(document.querySelector('.hero-lede')).opacity"), "1")
-shot("no-vendor")
+check("stats when the script fails", ev(STATS_JS), STATS)
+check("page still readable without it", ev("getComputedStyle(document.querySelector('.hero-lede')).opacity"), "1")
+check("nothing is left hidden without it",
+      ev("[...document.querySelectorAll('[data-reveal], [data-reveal] > *')].every(e => getComputedStyle(e).opacity === '1')"), True)
+check("the command line needs script, so it stays out of the way without it",
+      ev("getComputedStyle(document.getElementById('cmd')).display"), "none")
+shot("no-script")
 call("Network.setBlockedURLs", {"urls": []})
 
 print("\n== counters still animate when they can ==")
+call("Emulation.setDeviceMetricsOverride", PHONE)
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3.5)
 check("pre-scroll counter is zeroed for the animation", ev("document.querySelector('[data-count]').textContent"), "0.00")
-ev("(async () => { window.scrollTo(0, 900); await new Promise(r => setTimeout(r, 2600)); return 1; })()")
+ev("(async () => { document.querySelector('.p-metrics').scrollIntoView(); await new Promise(r => setTimeout(r, 2600)); return 1; })()")
 check("animated to final value", ev("document.querySelector('[data-count]').textContent"), "4.85")
+call("Emulation.clearDeviceMetricsOverride")
 
 print("\n== skip link moves focus ==")
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3.5)
@@ -242,35 +254,101 @@ check("all images decode async", all(x["d"] == "async" for x in r), True)
 print("\n== deep link clears the fixed header ==")
 call("Page.navigate", {"url": BASE + "/#skills"}); time.sleep(3)
 r = ev("""JSON.stringify({ secTop: Math.round(document.querySelector('#skills').getBoundingClientRect().top),
-  navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
-check("section top below the nav", r["secTop"] >= r["navH"], True)
+  navH: Math.round(document.querySelector('.top').getBoundingClientRect().height) })""")
+check("section top below the header", r["secTop"] >= r["navH"], True)
 
 print("\n== printing captures the real figures ==")
 # The counters read zero until they are scrolled into view and a partial number
 # while they count up, and printing snapshots whatever is on screen. Loading the
 # page and printing it without scrolling used to put a CGPA of 0.00 out of 5.00
 # on paper; printing mid-animation put 2.66 there.
+call("Emulation.setDeviceMetricsOverride", PHONE)
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 check("counters still start at zero for the animation",
       ev("document.querySelector('[data-count]').textContent"), "0.00")
 call("Page.printToPDF", {"paperWidth": 8.27, "paperHeight": 11.69})
-check("printing puts the true figures back",
-      ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
-      ["4.85/5.00", "3×", "8+", "55.5%"])
+check("printing puts the true figures back", ev(STATS_JS), STATS)
 
 # Safari fires only the print media query, not beforeprint. Switching to print
-# media also relays the page out, which starts the count-up that the scroll
-# observer had been holding, and every frame of it overwrote the figure the
-# snap had just put back: 0.77/5.00 at 0.3s, 3.56/5.00 at 0.6s, 4.81/5.00 at
-# 1.2s. The snapped figures have to win for as long as the print lasts.
+# media also relays the page out, which can start a count-up that would
+# overwrite the figure the snap had just put back. The snapped figures have to
+# win for as long as the print lasts.
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 call("Emulation.setEmulatedMedia", {"media": "print"})
 for delay in (0.4, 0.8):
     time.sleep(delay)
-    check(f"the print media query alone holds the true figures ({delay}s)",
-          ev("JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"),
-          ["4.85/5.00", "3×", "8+", "55.5%"])
+    check(f"the print media query alone holds the true figures ({delay}s)", ev(STATS_JS), STATS)
+# A collapsed blotter row would print as a bare heading, so every row opens for
+# the print, and the reader's own choice of open rows comes back afterwards
+check("printing opens every collapsed row", ev("document.querySelectorAll('details:not([open])').length"), 0)
 call("Emulation.setEmulatedMedia", {"media": ""})
+time.sleep(0.3)
+check("and closes them again afterwards", ev("document.querySelectorAll('details:not([open])').length"), 2)
+call("Emulation.clearDeviceMetricsOverride")
+
+print("\n== the command line ==")
+# It is a shortcut to places the nav already reaches, so what matters is that
+# it lands where it says, moves focus there, and says so when it does not know
+# a command rather than silently doing nothing.
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.5)
+check("the command line is shown once script runs", ev("getComputedStyle(document.getElementById('cmd')).display"), "flex")
+r = ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+  const i = document.getElementById('cmd-input'), f = document.getElementById('cmd');
+  i.focus(); await w(100);
+  const opened = f.classList.contains('is-open');
+  i.value = 'edu'; i.dispatchEvent(new Event('input')); await w(50);
+  f.requestSubmit(); await w(1400);
+  return JSON.stringify({ opened: opened, hash: location.hash, focus: document.activeElement.id,
+    closed: !f.classList.contains('is-open') });
+})()""")
+print("   ", json.dumps(r))
+check("focusing it offers the command list", r.get("opened"), True)
+check("EDU goes to education", r.get("hash"), "#education")
+check("and focus follows", r.get("focus"), "education")
+check("and the list closes", r.get("closed"), True)
+r = ev("""(async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+  const i = document.getElementById('cmd-input'), f = document.getElementById('cmd');
+  i.focus(); i.value = 'zzz'; i.dispatchEvent(new Event('input')); f.requestSubmit(); await w(100);
+  return JSON.stringify({ said: document.getElementById('cmd-out').textContent,
+    role: document.getElementById('cmd-out').getAttribute('role') });
+})()""")
+check("an unknown command is answered, not ignored", "Unknown command" in (r.get("said") or ""), True)
+check("and the answer is announced", r.get("role"), "status")
+key("Escape", 27); time.sleep(0.2)
+ev("document.activeElement.blur(); 1")
+for t in ("rawKeyDown", "keyUp"):
+    call("Input.dispatchKeyEvent", {"type": t, "key": "k", "code": "KeyK", "modifiers": 2,
+                                    "windowsVirtualKeyCode": 75, "nativeVirtualKeyCode": 75})
+time.sleep(0.2)
+check("Ctrl+K focuses the command line", ev("document.activeElement.id"), "cmd-input")
+
+print("\n== the theme toggle ==")
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.5)
+ev("localStorage.removeItem('kw-theme'); 1")
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.5)
+check("dark is the default", ev("document.documentElement.getAttribute('data-theme') || 'dark'"), "dark")
+ev("document.querySelector('.theme-toggle').click(); 1"); time.sleep(0.3)
+r = ev("""JSON.stringify({ theme: document.documentElement.getAttribute('data-theme'),
+  label: document.querySelector('.theme-toggle').getAttribute('aria-label'),
+  meta: document.querySelector('meta[name=theme-color]').content,
+  bg: getComputedStyle(document.body).backgroundColor })""")
+check("the toggle switches to light", r.get("theme"), "light")
+check("its label says what it will do next", r.get("label"), "Switch to the dark theme")
+check("the browser chrome follows", r.get("meta"), "#f2efe8")
+check("the page really repaints", r.get("bg"), "rgb(242, 239, 232)")
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.5)
+check("the choice survives a reload", ev("document.documentElement.getAttribute('data-theme')"), "light")
+ev("document.querySelector('.theme-toggle').click(); localStorage.removeItem('kw-theme'); 1")
+
+print("\n== the ticker can be paused (WCAG 2.2.2) ==")
+call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.5)
+ev("document.querySelector('.ticker-toggle').click(); 1"); time.sleep(0.2)
+r = ev("""JSON.stringify({ pressed: document.querySelector('.ticker-toggle').getAttribute('aria-pressed'),
+  state: getComputedStyle(document.querySelector('.ticker-track')).animationPlayState,
+  label: document.querySelector('.ticker-toggle').getAttribute('aria-label') })""")
+check("the pause button reports its state", r.get("pressed"), "true")
+check("and the ticker actually stops", r.get("state"), "paused")
+check("and its label offers the way back", r.get("label"), "Play the ticker")
 
 print("\n== copying the address says so out loud ==")
 # The button swaps its icon for a tick, which is the only confirmation there is
@@ -310,7 +388,7 @@ call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 check("page behind the closed menu is reachable", ev("document.getElementById('main').inert === true"), False)
 ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
 check("opening the menu hides the page behind it", ev("document.getElementById('main').inert === true"), True)
-for _ in range(13):   # past the ten menu links and round the cycle
+for _ in range(13):   # past the nine menu links and round the cycle
     for t in ("rawKeyDown", "keyUp"):
         call("Input.dispatchKeyEvent", {"type": t, "key": "Tab", "code": "Tab",
                                         "windowsVirtualKeyCode": 9, "nativeVirtualKeyCode": 9})
@@ -322,12 +400,11 @@ check("closing the menu gives the page back", ev("document.getElementById('main'
 call("Emulation.clearDeviceMetricsOverride")
 
 print("\n== the mobile menu fits a short viewport ==")
-# The panel is the height of the viewport and its ten items need 684px. On an
-# iPhone SE in portrait (667px) that put Resume, LinkedIn and GitHub below the
-# fold; in landscape (360-375px) it hid everything from Education down. The
-# page behind is scroll-locked while the menu is open and a fixed box does not
-# scroll its own overflow, so none of it could be reached by touch, and tabbing
-# to it moved focus off screen.
+# The panel is the height of the viewport below the header. On a phone in
+# landscape (360px tall) its nine items cannot all fit. The page behind is
+# scroll-locked while the menu is open and a fixed box does not scroll its own
+# overflow unless told to, so nothing below the fold could be reached by
+# touch, and tabbing to it moved focus off screen.
 for label, width, height in (("phone in landscape", 740, 360), ("iPhone SE portrait", 375, 667)):
     call("Emulation.setDeviceMetricsOverride", {"width": width, "height": height, "deviceScaleFactor": 1, "mobile": True})
     call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
@@ -341,7 +418,7 @@ for label, width, height in (("phone in landscape", 740, 360), ("iPhone SE portr
                lastReachable: last.top >= 0 && last.bottom <= vh,
                pageMoved: Math.round(window.scrollY) }; })())""")
     print("   ", label, json.dumps(r))
-    check(f"the menu scrolls when it overflows, {label}", r["needed"] and r["scrolled"], True)
+    check(f"the menu scrolls when it overflows, {label}", (not r["needed"]) or r["scrolled"], True)
     check(f"the last menu link can be brought on screen, {label}", r["lastReachable"], True)
     check(f"scrolling the menu leaves the page behind, {label}", r["pageMoved"], 0)
     # and every tab stop has to be somewhere the visitor can see
@@ -357,10 +434,7 @@ for label, width, height in (("phone in landscape", 740, 360), ("iPhone SE portr
             offscreen.append(where["what"])
     check(f"no menu item takes focus off screen, {label}", offscreen, [])
 
-# A wheel gesture has to reach the panel too: Lenis is stopped while the menu is
-# open, and a stopped Lenis calls preventDefault on wheel and touch unless an
-# ancestor of the target carries data-lenis-prevent. Without that attribute the
-# panel is scrollable and still will not scroll.
+# A wheel gesture has to reach the panel too, not the scroll-locked page
 call("Emulation.setDeviceMetricsOverride", {"width": 740, "height": 360, "deviceScaleFactor": 1, "mobile": False})
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
@@ -373,11 +447,11 @@ shot("menu-short-scrolled")
 call("Emulation.clearDeviceMetricsOverride")
 
 print("\n== rotating with the menu open does not strand the page ==")
-# Above 820px the full navigation takes over and the toggle is hidden. A tablet
-# rotated from portrait to landscape with the menu open was left showing both
-# navigations at once, with the page behind still inert and no toggle left to
-# close the panel: the only ways out were Escape, which a touch device does not
-# have, or following a link.
+# Above 960px the full navigation takes over and the toggle is hidden. A tablet
+# rotated from portrait to landscape with the menu open would be left showing
+# both navigations at once, with the page behind still inert and no toggle left
+# to close the panel: the only ways out were Escape, which a touch device does
+# not have, or following a link.
 call("Emulation.setDeviceMetricsOverride", {"width": 768, "height": 1024, "deviceScaleFactor": 1, "mobile": True})
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 ev("document.querySelector('.nav-toggle').click(); 1"); time.sleep(0.6)
@@ -392,7 +466,7 @@ print("   ", json.dumps(r))
 check("rotating to landscape closes the menu", r["open"], False)
 check("the hidden toggle stops claiming it is expanded", r["expanded"], "false")
 check("the page behind is given back", r["inert"], False)
-# and the page has to scroll again, which it does not if Lenis was left stopped
+# and the page has to scroll again, which it does not if the lock was left on
 ev("window.scrollTo(0, 0); 1"); time.sleep(0.4)
 call("Input.synthesizeScrollGesture", {"x": 512, "y": 400, "xDistance": 0, "yDistance": -500,
                                        "gestureSourceType": "mouse", "speed": 800})
@@ -426,35 +500,39 @@ for label, width, height, embed in (("landscape phone 844x390", 844, 390, False)
         check(f"the embedded frame clears the first chart, {label}", isinstance(h, int) and h >= 480, True)
 call("Emulation.clearDeviceMetricsOverride")
 
-print("\n== section headings finish revealing ==")
-# The headings are sticky, so their box stops moving while the page keeps
-# going, and scroll-threshold triggers read that as entering and leaving over
-# and over. The character stagger used to be left frozen part way through -
-# the largest type on the page, permanently half drawn.
+print("\n== everything that reveals on scroll finishes revealing ==")
+# A reveal that never fires leaves a heading or a panel at opacity 0 for good,
+# which is worse than no animation at all. Walk the page like a reader would.
 call("Emulation.clearDeviceMetricsOverride")
 call("Page.navigate", {"url": BASE + "/"}); time.sleep(3)
 doc_h = ev("document.documentElement.scrollHeight") or 12000
 for _y in range(0, int(doc_h), 500):
     ev("window.scrollTo(0, %d); 1" % _y); time.sleep(0.12)
-time.sleep(2.5)
-check("every section heading is fully revealed after scrolling the page",
-      ev("(function(){var bad=[];document.querySelectorAll('.sec h2').forEach(function(h){var n=0;h.querySelectorAll('.ch').forEach(function(c){if(parseFloat(getComputedStyle(c).opacity)<0.95)n++;});if(n)bad.push(h.closest('section').id+':'+n+'/'+h.querySelectorAll('.ch').length);});return JSON.stringify(bad);})()"),
+time.sleep(1.5)
+check("every revealed element is fully visible after scrolling the page",
+      ev("""JSON.stringify([...document.querySelectorAll('[data-reveal]:not([data-stagger]), [data-reveal][data-stagger] > *')]
+        .filter(e => parseFloat(getComputedStyle(e).opacity) < 0.95)
+        .map(e => (e.closest('section') || {}).id + ':' + e.className))"""),
       [])
 
-print("\n== the desktop nav fits the moment it appears ==")
-# The mobile menu stops at 820px but the full nav needs 920px to lay out, so
-# 821-919px used to clip the Resume button off the right edge and wrap the
-# brand name onto a second line. 834px is an iPad Pro 11 in portrait.
-for width in (821, 834, 900):
-    call("Emulation.setDeviceMetricsOverride", {"width": width, "height": 700, "deviceScaleFactor": 1, "mobile": False})
+print("\n== the header fits at every width that shows the full nav ==")
+# Nav, command line, theme toggle and Resume share one bar. Each breakpoint
+# drops something (the command line below 1280px, the function-key numbers
+# below 1180px, the whole nav below 961px); the widths just above each drop
+# are where a collision would show first.
+for width in (961, 1024, 1181, 1280, 1440):
+    call("Emulation.setDeviceMetricsOverride", {"width": width, "height": 800, "deviceScaleFactor": 1, "mobile": False})
     call("Page.navigate", {"url": BASE + "/"}); time.sleep(2.4)
-    r = ev("""JSON.stringify({
-      resumeRight: Math.round(document.querySelector('.nav-links li:last-child a').getBoundingClientRect().right),
-      innerRight: Math.round(document.querySelector('.nav-inner').getBoundingClientRect().right),
-      brandH: Math.round(document.querySelector('.brand').getBoundingClientRect().height),
-      navH: Math.round(document.querySelector('.nav').getBoundingClientRect().height) })""")
-    check(f"resume button inside the container at {width}px", r["resumeRight"] <= r["innerRight"], True)
-    check(f"brand stays on one line at {width}px", r["brandH"] <= 40, True)
+    r = ev("""JSON.stringify((() => {
+      const box = s => { const e = document.querySelector(s); if (!e || getComputedStyle(e).display === 'none') return null;
+                         const r = e.getBoundingClientRect(); return { l: Math.round(r.left), r: Math.round(r.right), h: Math.round(r.height) }; };
+      const inner = box('.bar-inner'), nav = box('.nav-primary'), cmd = box('.cmd'), theme = box('.theme-toggle'), resume = box('.resume-btn'), brand = box('.brand');
+      return { inner, nav, cmd, theme, resume, brand }; })())""")
+    order = [b for b in (r["brand"], r["nav"], r["cmd"], r["theme"], r["resume"]) if b]
+    overlap = any(a["r"] > b["l"] for a, b in zip(order, order[1:]))
+    check(f"nothing in the header overlaps at {width}px", overlap, False)
+    check(f"resume button inside the container at {width}px", r["resume"]["r"] <= r["inner"]["r"], True)
+    check(f"brand stays on one line at {width}px", r["brand"]["h"] <= 40, True)
 call("Emulation.clearDeviceMetricsOverride")
 
 print("\n== reflow at 320px (WCAG 1.4.10) ==")

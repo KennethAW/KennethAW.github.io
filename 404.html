@@ -5,34 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page not found</title>
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0a0a0b">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23e0a35a'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='JetBrains Mono,Menlo,monospace' font-size='26' font-weight='700' fill='%230a0a0b'%3EKW%3C/text%3E%3C/svg%3E">
-  <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/instrument-serif-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <meta name="theme-color" content="#0b0e13">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23ffb224'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Geist Mono,Menlo,monospace' font-size='24' font-weight='700' fill='%230b0e13'%3EKW%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/fonts/fonts.css">
   <link rel="stylesheet" href="/styles.css">
+  <script>try{var t=localStorage.getItem("kw-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
   <style>
-    .nf { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 2rem; text-align: center; position: relative; overflow: hidden; }
-    .nf::before { content: ""; position: absolute; inset: 0; background: radial-gradient(40rem 24rem at 50% 30%, rgba(224, 163, 90, 0.08), transparent 60%); pointer-events: none; }
-    .nf-inner { position: relative; max-width: 40rem; }
-    .nf h1 { font-size: clamp(2.4rem, 7vw, 5rem); letter-spacing: -0.04em; line-height: 0.98; margin: 1rem 0 1.25rem; }
-    .nf h1 em { font-style: normal; color: var(--accent); }
-    .nf p { color: var(--muted); font-size: 1.1rem; margin-bottom: 2rem; }
-    .nf-row { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .nf { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 2rem 16px; }
+    .nf .panel { width: 100%; max-width: 640px; }
+    .nf .panel-body { padding: 1.75rem; }
+    .nf-code { font: 500 13px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
+    .nf h1 { margin: 1rem 0 0.9rem; font: 500 clamp(30px, 6vw, 44px)/1.08 var(--mono); letter-spacing: -0.05em; }
+    .nf h1 em { white-space: nowrap; }
+    .nf p { color: var(--text-2); margin-bottom: 1.5rem; }
+    .nf-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
   </style>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
   <main class="nf">
-    <div class="nf-inner">
-      <span class="mono">Error 404</span>
-      <h1>This page hit its <em>stop-loss</em>.</h1>
-      <p>The link may be outdated or mistyped. Everything on the portfolio is one page away.</p>
-      <div class="nf-row">
-        <a class="btn btn-primary" href="/">Back to the portfolio
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
-        <a class="btn" href="/#projects">Selected work</a>
-        <a class="btn" href="/dashboard/index.html">Interactive dashboard</a>
+    <div class="panel">
+      <div class="panel-bar"><span class="fn">ERR</span><span class="pt">Security not found</span><span class="pm">404</span></div>
+      <div class="panel-body">
+        <span class="nf-code">Error 404</span>
+        <h1>This page hit its <em>stop-loss</em>.</h1>
+        <p>The link may be outdated or mistyped. Everything on the portfolio is one page away.</p>
+        <div class="nf-row">
+          <a class="btn btn-go" href="/">Back to the portfolio</a>
+          <a class="btn" href="/#projects">Research</a>
+          <a class="btn" href="/dashboard/index.html">Interactive dashboard</a>
+        </div>
       </div>
     </div>
   </main>

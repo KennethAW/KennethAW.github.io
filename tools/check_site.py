@@ -22,7 +22,6 @@ REQUIRED = [
     "assets/fonts/fonts.css", "assets/fonts/geist-latin.woff2",
     "dashboard/index.html", "dashboard/data/baselines.json",
     "dashboard/assets/fonts/fonts.css",
-    "assets/vendor/anime-4.5.0.umd.min.js", "assets/vendor/lenis-1.3.26.min.js",
 ]
 
 failures = []
@@ -66,10 +65,10 @@ for page in PAGES:
     if "fonts.googleapis.com" in html or "fonts.gstatic.com" in html:
         fail(f"{page}: links a Google Fonts stylesheet; fonts are meant to be self-hosted")
 
-    # Scripts and styles are vendored, so nothing on the page should reach a CDN
+    # Scripts and styles are self-hosted, so nothing on the page should reach a CDN
     for host in ("cdnjs.cloudflare.com", "cdn.jsdelivr.net", "unpkg.com"):
         if host in html:
-            fail(f"{page}: loads from {host}; vendor it into assets/vendor instead")
+            fail(f"{page}: loads from {host}; self-host it instead")
 
     # Scripts must not block the parser
     for tag in re.findall(r"<script[^>]*src=[^>]*>", html):

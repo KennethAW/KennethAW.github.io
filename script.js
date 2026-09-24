@@ -1,8 +1,8 @@
 // Kenneth Anthony Wijaya - portfolio
-// Motion and interaction layer. Lenis handles smooth scrolling, anime.js v4
-// handles the intro, scroll-synced spine, reveals, counters, and parallax.
-// Every feature checks for its library and for prefers-reduced-motion, so the
-// page still works as plain HTML if a CDN is blocked.
+// Interaction layer. No libraries: the terminal look needs snappy, not smooth,
+// so everything here is plain DOM, CSS transitions and IntersectionObserver.
+// Every figure and sentence is already in the HTML; if this file fails to load
+// the page is complete and readable, it just stops moving.
 
 (function () {
   "use strict";
@@ -11,38 +11,10 @@
   doc.classList.add("js");
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var hasAnime = typeof window.anime !== "undefined";
-  var hasLenis = typeof window.Lenis !== "undefined";
 
-  /* ---------- Smooth scrolling ---------- */
-  var lenis = null;
-  if (hasLenis && !reduceMotion) {
-    lenis = new window.Lenis({ autoRaf: true, lerp: 0.09, smoothWheel: true });
-    /* Scroll velocity, normalised and clamped, published as --vel. The section
-       numerals lag behind it, which is what makes a page feel like it has
-       weight rather than teleporting. Lenis already smooths velocity and emits
-       once per frame, so there is nothing to throttle; it settles back to 0 on
-       its own when the scroll stops. Behind !reduceMotion with Lenis itself. */
-    var docEl = document.documentElement;
-    lenis.on("scroll", function (e) {
-      var v = (e && typeof e.velocity === "number") ? e.velocity : 0;
-      docEl.style.setProperty("--vel", Math.max(-1, Math.min(1, v / 28)).toFixed(3));
-    });
-  }
-
-  function scrollToTarget(target, offset) {
-    if (target === 0) {
-      if (lenis) lenis.scrollTo(0, { duration: 1.2 });
-      else window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-      return;
-    }
-    if (!target) return;
-    if (lenis) {
-      lenis.scrollTo(target, { offset: typeof offset === "number" ? offset : -20, duration: 1.4 });
-    } else {
-      target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-    }
+  function scrollToTarget(target) {
+    if (target === 0) { window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }); return; }
+    if (target) target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
   /* ---------- Anchor links ----------
@@ -56,33 +28,68 @@
     target.focus({ preventScroll: true });
   }
 
+  function goTo(id) {
+    var target = document.querySelector(id);
+    if (!target) return;
+    closeMenu();
+    if (id === "#top") scrollToTarget(0); else scrollToTarget(target);
+    history.replaceState(null, "", id);
+    setTimeout(function () { focusTarget(target); }, reduceMotion ? 0 : 600);
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     if (a.hasAttribute("data-no-smooth")) return;
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
-      if (id.length < 2) return;
-      var target = document.querySelector(id);
-      if (!target) return;
+      if (id.length < 2 || !document.querySelector(id)) return;
       e.preventDefault();
-      closeMenu();
-      if (id === "#top") scrollToTarget(0); else scrollToTarget(target);
-      history.replaceState(null, "", id);
-      setTimeout(function () { focusTarget(target); }, reduceMotion ? 0 : 700);
+      goTo(id);
     });
   });
+
+  /* ---------- Theme ----------
+     Dark is the default. The choice is remembered per browser; the inline
+     script in <head> applies it before first paint. */
+  var themeBtn = document.querySelector(".theme-toggle");
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  function currentTheme() { return doc.getAttribute("data-theme") === "light" ? "light" : "dark"; }
+  function syncThemeUi() {
+    var light = currentTheme() === "light";
+    if (themeBtn) themeBtn.setAttribute("aria-label", light ? "Switch to the dark theme" : "Switch to the light theme");
+    if (themeMeta) themeMeta.setAttribute("content", light ? "#f2efe8" : "#0b0e13");
+  }
+  function setTheme(next) {
+    doc.setAttribute("data-theme", next);
+    try { localStorage.setItem("kw-theme", next); } catch (e) { /* private mode: still switches */ }
+    syncThemeUi();
+  }
+  function toggleTheme() { setTheme(currentTheme() === "light" ? "dark" : "light"); }
+  if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
+  syncThemeUi();
+
+  /* ---------- Ticker ----------
+     Moving content that runs for more than five seconds must be pausable
+     (WCAG 2.2.2). Hover pauses it too, in CSS. */
+  var ticker = document.querySelector(".ticker");
+  var tickerBtn = document.querySelector(".ticker-toggle");
+  if (ticker && tickerBtn) {
+    tickerBtn.addEventListener("click", function () {
+      var paused = !ticker.classList.contains("is-paused");
+      ticker.classList.toggle("is-paused", paused);
+      tickerBtn.setAttribute("aria-pressed", paused ? "true" : "false");
+      tickerBtn.setAttribute("aria-label", paused ? "Play the ticker" : "Pause the ticker");
+    });
+  }
 
   /* ---------- Mobile menu ---------- */
   var toggle = document.querySelector(".nav-toggle");
   var menu = document.getElementById("menu");
-  var nav = document.querySelector(".nav");
+  var top = document.querySelector(".top");
 
   /* The open menu is an opaque panel over the whole screen, but the page
-     underneath stays in the tab order. Tabbing past the last menu link used to
-     land on the hero's buttons, which are completely hidden behind it: focus
-     vanished with no visible indicator, and a screen reader could wander into
-     content the visitor could not see. inert removes them from both the tab
-     order and the accessibility tree. The brand and the toggle sit above the
-     panel and stay reachable, so there is always a way back out. */
+     underneath stays in the tab order. inert removes it from both the tab
+     order and the accessibility tree. The header sits above the panel and
+     stays reachable, so there is always a way back out. */
   var behindMenu = [document.getElementById("main"), document.querySelector("footer"),
                     document.querySelector(".to-top"), document.querySelector(".skip-link")];
   function hideBehindMenu(hidden) {
@@ -94,7 +101,7 @@
     menu.classList.remove("open");
     toggle.setAttribute("aria-expanded", "false");
     hideBehindMenu(false);
-    if (lenis) lenis.start();
+    document.body.style.overflow = "";
   }
   if (toggle && menu) {
     toggle.addEventListener("click", function () {
@@ -102,27 +109,20 @@
       menu.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
       hideBehindMenu(open);
-      if (lenis) { open ? lenis.stop() : lenis.start(); }
+      document.body.style.overflow = open ? "hidden" : "";
       if (open) {
-        nav.classList.remove("is-hidden");
-        if (hasAnime && !reduceMotion) {
-          window.anime.animate(menu.querySelectorAll("a"), {
-            opacity: [0, 1], y: [18, 0], delay: window.anime.stagger(50), duration: 600, ease: "outExpo"
-          });
-        }
+        top.classList.remove("is-hidden");
         setTimeout(function () { var first = menu.querySelector("a"); if (first) first.focus(); }, 60);
       }
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && menu.classList.contains("open")) { closeMenu(); toggle.focus(); }
     });
-    /* Above 820px the full navigation takes over and the toggle is hidden, so a
-       tablet rotated from portrait to landscape with the menu open was left
-       with both navigations on screen, the page behind still inert, and no
-       toggle to close the panel with. Close it when the breakpoint is crossed;
-       the full nav is right there. */
+    /* Above the breakpoint the full navigation takes over and the toggle is
+       hidden, so a tablet rotated with the menu open would be left with the
+       page inert and no toggle to close the panel with. */
     if (window.matchMedia) {
-      var wide = window.matchMedia("(min-width: 821px)");
+      var wide = window.matchMedia("(min-width: 961px)");
       var onWide = function (e) { if (e.matches) closeMenu(); };
       if (wide.addEventListener) wide.addEventListener("change", onWide);
       else if (wide.addListener) wide.addListener(onWide);
@@ -153,9 +153,9 @@
   });
 
   /* ---------- Interactive dashboard embed ---------- */
-  (function () {
+  var launchDashboard = (function () {
     var win = document.getElementById("dash-window");
-    if (!win) return;
+    if (!win) return function () {};
     var media = win.querySelector(".window-media");
     var frame = win.querySelector(".window-frame");
     var tools = win.querySelector(".window-tools");
@@ -180,10 +180,8 @@
 
     /* A subframe that an extension or a proxy blocks, or that 404s, still fires
        load - with the browser's error page or the site's own 404 inside it -
-       and never fires error. The load event alone is therefore not evidence
-       that the dashboard is there, and the panel used to announce "Live" over
-       a blank grey box. The frame is same-origin, so look inside: the real
-       document has #root, an error page has nothing readable at all. */
+       and never fires error. The frame is same-origin, so look inside: the
+       real document has #root, an error page has nothing readable at all. */
     function frameHasDashboard() {
       var iframe = frame.querySelector("iframe");
       try {
@@ -194,11 +192,8 @@
     }
 
     function open() {
-      /* The dashboard is built for wide screens, and width alone did not catch a
-         phone held sideways: 844x390 is past the width gate, but 78vh of 390 is a
-         304px frame, and the dashboard's own header ends 170px in with a 310px
-         chart below it. The chart - the entire point of embedding it - is left as
-         a sliver. Check both dimensions. */
+      // Check both dimensions: a phone held sideways is wide enough but far
+      // too short for the dashboard's first chart.
       if (window.innerWidth < MIN_WIDTH || window.innerHeight < MIN_HEIGHT) {
         window.open(src, "_blank", "noopener");
         return;
@@ -213,10 +208,8 @@
           clearTimeout(timer);
           if (loading) loading.classList.remove("on");
           if (!frameHasDashboard()) { fail(); return; }
-          // Tabbing past the panel edge takes you into the dashboard, and a key
-          // pressed in there is delivered to its document, not this one, so the
-          // Escape below never fired and the only way back out was to tab
-          // through the whole app. The frame is same-origin: listen in it too.
+          // A key pressed inside the frame is delivered to its document, not
+          // this one. The frame is same-origin: listen for Escape in it too.
           try {
             iframe.contentDocument.addEventListener("keydown", onKeydown);
           } catch (e) { /* a frame we cannot reach into is already an error */ }
@@ -233,7 +226,7 @@
       if (existing && !frameHasDashboard()) fail();
       if (launch) launch.setAttribute("aria-expanded", "true");
       setTimeout(function () {
-        scrollToTarget(win, -88);
+        scrollToTarget(win);
         // Put keyboard users inside the panel they just opened
         frame.setAttribute("tabindex", "-1");
         frame.focus({ preventScroll: true });
@@ -260,6 +253,110 @@
     if (launch) launch.addEventListener("click", open);
     if (close) close.addEventListener("click", shut);
     document.addEventListener("keydown", onKeydown);
+    return open;
+  })();
+
+  /* ---------- Command line ----------
+     Type a section name and press Enter. It is a shortcut, never the only way
+     to reach anything: every command maps to a link that is already on the
+     page. Ctrl/Cmd+K focuses it; a modified shortcut cannot fire by accident
+     while someone is typing (WCAG 2.1.4). */
+  (function () {
+    var form = document.getElementById("cmd");
+    if (!form) return;
+    var input = document.getElementById("cmd-input");
+    var out = document.getElementById("cmd-out");
+    var items = Array.prototype.slice.call(form.querySelectorAll("[data-cmd]"));
+    form.hidden = false;
+
+    var commands = {
+      ABOUT: "#about", BIO: "#about",
+      EXP: "#experience", EXPERIENCE: "#experience", DEALS: "#experience", WORK: "#experience",
+      LEAD: "#leadership", LEADERSHIP: "#leadership",
+      RSCH: "#projects", RESEARCH: "#projects", FYP: "#projects", PROJECTS: "#projects",
+      EDU: "#education", EDUCATION: "#education",
+      SKILLS: "#skills", TOOLS: "#skills",
+      MSG: "#contact", CONTACT: "#contact", EMAIL: "#contact",
+      TOP: "#top", HOME: "#top"
+    };
+
+    function say(text, isError) {
+      out.textContent = text;
+      out.classList.toggle("err", !!isError);
+    }
+    function openPop() { form.classList.add("is-open"); }
+    function closePop() { form.classList.remove("is-open"); say(""); }
+
+    function run(raw) {
+      var q = String(raw || "").trim().toUpperCase().replace(/\s*<?GO>?$/, "").replace(/\s+/g, "");
+      if (!q) { openPop(); return; }
+      if (q === "HELP" || q === "?") { say("Pick a command below, or type one and press Enter."); openPop(); return; }
+      if (q === "CV" || q === "RESUME") {
+        window.open("assets/Kenneth_Wijaya_Resume.pdf", "_blank", "noopener");
+        finish(); return;
+      }
+      if (q === "THEME" || q === "LIGHT" || q === "DARK") {
+        setTheme(q === "THEME" ? (currentTheme() === "light" ? "dark" : "light") : q.toLowerCase());
+        say("Theme set to " + currentTheme() + ".");
+        input.value = "";
+        return;
+      }
+      if (q === "DASH" || q === "DASHBOARD") {
+        finish();
+        var win = document.getElementById("dash-window");
+        scrollToTarget(win);
+        setTimeout(launchDashboard, reduceMotion ? 0 : 500);
+        return;
+      }
+      if (commands[q]) { finish(); goTo(commands[q]); return; }
+      // Unique prefix: "EDU" works, so should "ED"
+      var keys = Object.keys(commands).filter(function (k) { return k.indexOf(q) === 0; });
+      var targets = keys.map(function (k) { return commands[k]; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+      if (targets.length === 1) { finish(); goTo(targets[0]); return; }
+      say("Unknown command “" + q + "”. Type HELP for the list.", true);
+      openPop();
+    }
+    function finish() { input.value = ""; filter(""); closePop(); input.blur(); }
+
+    function filter(v) {
+      var q = v.trim().toUpperCase();
+      items.forEach(function (b) {
+        var hit = !q || b.getAttribute("data-cmd").indexOf(q) === 0;
+        b.parentNode.hidden = !hit;
+        b.classList.remove("hit");
+      });
+      var first = items.filter(function (b) { return !b.parentNode.hidden; })[0];
+      if (q && first) first.classList.add("hit");
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = input.value;
+      // Enter on a partial match runs the highlighted command
+      var hit = form.querySelector(".cmd-list .hit");
+      if (hit && !commands[v.trim().toUpperCase()]) v = hit.getAttribute("data-cmd");
+      run(v);
+    });
+    input.addEventListener("focus", openPop);
+    input.addEventListener("input", function () { say(""); filter(input.value); openPop(); });
+    items.forEach(function (b) {
+      b.addEventListener("click", function () { run(b.getAttribute("data-cmd")); });
+    });
+    form.addEventListener("focusout", function () {
+      setTimeout(function () { if (!form.contains(document.activeElement)) closePop(); }, 0);
+    });
+    form.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { closePop(); input.blur(); }
+    });
+    document.addEventListener("click", function (e) { if (!form.contains(e.target)) closePop(); });
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+        if (getComputedStyle(form).display === "none") return;
+        e.preventDefault();
+        input.focus();
+        input.select();
+      }
+    });
   })();
 
   /* ---------- Gallery arrows ---------- */
@@ -271,7 +368,7 @@
 
     function step() {
       var fig = track.querySelector("figure");
-      return fig ? fig.getBoundingClientRect().width + 16 : 400;
+      return fig ? fig.getBoundingClientRect().width + 12 : 400;
     }
 
     // Dim the arrows at the ends, and hide them when nothing can scroll
@@ -294,7 +391,7 @@
     sync();
   });
 
-  /* ---------- Scroll: progress bar, nav hide/show, back-to-top ---------- */
+  /* ---------- Scroll: progress bar, header hide/show, back-to-top ---------- */
   var ticking = false, lastY = window.scrollY;
   var toTop = document.querySelector(".to-top");
   function handleScroll() {
@@ -302,9 +399,10 @@
     var max = doc.scrollHeight - window.innerHeight;
     var p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
     doc.style.setProperty("--p", p.toFixed(4));
-    if (nav && !(menu && menu.classList.contains("open"))) {
-      if (y > 140 && y > lastY + 6) nav.classList.add("is-hidden");
-      else if (y < lastY - 6 || y <= 140) nav.classList.remove("is-hidden");
+    var cmdOpen = document.getElementById("cmd") && document.getElementById("cmd").classList.contains("is-open");
+    if (top && !(menu && menu.classList.contains("open")) && !cmdOpen) {
+      if (y > 160 && y > lastY + 6) top.classList.add("is-hidden");
+      else if (y < lastY - 6 || y <= 160) top.classList.remove("is-hidden");
     }
     if (toTop) toTop.classList.toggle("show", y > 700);
     lastY = y;
@@ -314,24 +412,17 @@
     if (!ticking) { ticking = true; requestAnimationFrame(handleScroll); }
   }, { passive: true });
   handleScroll();
-  if (toTop) toTop.addEventListener("click", function () { scrollToTarget(0); });
+  if (toTop) toTop.addEventListener("click", function () {
+    scrollToTarget(0);
+    setTimeout(function () { focusTarget(document.getElementById("top")); }, reduceMotion ? 0 : 600);
+  });
+  // A header that slid away must come back when focus moves into it
+  if (top) top.addEventListener("focusin", function () { top.classList.remove("is-hidden"); });
 
-  /* ---------- Active section: nav links, sliding indicator, spine nodes ---------- */
+  /* ---------- Active section in the nav ---------- */
   var navAnchors = Array.prototype.slice.call(document.querySelectorAll(".nav-links a[href^='#']"));
-  var navInner = document.querySelector(".nav-inner");
-  var indicator = document.querySelector(".nav-indicator");
-  var sections = Array.prototype.slice.call(document.querySelectorAll("main section[id]"));
-
-  function moveIndicator() {
-    if (!indicator || !navInner) return;
-    var active = document.querySelector(".nav-links a.active");
-    if (!active || window.innerWidth <= 820) { indicator.style.opacity = "0"; return; }
-    var r = active.getBoundingClientRect(), n = navInner.getBoundingClientRect();
-    indicator.style.left = (r.left - n.left) + "px";
-    indicator.style.width = r.width + "px";
-    indicator.style.opacity = "1";
-  }
-
+  var sections = Array.prototype.slice.call(document.querySelectorAll("main section[id]"))
+    .filter(function (s) { return navAnchors.some(function (a) { return a.getAttribute("href") === "#" + s.id; }) || s.id === "top"; });
   if ("IntersectionObserver" in window && sections.length) {
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -342,255 +433,109 @@
           a.classList.toggle("active", on);
           if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
         });
-        var node = entry.target.querySelector(".sec-node");
-        if (node) node.classList.add("on");
-        // The ambient field reads this to shift its weather per section
-        document.body.setAttribute("data-sec", entry.target.id);
-        moveIndicator();
       });
     }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
     sections.forEach(function (s) { spy.observe(s); });
   }
-  window.addEventListener("resize", moveIndicator);
 
-  /* ---------- Clock (London) and footer year ---------- */
-  var clock = document.getElementById("clock");
-  if (clock && window.Intl && Intl.DateTimeFormat) {
-    var fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
-    var tick = function () { clock.textContent = fmt.format(new Date()); };
+  /* ---------- Clocks and footer year ---------- */
+  var clocks = Array.prototype.slice.call(document.querySelectorAll("[data-tz]"));
+  var london = document.getElementById("clock");
+  if (window.Intl && Intl.DateTimeFormat) {
+    var fmts = clocks.map(function (el) {
+      try {
+        return new Intl.DateTimeFormat("en-GB", { timeZone: el.getAttribute("data-tz"), hour: "2-digit", minute: "2-digit" });
+      } catch (e) { return null; }
+    });
+    var londonFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
+    var tick = function () {
+      var now = new Date();
+      clocks.forEach(function (el, i) { if (fmts[i]) el.textContent = fmts[i].format(now); });
+      if (london) london.textContent = londonFmt.format(now);
+    };
     tick();
-    setInterval(tick, 30000);
+    setInterval(tick, 20000);
   }
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  /* ---------- Pointer-driven micro-interactions (desktop only) ---------- */
-  if (finePointer && !reduceMotion) {
-    document.querySelectorAll(".btn, .icon-btn, .to-top").forEach(function (el) {
-      el.addEventListener("mousemove", function (e) {
-        var r = el.getBoundingClientRect();
-        var dx = (e.clientX - (r.left + r.width / 2)) * 0.22;
-        var dy = (e.clientY - (r.top + r.height / 2)) * 0.22;
-        el.style.setProperty("--mx", Math.max(-8, Math.min(8, dx)).toFixed(1) + "px");
-        el.style.setProperty("--my", Math.max(-8, Math.min(8, dy)).toFixed(1) + "px");
-      });
-      el.addEventListener("mouseleave", function () {
-        el.style.setProperty("--mx", "0px");
-        el.style.setProperty("--my", "0px");
-      });
-    });
-
-    document.querySelectorAll(".spot").forEach(function (el) {
-      el.addEventListener("mousemove", function (e) {
-        var r = el.getBoundingClientRect();
-        el.style.setProperty("--x", (e.clientX - r.left) + "px");
-        el.style.setProperty("--y", (e.clientY - r.top) + "px");
-      });
-    });
-
-    var hero = document.querySelector(".hero");
-    if (hero) {
-      var pending = false, px = 0, py = 0;
-      window.addEventListener("mousemove", function (e) {
-        if (window.scrollY > window.innerHeight) return;
-        px = (e.clientX / window.innerWidth - 0.5) * 2;
-        py = (e.clientY / window.innerHeight - 0.5) * 2;
-        if (!pending) {
-          pending = true;
-          requestAnimationFrame(function () {
-            hero.style.setProperty("--px", px.toFixed(3));
-            hero.style.setProperty("--py", py.toFixed(3));
-            pending = false;
-          });
-        }
-      }, { passive: true });
-    }
+  /* ---------- Printing ----------
+     A collapsed blotter row would print as a bare heading. Open every row for
+     the print and put them back afterwards. */
+  var closedForPrint = [];
+  function openForPrint() {
+    if (closedForPrint.length) return;
+    closedForPrint = Array.prototype.slice.call(document.querySelectorAll("details:not([open])"));
+    closedForPrint.forEach(function (d) { d.open = true; });
+  }
+  function restoreAfterPrint() {
+    closedForPrint.forEach(function (d) { d.open = false; });
+    closedForPrint = [];
+  }
+  window.addEventListener("beforeprint", openForPrint);
+  window.addEventListener("afterprint", restoreAfterPrint);
+  // Safari, and Chrome's own print-to-PDF, fire only the media query
+  if (window.matchMedia) {
+    var printRows = window.matchMedia("print");
+    var onPrintRows = function (e) { if (e.matches) openForPrint(); else restoreAfterPrint(); };
+    if (printRows.addEventListener) printRows.addEventListener("change", onPrintRows);
+    else if (printRows.addListener) printRows.addListener(onPrintRows);
   }
 
-  /* ---------- Hero price path (drawn with or without anime.js) ---------- */
-  function buildHeroPath() {
-    var line = document.getElementById("heroLine");
-    var area = document.getElementById("heroArea");
-    if (!line) return null;
-    var seed = 20260906;
-    function rnd() { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
-    var n = 90, w = 1000, y = 238, pts = [];
-    for (var i = 0; i <= n; i++) {
-      var x = (i / n) * w;
-      var drift = -1.6;
-      var noise = (rnd() - 0.5) * 26;
-      y = Math.max(46, Math.min(282, y + drift + noise));
-      pts.push([x.toFixed(1), y.toFixed(1)]);
-    }
-    var d = "M" + pts.map(function (p) { return p[0] + " " + p[1]; }).join(" L");
-    line.setAttribute("d", d);
-    if (area) area.setAttribute("d", d + " L" + w + " 300 L0 300 Z");
-    return { line: line, area: area };
-  }
-  var heroPath = buildHeroPath();
-
-  /* ---------- Everything below needs anime.js and motion allowed ---------- */
-  if (!hasAnime || reduceMotion) {
-    if (heroPath && heroPath.area) heroPath.area.setAttribute("opacity", "1");
-    document.querySelectorAll(".spine-fill").forEach(function (el) { el.style.transform = "none"; });
+  /* ---------- Everything below is motion ---------- */
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    document.querySelectorAll("[data-reveal]").forEach(function (el) { el.classList.add("in"); });
     return;
   }
 
-  var anime = window.anime;
-  var animate = anime.animate, createTimeline = anime.createTimeline, stagger = anime.stagger,
-      onScroll = anime.onScroll, utils = anime.utils, svg = anime.svg;
-
-  /* Intro timeline */
-  var intro = createTimeline({ defaults: { ease: "outExpo", duration: 1100 } });
-  utils.set(".hero-title .line-inner", { y: "110%" });
-  utils.set([".hero-rail-top", ".hero-name", ".hero-lede", ".hero-actions", ".hero-links", ".hero-cue"], { opacity: 0, y: 16 });
-  utils.set(".hero-grid", { opacity: 0 });
-
-  intro
-    .add(".hero-grid", { opacity: [0, 0.55], duration: 1800, ease: "outQuad" }, 0)
-    .add(".hero-rail-top", { opacity: 1, y: 0 }, 100)
-    .add(".hero-name", { opacity: 1, y: 0 }, 220)
-    .add(".hero-title .line-inner", { y: ["110%", "0%"], delay: stagger(120), duration: 1300 }, 300)
-    .add(".hero-lede", { opacity: 1, y: 0 }, 800)
-    .add(".hero-actions", { opacity: 1, y: 0 }, 950)
-    .add(".hero-links", { opacity: 1, y: 0 }, 1050)
-    .add(".hero-cue", { opacity: 1, y: 0 }, 1300);
-
-  if (heroPath) {
-    intro.add(svg.createDrawable("#heroLine"), { draw: ["0 0", "0 1"], duration: 2600, ease: "inOutQuad" }, 500);
-    if (heroPath.area) intro.add("#heroArea", { opacity: [0, 1], duration: 1400, ease: "outQuad" }, 1900);
-  }
-
-  /* Hero content recedes as you scroll away from it */
-  var heroInner = document.querySelector(".hero-inner");
-  if (heroInner) {
-    animate(heroInner, {
-      y: [0, -70],
-      opacity: [1, 0.1],
-      ease: "linear",
-      autoplay: onScroll({ target: ".hero", enter: "top top", leave: "top bottom", sync: true })
-    });
-  }
-
-  /* Spine fill synced to scroll through the thread */
-  var thread = document.querySelector(".thread");
-  if (thread) {
-    animate(".spine-fill", {
-      scaleY: [0, 1],
-      ease: "linear",
-      autoplay: onScroll({ target: thread, enter: "center top", leave: "bottom-=40 bottom", sync: true })
-    });
-  }
-
-  /* Section headings: split into words and letters, then rise in with a stagger */
-  function splitChars(el) {
-    el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
-    function walk(node) {
-      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
-        if (child.nodeType === 3) {
-          var frag = document.createDocumentFragment();
-          child.textContent.split(/(\s+)/).forEach(function (part) {
-            if (!part) return;
-            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
-            var wd = document.createElement("span");
-            wd.className = "wd";
-            part.split("").forEach(function (c) {
-              var s = document.createElement("span");
-              s.className = "ch";
-              s.textContent = c;
-              s.setAttribute("aria-hidden", "true");
-              wd.appendChild(s);
-            });
-            frag.appendChild(wd);
-          });
-          node.replaceChild(frag, child);
-        } else if (child.nodeType === 1) {
-          walk(child);
-        }
-      });
-    }
-    walk(el);
-    return el.querySelectorAll(".ch");
-  }
-  /* Section headings are sticky, so their box stops moving with the scroll
-     while the page keeps going. onScroll thresholds read that as entering and
-     leaving over and over, and the character stagger was left frozen part way
-     through: measured after a normal scroll of the whole page, about had 19 of
-     35 characters under full opacity, experience 22 of 36, and jumping
-     straight to a section left its heading at opacity 0 while on screen. The
-     largest type on the page never finished arriving.
-
-     An IntersectionObserver does not care that the element is sticky, fires
-     for something already on screen the moment it is observed, and is
-     disconnected after the one reveal it owes. */
-  document.querySelectorAll(".sec h2").forEach(function (h2) {
-    var chars = splitChars(h2);
-    if (!chars.length) return;
-    utils.set(chars, { opacity: 0, y: 18 });
-    var played = false;
-    function reveal() {
-      if (played) return;
-      played = true;
-      animate(chars, { opacity: 1, y: 0, duration: 900, ease: "outExpo", delay: stagger(14) });
-    }
-    if ("IntersectionObserver" in window) {
-      var io = new IntersectionObserver(function (entries) {
-        for (var i = 0; i < entries.length; i++) {
-          if (entries[i].isIntersecting) { reveal(); io.disconnect(); return; }
-        }
-      }, { threshold: 0.01 });
-      io.observe(h2);
-    } else {
-      reveal();
-    }
-  });
-
   /* Reveal groups */
-  document.querySelectorAll("[data-reveal]").forEach(function (el) {
-    var targets = el.hasAttribute("data-stagger") ? Array.prototype.slice.call(el.children) : [el];
-    if (!targets.length) return;
-    utils.set(targets, { opacity: 0, y: 24 });
-    animate(targets, {
-      opacity: 1,
-      y: 0,
-      duration: 1100,
-      ease: "outExpo",
-      delay: stagger(70),
-      autoplay: onScroll({ target: el, enter: "bottom-=60 top", repeat: false })
+  var revealer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("in");
+      revealer.unobserve(entry.target);
     });
-  });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+  document.querySelectorAll("[data-reveal]").forEach(function (el) { revealer.observe(el); });
 
   /* Counters */
   var snapCounters = [];
-  // Once the figures have been snapped for a print they stay snapped. Switching
-  // to print media relays the page out, which makes the scroll observer below
-  // start the count-up, and every frame of it overwrote the real figure that
-  // had just been put back.
+  // Once the figures have been snapped for a print they stay snapped: the
+  // relayout for print media can start a count-up that would overwrite them.
   var countersSnapped = false;
+  var counterIo = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      counterIo.unobserve(entry.target);
+      entry.target._count();
+    });
+  }, { threshold: 0.2 });
   document.querySelectorAll("[data-count]").forEach(function (el) {
     var target = parseFloat(el.getAttribute("data-count"));
     var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
-    var state = { v: 0 };
     // The real figure ships in the HTML so it survives without JS. Reset it to
     // zero only now that we know we can actually count it up.
-    el.textContent = state.v.toFixed(decimals);
+    el.textContent = (0).toFixed(decimals);
     snapCounters.push(function () { el.textContent = target.toFixed(decimals); });
-    animate(state, {
-      v: target,
-      duration: 1800,
-      ease: "outExpo",
-      onUpdate: function () { if (!countersSnapped) el.textContent = state.v.toFixed(decimals); },
-      autoplay: onScroll({ target: el, enter: "bottom-=40 top", repeat: false })
-    });
+    el._count = function () {
+      var start = null, dur = 1400;
+      function frame(t) {
+        if (countersSnapped) return;
+        if (start === null) start = t;
+        var k = Math.min(1, (t - start) / dur);
+        var eased = 1 - Math.pow(1 - k, 4);
+        el.textContent = (target * eased).toFixed(decimals);
+        if (k < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    };
+    counterIo.observe(el);
   });
 
-  /* Printing captures whatever is on screen at that moment, and these counters
-     spend most of their life showing something other than the truth: zero until
-     they are scrolled into view, and a partial figure while they count up. A
-     visitor who loads the page and prints it without scrolling was getting a
-     CGPA of 0.00 out of 5.00; one who printed during the animation got 2.66.
-     Put the real figures back before the snapshot is taken. beforeprint covers
-     Chrome, Firefox and Edge; the print media query covers Safari. */
+  /* Printing captures whatever is on screen, and a counter spends part of its
+     life showing something other than the truth. Put the real figures back
+     before the snapshot. beforeprint covers Chrome, Firefox and Edge; the
+     print media query covers Safari. */
   function snapCountersToFinal() {
     countersSnapped = true;
     snapCounters.forEach(function (snap) { snap(); });
@@ -602,23 +547,4 @@
     if (printMq.addEventListener) printMq.addEventListener("change", onPrintMq);
     else if (printMq.addListener) printMq.addListener(onPrintMq);
   }
-
-  /* Parallax on the featured screenshot */
-  var parallax = document.querySelector(".parallax");
-  if (parallax) {
-    animate(parallax, {
-      y: ["0%", "-14%"],
-      ease: "linear",
-      autoplay: onScroll({ target: parallax.parentElement, enter: "bottom top", leave: "top bottom", sync: true })
-    });
-  }
-
-  /* Section index ticks in with the heading */
-  document.querySelectorAll(".sec-index").forEach(function (el) {
-    utils.set(el, { opacity: 0, x: -10 });
-    animate(el, {
-      opacity: 1, x: 0, duration: 900, ease: "outExpo",
-      autoplay: onScroll({ target: el, enter: "bottom-=80 top", repeat: false })
-    });
-  });
 })();

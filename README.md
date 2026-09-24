@@ -1,7 +1,8 @@
 # Kenneth Anthony Wijaya — Personal Website
 
-A single-page portfolio. Plain HTML, CSS and JavaScript with a small motion
-layer. No build step, no framework, no third-party requests at runtime.
+A single-page portfolio, designed as a personal market terminal. Plain HTML,
+CSS and JavaScript. No build step, no framework, no libraries, no third-party
+requests at runtime.
 
 **Live at <https://kennethaw.github.io>.** Every push to `main` redeploys it.
 
@@ -10,23 +11,23 @@ layer. No build step, no framework, no third-party requests at runtime.
 | Path | What it is |
 |---|---|
 | `index.html` | The whole page |
-| `styles.css` | The design system and every layout rule |
-| `script.js` | Motion and interaction: smooth scroll, hero intro, scroll-synced spine, reveals, counters, gallery, mobile menu, dashboard embed |
+| `styles.css` | The design system, both themes and every layout rule |
+| `script.js` | Interaction: command line, theme toggle, ticker pause, clocks, reveals, counters, gallery, mobile menu, dashboard embed |
 | `404.html` | Styled not-found page |
 | `assets/` | Resume PDF, gallery images, project PDFs, social preview image |
 | `assets/fonts/` | Self-hosted woff2 subsets plus metric-matched fallbacks |
-| `assets/vendor/` | anime.js 4.5.0 and Lenis 1.3.26, vendored (both MIT) |
-| `dashboard/` | The Alpha Analytics dashboard from the final-year project, built as static files and embedded in the Work section |
+| `dashboard/` | The Alpha Analytics dashboard from the final-year project, built as static files and embedded in the Research section |
 | `tools/` | Build and check scripts (see below) |
 | `robots.txt`, `sitemap.xml` | Search engine basics |
 
 ## Preview locally
 
 ```bash
-python -m http.server 5500
+python tools/serve.py 5500
 ```
 
-Then open <http://localhost:5500>.
+Then open <http://localhost:5500>. `python -m http.server 5500` works too, but
+it serves one file at a time and does not compress, so do not measure with it.
 
 ## Checks
 
@@ -42,51 +43,83 @@ python tools/check_site.py
 ```
 
 `tools/verify_site.py` drives a real headless Chrome and asserts behaviour:
-focus actually moves when the skip link is used, the dashboard opens and
-closes on Escape and returns focus, gallery arrows disable at the ends,
-headline figures still read correctly with the motion libraries blocked, and
+focus actually moves when the skip link or the command line is used, the
+dashboard opens and closes on Escape and returns focus, the theme toggle
+repaints and remembers, the ticker pauses, gallery arrows disable at the ends,
+headline figures still read correctly with the script blocked or while
+printing, collapsed rows open for print, the header never overlaps itself, and
 deep links clear the fixed header. It needs Chrome and `websocket-client`, so
-it is a local tool rather than a CI step.
+it is a local tool rather than a CI step. Set `CHROME_PATH` if Chrome is not
+in the default Windows location.
 
 ```bash
 pip install websocket-client
-python -m http.server 5500 &
+python tools/serve.py 5500 &
 python tools/verify_site.py
 ```
 
 ## Design notes
 
-- **Type.** Geist for text and display, Instrument Serif italic for one
-  emphasised word per heading, Geist Mono only for small labels. Body 17px.
-- **Colour.** Warm near-black, ivory text, a single gold accent for emphasis,
-  the spine and small details. Primary buttons are ivory, not gold.
-- **Structure.** Hairlines and whitespace instead of boxes. Each section has a
-  sticky heading on the left and content on the right, with a scroll-synced
-  spine and a node per section down the far left.
+- **Concept.** A personal market terminal. The page is a set of panels, each
+  with a function-code bar (`DES`, `KPI`, `BLTR`, `RSCH`...), under a ticker
+  and a command line. The figures on it are the real ones: the chart in the
+  hero and the model comparison come straight from the final-year project's
+  exported data in `dashboard/data/`.
+- **Themes.** Dark by default, with a light "day mode" behind the sun/moon
+  button. The choice is remembered per browser, and applied by a one-line
+  script in `<head>` before first paint so there is no flash. Every colour is
+  a token on `:root` and `[data-theme="light"]`; each text colour was checked
+  against every surface it sits on and passes WCAG AA in both themes. The
+  contact console stays dark in both, because it is a terminal window.
+- **Colour means something.** Amber is the accent and every action. Green is
+  a good number or a winning trade, red a bad one or a limitation, cyan a
+  link. On the skills map, colour marks the category, never a level.
+- **Type.** Geist Mono for headings, figures, labels and everything
+  terminal-like; Geist for reading text. Body 16px.
+- **Structure.** Each section opens with a numbered strip and a one-line
+  heading, then takes its own form: a profile dashboard, a bio with no panel
+  chrome, a blotter of expandable roles, a research note with charts, cards
+  for education, a colour-coded skills map, and a console for contact.
+- **Less to read.** Detail lives one click away rather than in the way: role
+  bullets are inside `<details>` rows (first one open), findings are one line
+  each, and the backtest figures are a grid of numbers rather than prose.
+- **The command line.** Type `EDU`, `RSCH`, `CV`, `DASH`, `THEME` or `HELP`
+  in the header (Ctrl/Cmd+K focuses it). It is a shortcut only: every command
+  goes somewhere the nav or a link already reaches. It is hidden below 1280px
+  and without JavaScript.
 - **Fonts.** Self-hosted latin subsets, with `@font-face` fallbacks whose
   `size-adjust` and vertical metrics were measured from the real fonts. This
-  shrinks the reflow when the real font swaps in; it does not abolish it, and
-  the claim to check is the measured one: cumulative layout shift is 0. Do not
-  re-tune `size-adjust` by eye — a plausible-looking 105.43% once moved the
+  shrinks the reflow when the real font swaps in; it does not abolish it. Do
+  not re-tune `size-adjust` by eye: a plausible-looking 105.43% once moved the
   page nearly four times as much as having no fallback at all.
-- **Motion.** Micro-interactions run 150–350ms with an ease-out curve on
-  transform and opacity only. Reduced-motion visitors get a static page.
-  Pointer effects (magnetic buttons, spotlight, hero depth) only run on
-  devices with a mouse.
+- **Motion.** Panels boot in once on load, the hero chart draws itself, and
+  sections fade up as they arrive, all in CSS with IntersectionObserver.
+  Transform and opacity only. The ticker can be paused (and pauses on hover).
+  Reduced-motion visitors get a still page and a ticker they can scroll.
 - **Degradation.** Every figure and sentence is in the HTML. If JavaScript is
-  off or the motion libraries fail to load, the page is complete and readable;
-  it just stops moving.
-- **Copy.** Written for a reader rather than pasted from the CV: a positioning
-  line in the hero, a short narrative in About, a one-line summary per role,
-  and the final-year project as a case study with question, approach, result,
-  findings and stated limitations.
+  off, the page is complete and readable, the `<details>` rows still open, and
+  only the command line (which needs script) is hidden.
 
-Measured with Lighthouse against the live site, three runs per preset:
-desktop 100 / 100 / 100 / 100; mobile performance 97 (range 97-99) with
-accessibility, best practices and SEO all 100. Cumulative layout shift 0,
-145 KB transferred. Mobile performance is scored far more harshly than
-desktop and varies by a couple of points between runs, so `tools/audit.py`
+Measured with Lighthouse against `tools/serve.py` locally, three runs per
+preset: desktop 100 / 100 / 100 / 100 and mobile 100 / 100 / 100 / 100,
+cumulative layout shift at most 0.002, 86 KB transferred. Re-measure against
+the live site after a deploy: mobile performance is scored far more harshly
+than desktop and production adds CDN time-to-first-byte, so `tools/audit.py`
 sets its floors per preset rather than demanding 100 everywhere.
+
+## The profile photo
+
+The frame in the hero's profile panel shows a `KW` monogram until there is a
+photo. To add one, save a portrait (4:5, at least 400x500) as
+`assets/photo.jpg` and replace the monogram inside `.portrait-frame` in
+`index.html` with:
+
+```html
+<img src="assets/photo.jpg" width="400" height="500" alt="Kenneth Anthony Wijaya" decoding="async">
+```
+
+Then drop `aria-hidden="true"` from the `<figure class="portrait">`, so the
+photo and its alt text are announced.
 
 ## The embedded dashboard
 
@@ -112,8 +145,8 @@ because no Finnhub API key is bundled, and the app makes one live call to
 
 ## Regenerating the social preview image
 
-`assets/og.png` is rendered from `tools/og.html`. With the local server
-running:
+`assets/og.png` is rendered from `tools/og.html`. Its chart is the same
+GOOGL series as the one on the page. With the local server running:
 
 ```bash
 chrome --headless=new --window-size=1200,630 --screenshot=assets/og.png http://localhost:5500/tools/og.html
@@ -143,5 +176,8 @@ Everything lives in `index.html`, under the section comments (`HERO`, `ABOUT`,
 - The animated statistics use `data-count` for the target and carry the real
   value as their text. Keep both in sync; `check_site.py` fails the build if
   they drift.
+- The ticker in the header repeats headline figures, and its list appears
+  twice (the second copy makes the loop seamless). Change both copies, and
+  `tools/og.html`, when a figure changes.
 - Replace `assets/Kenneth_Wijaya_Resume.pdf` whenever the resume changes.
 - Bump "Updated Sep 2026" in the footer when you make a substantive change.

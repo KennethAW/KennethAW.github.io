@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Kenneth Anthony Wijaya</title>
   <meta name="description" content="Kenneth Anthony Wijaya: MSc Risk Management and Financial Engineering at Imperial College London, First Class EEE graduate from NTU, with investment banking and quantitative research experience.">
-  <meta name="theme-color" content="#0c0b0a">
+  <meta name="theme-color" content="#0b0e13">
   <link rel="canonical" href="https://kennethaw.github.io/">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kennethaw.github.io/">
@@ -18,11 +18,14 @@
   <meta name="twitter:title" content="Kenneth Anthony Wijaya">
   <meta name="twitter:description" content="Engineering rigour, applied to markets. Investment banking experience, quant research, and an interactive analytics dashboard.">
   <meta name="twitter:image" content="https://kennethaw.github.io/assets/og.png">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f4efe6'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Geist Mono,Menlo,monospace' font-size='24' font-weight='700' fill='%230c0b0a'%3EKW%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23ffb224'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Geist Mono,Menlo,monospace' font-size='24' font-weight='700' fill='%230b0e13'%3EKW%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/instrument-serif-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- Applies a saved theme before first paint, so a visitor who chose the
+       light theme never sees a flash of the dark one. -->
+  <script>try{var t=localStorage.getItem("kw-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -46,46 +49,110 @@
 </head>
 <body>
   <a class="skip-link" href="#main" data-no-smooth>Skip to content</a>
-  <div class="progress" aria-hidden="true"></div>
-  <div class="field" aria-hidden="true"><i class="f-sheen"></i><i class="f-gold"></i><i class="f-ember"></i><i class="f-cool"></i></div>
-  <div class="grain" aria-hidden="true"></div>
 
-  <header class="nav">
-    <div class="container nav-inner">
-      <a class="brand" href="#top" title="Back to top">
-        <span class="brand-mark" aria-hidden="true">KW</span>
-        <span class="brand-name">Kenneth Wijaya</span>
-      </a>
-      <nav class="nav-primary" aria-label="Primary">
-      <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#projects">Work</a></li>
-        <li><a href="#education">Education</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#leadership">Leadership</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a class="btn" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a></li>
-      </ul>
-      <span class="nav-indicator" aria-hidden="true"></span>
-      </nav>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
+  <header class="top">
+    <!-- The ticker repeats figures that appear, with their context, further
+         down the page, so it is hidden from assistive technology. It moves, so
+         it has to be pausable (WCAG 2.2.2). -->
+    <div class="ticker">
+      <button class="ticker-toggle" type="button" aria-pressed="false" aria-label="Pause the ticker">
+        <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+        <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
       </button>
+      <div class="ticker-view" aria-hidden="true">
+        <div class="ticker-track">
+          <ul class="ticker-list">
+            <li><b>KW.CGPA</b> 4.85<i>/5.00</i><em class="up">First Class</em></li>
+            <li><b>DEANS.LIST</b> 3&times;<em class="up">Top 5%</em></li>
+            <li><b>IB.DEALS</b> 8+<em class="up">Live</em></li>
+            <li><b>XGB.DIR.ACC</b> 55.5%<em class="up">vs 50.0</em></li>
+            <li><b>TFT.GOOGL</b> 17.2%<i>ann.</i><em class="up">Net</em></li>
+            <li><b>SHARPE</b> 1.02<em class="up">Net of 5 bps</em></li>
+            <li><b>SPY</b> 23.4%<em class="dn">Not beaten</em></li>
+            <li><b>STATUS</b> Open<em class="up">2027 grad</em></li>
+            <li><b>DESKS</b> LDN &middot; SGP &middot; HKG</li>
+            <li><b>IMPERIAL</b> MSc RMFE<em class="nt">&rsquo;27</em></li>
+            <li><b>NTU</b> BEng EEE<em class="nt">&rsquo;26</em></li>
+          </ul>
+          <ul class="ticker-list">
+            <li><b>KW.CGPA</b> 4.85<i>/5.00</i><em class="up">First Class</em></li>
+            <li><b>DEANS.LIST</b> 3&times;<em class="up">Top 5%</em></li>
+            <li><b>IB.DEALS</b> 8+<em class="up">Live</em></li>
+            <li><b>XGB.DIR.ACC</b> 55.5%<em class="up">vs 50.0</em></li>
+            <li><b>TFT.GOOGL</b> 17.2%<i>ann.</i><em class="up">Net</em></li>
+            <li><b>SHARPE</b> 1.02<em class="up">Net of 5 bps</em></li>
+            <li><b>SPY</b> 23.4%<em class="dn">Not beaten</em></li>
+            <li><b>STATUS</b> Open<em class="up">2027 grad</em></li>
+            <li><b>DESKS</b> LDN &middot; SGP &middot; HKG</li>
+            <li><b>IMPERIAL</b> MSc RMFE<em class="nt">&rsquo;27</em></li>
+            <li><b>NTU</b> BEng EEE<em class="nt">&rsquo;26</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar">
+      <div class="container bar-inner">
+        <a class="brand" href="#top" title="Back to top">
+          <span class="brand-mark" aria-hidden="true">KW</span>
+          <span class="brand-name">Kenneth Wijaya</span>
+        </a>
+        <nav class="nav-primary" aria-label="Primary">
+          <ul class="nav-links">
+            <li><a href="#about"><span class="fk" aria-hidden="true">01</span>About</a></li>
+            <li><a href="#experience"><span class="fk" aria-hidden="true">02</span>Experience</a></li>
+            <li><a href="#projects"><span class="fk" aria-hidden="true">03</span>Research</a></li>
+            <li><a href="#education"><span class="fk" aria-hidden="true">04</span>Education</a></li>
+            <li><a href="#skills"><span class="fk" aria-hidden="true">05</span>Skills</a></li>
+            <li><a href="#contact"><span class="fk" aria-hidden="true">06</span>Contact</a></li>
+          </ul>
+        </nav>
+        <!-- A command line that jumps around the page. It needs JavaScript, so it
+             ships hidden and script.js reveals it; the nav above does the same
+             job without it. -->
+        <form class="cmd" id="cmd" autocomplete="off" hidden>
+          <label class="sr-only" for="cmd-input">Command line. Type a section name, or HELP for the list.</label>
+          <span class="cmd-prompt" aria-hidden="true">&gt;</span>
+          <input id="cmd-input" type="text" spellcheck="false" autocapitalize="characters" placeholder="Type a command" aria-describedby="cmd-out">
+          <kbd class="cmd-kbd" aria-hidden="true">Ctrl K</kbd>
+          <button class="cmd-go" type="submit">GO</button>
+          <div class="cmd-pop" id="cmd-pop">
+            <p class="cmd-out" id="cmd-out" role="status"></p>
+            <ul class="cmd-list">
+              <li><button type="button" data-cmd="ABOUT"><b>ABOUT</b><span>Who I am</span></button></li>
+              <li><button type="button" data-cmd="EXP"><b>EXP</b><span>Deals and roles</span></button></li>
+              <li><button type="button" data-cmd="RSCH"><b>RSCH</b><span>ML trading research</span></button></li>
+              <li><button type="button" data-cmd="DASH"><b>DASH</b><span>Launch the live dashboard</span></button></li>
+              <li><button type="button" data-cmd="EDU"><b>EDU</b><span>Imperial and NTU</span></button></li>
+              <li><button type="button" data-cmd="SKILLS"><b>SKILLS</b><span>The toolkit</span></button></li>
+              <li><button type="button" data-cmd="CV"><b>CV</b><span>Open the resume (PDF)</span></button></li>
+              <li><button type="button" data-cmd="MSG"><b>MSG</b><span>Get in touch</span></button></li>
+              <li><button type="button" data-cmd="THEME"><b>THEME</b><span>Switch light and dark</span></button></li>
+            </ul>
+          </div>
+        </form>
+        <button class="theme-toggle icon-btn" type="button" aria-label="Switch to the light theme">
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+        </button>
+        <a class="btn btn-go resume-btn" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+        <button class="nav-toggle icon-btn" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
+        </button>
+      </div>
+      <div class="progress" aria-hidden="true"></div>
     </div>
   </header>
 
-  <!-- data-lenis-prevent: the panel scrolls natively when it is taller than a
-       short viewport, and Lenis must not swallow the wheel event -->
-  <nav class="menu" id="menu" aria-label="Mobile" data-lenis-prevent>
-    <a href="#about">About<span class="idx">01</span></a>
-    <a href="#experience">Experience<span class="idx">02</span></a>
-    <a href="#projects">Work<span class="idx">03</span></a>
-    <a href="#education">Education<span class="idx">04</span></a>
-    <a href="#skills">Skills<span class="idx">05</span></a>
-    <a href="#leadership">Leadership<span class="idx">06</span></a>
-    <a href="#contact">Contact<span class="idx">07</span></a>
+  <!-- The panel scrolls natively when it is taller than a short viewport -->
+  <nav class="menu" id="menu" aria-label="Mobile">
+    <a href="#about"><span class="idx">01</span>About</a>
+    <a href="#experience"><span class="idx">02</span>Experience</a>
+    <a href="#projects"><span class="idx">03</span>Research</a>
+    <a href="#education"><span class="idx">04</span>Education</a>
+    <a href="#skills"><span class="idx">05</span>Skills</a>
+    <a href="#contact"><span class="idx">06</span>Contact</a>
     <div class="menu-foot">
       <a href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume &nearr;</a>
       <a href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn &nearr;</a>
@@ -95,293 +162,369 @@
 
   <main id="main" tabindex="-1">
     <!-- ================= HERO ================= -->
-    <section class="hero" id="top">
-      <div class="hero-grid" aria-hidden="true"></div>
-      <svg class="hero-path" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="lineFade" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#f4efe6" stop-opacity="0"/>
-            <stop offset="0.2" stop-color="#f4efe6" stop-opacity="0.55"/>
-            <stop offset="1" stop-color="#f0cd93"/>
-          </linearGradient>
-          <linearGradient id="areaFade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#d8a35b" stop-opacity="0.14"/>
-            <stop offset="1" stop-color="#d8a35b" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <path id="heroArea" fill="url(#areaFade)" d="" opacity="0"/>
-        <path id="heroLine" fill="none" stroke="url(#lineFade)" stroke-width="1.5" vector-effect="non-scaling-stroke" d=""/>
-      </svg>
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero-grid">
 
-      <div class="container hero-rail hero-rail-top">
-        <span class="status mono"><i aria-hidden="true"></i>Open to 2027 graduate roles</span>
-        <span class="mono rail-end">London &middot; 2027 intake</span>
-      </div>
+        <article class="panel p-profile">
+          <div class="panel-bar"><span class="fn">DES</span><span class="pt">Profile</span><span class="pm"><span class="status"><i aria-hidden="true"></i>Open to 2027 graduate roles</span></span></div>
+          <div class="panel-body profile">
+            <figure class="portrait" aria-hidden="true">
+              <div class="portrait-frame"><span class="portrait-mono">KW</span></div>
+              <figcaption>Fig. 1 &middot; K. A. Wijaya &middot; LDN</figcaption>
+            </figure>
+            <div class="profile-main">
+              <p class="hero-name">Kenneth Anthony Wijaya</p>
+              <h1 class="hero-title" id="hero-title">Engineering rigour, applied to <em>markets</em>.<span class="caret" aria-hidden="true"></span></h1>
+              <p class="hero-lede">
+                <strong>MSc Risk Management &amp; Financial Engineering at Imperial.</strong> First Class engineer from NTU.
+                I have worked live bond, sukuk and rights-issue deals in Jakarta, and built a machine learning trading
+                pipeline that is honest about costs.
+              </p>
+              <div class="hero-actions">
+                <a class="btn btn-go" href="#projects">See the research
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg></a>
+                <a class="btn" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Download resume
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+              </div>
+              <p class="hero-links">
+                <a class="tlink" href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn</a>
+                <a class="tlink" href="https://github.com/KennethAW" target="_blank" rel="noopener">GitHub</a>
+                <a class="tlink" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
+              </p>
+            </div>
+          </div>
+        </article>
 
-      <div class="container hero-inner">
-        <p class="hero-name">Kenneth Anthony Wijaya</p>
-        <h1 class="hero-title">
-          <span class="line"><span class="line-inner">Engineering rigour,</span></span>
-          <span class="line"><span class="line-inner">applied to <em>markets</em>.</span></span>
-        </h1>
-        <p class="hero-lede">
-          <strong>MSc Risk Management &amp; Financial Engineering at Imperial College London,</strong> after a First Class
-          BEng in Electrical &amp; Electronic Engineering at NTU. I have supported live bond, sukuk and rights-issue deals in
-          Jakarta, and built an end-to-end machine learning pipeline to test whether markets can be beaten after costs.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary down" href="#projects">See the work
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg></a>
-          <a class="tlink" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Download resume
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
-        </div>
-      </div>
+        <section class="panel p-metrics" aria-labelledby="kpi-title">
+          <div class="panel-bar"><span class="fn">KPI</span><span class="pt" id="kpi-title">Key figures</span></div>
+          <dl class="kpis">
+            <div class="kpi">
+              <dt>CGPA &middot; NTU Electrical &amp; Electronic Engineering</dt>
+              <dd><span class="stat-num"><span data-count="4.85" data-decimals="2">4.85</span><span class="suffix">/5.00</span></span><span class="tag t-green">First Class</span></dd>
+            </div>
+            <div class="kpi">
+              <dt>Dean&rsquo;s List, on the ASEAN Undergraduate Scholarship</dt>
+              <dd><span class="stat-num"><span data-count="3" data-decimals="0">3</span><span class="suffix">&times;</span></span><span class="tag t-green">Top 5%</span></dd>
+            </div>
+            <div class="kpi">
+              <dt>Live capital-markets deals as an IB Summer Analyst</dt>
+              <dd><span class="stat-num"><span data-count="8" data-decimals="0">8</span><span class="suffix">+</span></span><span class="tag t-amber">Bonds &middot; Sukuk</span></dd>
+            </div>
+            <div class="kpi">
+              <dt>Best next-day directional accuracy, five large caps</dt>
+              <dd><span class="stat-num"><span data-count="55.5" data-decimals="1">55.5</span><span class="suffix">%</span></span><span class="tag t-cyan">XGBoost</span></dd>
+            </div>
+          </dl>
+        </section>
 
-      <div class="container hero-rail hero-rail-bottom">
-        <span class="hero-cue" aria-hidden="true"><i></i><span class="mono">Scroll</span></span>
-        <span class="hero-links">
-          <a class="tlink quiet" href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn</a>
-          <a class="tlink quiet" href="https://github.com/KennethAW" target="_blank" rel="noopener">GitHub</a>
-          <a class="tlink quiet" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
-        </span>
+        <section class="panel p-chart" aria-labelledby="chart-panel-title">
+          <div class="panel-bar"><span class="fn">GP</span><span class="pt" id="chart-panel-title">GOOGL &middot; TFT strategy trades</span><span class="pm">Test set &middot; Aug 2023 &ndash; Dec 2024</span></div>
+          <div class="chart-wrap">
+            <svg class="chart" viewBox="0 0 640 240" role="img" aria-labelledby="chart-title chart-desc">
+              <title id="chart-title">GOOGL daily close over the test set, August 2023 to December 2024, with the TFT strategy&#8217;s trades shaded</title>
+              <desc id="chart-desc">GOOGL rose from 130.47 to 191.87. The strategy&#8217;s trade log holds 35 trades: 24 closed in profit and 11 at a loss.</desc>
+              <g class="c-grid"><line x1="8" y1="178.7" x2="588" y2="178.7"/><line x1="8" y1="131.6" x2="588" y2="131.6"/><line x1="8" y1="84.6" x2="588" y2="84.6"/></g>
+              <g class="c-spans"><rect class="w" x="29.2" y="14" width="3.3" height="200"/><rect class="w" x="37.4" y="14" width="1.6" height="200"/><rect class="w" x="68.5" y="14" width="11.4" height="200"/><rect class="w" x="102.8" y="14" width="1.6" height="200"/><rect class="w" x="107.7" y="14" width="4.9" height="200"/><rect class="w" x="117.5" y="14" width="6.5" height="200"/><rect class="l" x="125.6" y="14" width="1.6" height="200"/><rect class="w" x="142.0" y="14" width="1.6" height="200"/><rect class="w" x="148.5" y="14" width="8.2" height="200"/><rect class="w" x="158.3" y="14" width="13.1" height="200"/><rect class="w" x="181.2" y="14" width="18.0" height="200"/><rect class="w" x="217.1" y="14" width="8.2" height="200"/><rect class="l" x="228.6" y="14" width="11.4" height="200"/><rect class="l" x="241.6" y="14" width="8.2" height="200"/><rect class="w" x="251.4" y="14" width="9.8" height="200"/><rect class="l" x="262.9" y="14" width="1.6" height="200"/><rect class="w" x="302.1" y="14" width="6.5" height="200"/><rect class="w" x="351.1" y="14" width="6.5" height="200"/><rect class="w" x="372.3" y="14" width="3.3" height="200"/><rect class="w" x="396.8" y="14" width="1.6" height="200"/><rect class="l" x="401.7" y="14" width="6.5" height="200"/><rect class="l" x="409.9" y="14" width="9.8" height="200"/><rect class="w" x="423.0" y="14" width="11.4" height="200"/><rect class="w" x="437.7" y="14" width="6.5" height="200"/><rect class="l" x="445.9" y="14" width="8.2" height="200"/><rect class="l" x="455.7" y="14" width="3.3" height="200"/><rect class="l" x="460.6" y="14" width="3.3" height="200"/><rect class="w" x="470.4" y="14" width="6.5" height="200"/><rect class="l" x="480.2" y="14" width="1.6" height="200"/><rect class="w" x="486.7" y="14" width="1.6" height="200"/><rect class="l" x="496.5" y="14" width="18.0" height="200"/><rect class="w" x="516.1" y="14" width="3.3" height="200"/><rect class="w" x="527.5" y="14" width="3.3" height="200"/><rect class="w" x="550.4" y="14" width="13.1" height="200"/><rect class="w" x="565.1" y="14" width="3.3" height="200"/></g>
+              <path class="c-area" d="M8.0 177.6 L9.6 185.0 L11.3 184.8 L12.9 185.6 L14.5 177.6 L16.2 178.0 L17.8 182.0 L19.4 181.9 L21.1 182.2 L22.7 178.1 L24.3 181.7 L26.0 184.2 L27.6 181.4 L29.2 187.1 L30.9 185.0 L32.5 183.4 L34.1 175.7 L35.8 181.7 L37.4 181.5 L39.0 178.8 L40.7 170.5 L42.3 167.5 L43.9 166.8 L45.6 168.0 L47.2 167.7 L48.8 170.8 L50.5 168.9 L52.1 166.3 L53.7 165.1 L55.4 168.8 L57.0 165.6 L58.6 162.3 L60.3 164.0 L61.9 162.0 L63.5 162.4 L65.2 172.5 L66.8 180.2 L68.5 180.6 L70.1 178.6 L71.7 184.5 L73.4 180.0 L75.0 175.8 L76.6 179.2 L78.3 171.5 L79.9 175.6 L81.5 169.0 L83.2 169.4 L84.8 163.5 L86.4 161.6 L88.1 162.4 L89.7 156.6 L91.3 160.3 L93.0 164.0 L94.6 160.0 L96.2 158.5 L97.9 162.6 L99.5 163.1 L101.1 168.1 L102.8 166.0 L104.4 160.7 L106.0 191.5 L107.7 199.2 L109.3 199.5 L110.9 194.1 L112.6 195.0 L114.2 189.5 L115.8 187.1 L117.5 183.3 L119.1 180.6 L120.7 178.9 L122.4 176.9 L124.0 180.7 L125.6 175.2 L127.3 176.3 L128.9 172.8 L130.5 170.4 L132.2 165.0 L133.8 168.8 L135.4 166.6 L137.1 164.9 L138.7 161.4 L140.3 165.6 L142.0 166.3 L143.6 164.4 L145.2 169.6 L146.9 175.3 L148.5 176.9 L150.1 182.9 L151.8 178.9 L153.4 181.2 L155.0 165.0 L156.7 169.6 L158.3 173.5 L159.9 175.3 L161.6 175.2 L163.2 176.7 L164.8 175.2 L166.5 167.7 L168.1 165.7 L169.7 161.7 L171.4 156.9 L173.0 154.4 L174.6 154.3 L176.3 157.0 L177.9 157.3 L179.5 158.6 L181.2 162.1 L182.8 160.4 L184.5 166.3 L186.1 167.8 L187.7 160.6 L189.4 155.7 L191.0 152.6 L192.6 153.0 L194.3 151.7 L195.9 152.1 L197.5 154.4 L199.2 149.8 L200.8 143.0 L202.4 143.9 L204.1 141.5 L205.7 137.6 L207.3 130.2 L209.0 129.4 L210.6 126.4 L212.2 131.1 L213.9 157.6 L215.5 155.2 L217.1 152.3 L218.8 149.3 L220.4 148.3 L222.0 144.9 L223.7 144.1 L225.3 136.9 L226.9 140.3 L228.6 145.9 L230.2 144.0 L231.8 151.4 L233.5 156.7 L235.1 155.3 L236.7 151.9 L238.4 148.3 L240.0 148.6 L241.6 163.6 L243.3 160.5 L244.9 166.3 L246.5 161.5 L248.2 164.5 L249.8 173.4 L251.4 175.0 L253.1 178.0 L254.7 171.0 L256.3 168.6 L258.0 163.3 L259.6 161.4 L261.2 158.4 L262.9 150.6 L264.5 155.1 L266.1 140.0 L267.8 141.5 L269.4 137.5 L271.0 140.1 L272.7 132.8 L274.3 134.4 L275.9 133.0 L277.6 132.5 L279.2 132.4 L280.8 121.7 L282.5 123.9 L284.1 123.1 L285.7 133.3 L287.4 128.7 L289.0 123.2 L290.6 119.1 L292.3 120.2 L293.9 112.6 L295.5 116.5 L297.2 123.2 L298.8 124.3 L300.5 121.8 L302.1 120.5 L303.7 125.0 L305.4 119.9 L307.0 115.3 L308.6 113.2 L310.3 120.5 L311.9 83.3 L313.5 96.8 L315.2 104.7 L316.8 102.2 L318.4 95.8 L320.1 94.3 L321.7 92.3 L323.3 84.9 L325.0 89.3 L326.6 88.0 L328.2 91.0 L329.9 89.9 L331.5 87.1 L333.1 82.0 L334.8 78.1 L336.4 73.7 L338.0 71.7 L339.7 69.6 L341.3 73.0 L342.9 79.6 L344.6 76.2 L346.2 72.9 L347.8 74.1 L349.5 82.9 L351.1 82.0 L352.7 80.5 L354.4 79.0 L356.0 75.2 L357.6 72.2 L359.3 77.5 L360.9 75.7 L362.5 72.0 L364.2 69.2 L365.8 75.4 L367.4 71.6 L369.1 70.5 L370.7 75.5 L372.3 72.7 L374.0 64.9 L375.6 65.9 L377.2 54.6 L378.9 55.0 L380.5 51.4 L382.1 59.0 L383.8 57.1 L385.4 51.8 L387.0 50.4 L388.7 39.3 L390.3 42.9 L391.9 43.1 L393.6 37.9 L395.2 51.0 L396.8 52.2 L398.5 48.8 L400.1 54.9 L401.7 61.7 L403.4 69.4 L405.0 69.5 L406.6 60.1 L408.3 59.9 L409.9 81.3 L411.5 93.8 L413.2 94.4 L414.8 88.5 L416.5 86.7 L418.1 83.8 L419.7 85.6 L421.4 95.2 L423.0 112.5 L424.6 114.8 L426.3 113.2 L427.9 106.0 L429.5 102.2 L431.2 105.4 L432.8 101.1 L434.4 109.9 L436.1 107.7 L437.7 103.9 L439.3 95.2 L441.0 94.0 L442.6 97.1 L444.2 101.9 L445.9 97.6 L447.5 96.4 L449.1 99.8 L450.8 104.1 L452.4 106.6 L454.0 102.9 L455.7 116.9 L457.3 119.1 L458.9 117.2 L460.6 132.0 L462.2 136.7 L463.8 136.8 L465.5 131.0 L467.1 122.7 L468.7 116.2 L470.4 114.8 L472.0 111.9 L473.6 110.7 L475.3 105.3 L476.9 101.9 L478.5 106.0 L480.2 104.9 L481.8 106.8 L483.4 103.9 L485.1 101.0 L486.7 96.6 L488.3 93.9 L490.0 96.6 L491.6 96.6 L493.2 93.8 L494.9 103.3 L496.5 100.0 L498.1 105.9 L499.8 105.4 L501.4 102.7 L503.0 98.7 L504.7 97.5 L506.3 98.2 L507.9 103.4 L509.6 102.3 L511.2 100.8 L512.8 98.3 L514.5 103.8 L516.1 103.9 L517.7 98.0 L519.4 94.6 L521.0 87.6 L522.6 76.4 L524.3 84.3 L525.9 83.9 L527.5 88.7 L529.2 87.5 L530.8 71.6 L532.5 61.7 L534.1 67.3 L535.7 62.7 L537.4 59.7 L539.0 66.1 L540.6 73.8 L542.3 81.1 L543.9 74.5 L545.5 67.9 L547.2 72.9 L548.8 92.4 L550.4 99.2 L552.1 92.4 L553.7 88.9 L555.3 88.7 L557.0 89.3 L558.6 83.4 L560.2 83.7 L561.9 76.7 L563.5 80.7 L565.1 75.9 L566.8 73.9 L568.4 50.9 L570.0 26.9 L571.7 35.0 L573.3 40.0 L574.9 24.0 L576.6 26.9 L578.2 43.3 L579.8 43.1 L581.5 36.3 L583.1 28.8 L584.7 25.3 L586.4 26.5 L588.0 33.1 L588.0 214 L8.0 214 Z"/>
+              <path class="c-line" pathLength="1" d="M8.0 177.6 L9.6 185.0 L11.3 184.8 L12.9 185.6 L14.5 177.6 L16.2 178.0 L17.8 182.0 L19.4 181.9 L21.1 182.2 L22.7 178.1 L24.3 181.7 L26.0 184.2 L27.6 181.4 L29.2 187.1 L30.9 185.0 L32.5 183.4 L34.1 175.7 L35.8 181.7 L37.4 181.5 L39.0 178.8 L40.7 170.5 L42.3 167.5 L43.9 166.8 L45.6 168.0 L47.2 167.7 L48.8 170.8 L50.5 168.9 L52.1 166.3 L53.7 165.1 L55.4 168.8 L57.0 165.6 L58.6 162.3 L60.3 164.0 L61.9 162.0 L63.5 162.4 L65.2 172.5 L66.8 180.2 L68.5 180.6 L70.1 178.6 L71.7 184.5 L73.4 180.0 L75.0 175.8 L76.6 179.2 L78.3 171.5 L79.9 175.6 L81.5 169.0 L83.2 169.4 L84.8 163.5 L86.4 161.6 L88.1 162.4 L89.7 156.6 L91.3 160.3 L93.0 164.0 L94.6 160.0 L96.2 158.5 L97.9 162.6 L99.5 163.1 L101.1 168.1 L102.8 166.0 L104.4 160.7 L106.0 191.5 L107.7 199.2 L109.3 199.5 L110.9 194.1 L112.6 195.0 L114.2 189.5 L115.8 187.1 L117.5 183.3 L119.1 180.6 L120.7 178.9 L122.4 176.9 L124.0 180.7 L125.6 175.2 L127.3 176.3 L128.9 172.8 L130.5 170.4 L132.2 165.0 L133.8 168.8 L135.4 166.6 L137.1 164.9 L138.7 161.4 L140.3 165.6 L142.0 166.3 L143.6 164.4 L145.2 169.6 L146.9 175.3 L148.5 176.9 L150.1 182.9 L151.8 178.9 L153.4 181.2 L155.0 165.0 L156.7 169.6 L158.3 173.5 L159.9 175.3 L161.6 175.2 L163.2 176.7 L164.8 175.2 L166.5 167.7 L168.1 165.7 L169.7 161.7 L171.4 156.9 L173.0 154.4 L174.6 154.3 L176.3 157.0 L177.9 157.3 L179.5 158.6 L181.2 162.1 L182.8 160.4 L184.5 166.3 L186.1 167.8 L187.7 160.6 L189.4 155.7 L191.0 152.6 L192.6 153.0 L194.3 151.7 L195.9 152.1 L197.5 154.4 L199.2 149.8 L200.8 143.0 L202.4 143.9 L204.1 141.5 L205.7 137.6 L207.3 130.2 L209.0 129.4 L210.6 126.4 L212.2 131.1 L213.9 157.6 L215.5 155.2 L217.1 152.3 L218.8 149.3 L220.4 148.3 L222.0 144.9 L223.7 144.1 L225.3 136.9 L226.9 140.3 L228.6 145.9 L230.2 144.0 L231.8 151.4 L233.5 156.7 L235.1 155.3 L236.7 151.9 L238.4 148.3 L240.0 148.6 L241.6 163.6 L243.3 160.5 L244.9 166.3 L246.5 161.5 L248.2 164.5 L249.8 173.4 L251.4 175.0 L253.1 178.0 L254.7 171.0 L256.3 168.6 L258.0 163.3 L259.6 161.4 L261.2 158.4 L262.9 150.6 L264.5 155.1 L266.1 140.0 L267.8 141.5 L269.4 137.5 L271.0 140.1 L272.7 132.8 L274.3 134.4 L275.9 133.0 L277.6 132.5 L279.2 132.4 L280.8 121.7 L282.5 123.9 L284.1 123.1 L285.7 133.3 L287.4 128.7 L289.0 123.2 L290.6 119.1 L292.3 120.2 L293.9 112.6 L295.5 116.5 L297.2 123.2 L298.8 124.3 L300.5 121.8 L302.1 120.5 L303.7 125.0 L305.4 119.9 L307.0 115.3 L308.6 113.2 L310.3 120.5 L311.9 83.3 L313.5 96.8 L315.2 104.7 L316.8 102.2 L318.4 95.8 L320.1 94.3 L321.7 92.3 L323.3 84.9 L325.0 89.3 L326.6 88.0 L328.2 91.0 L329.9 89.9 L331.5 87.1 L333.1 82.0 L334.8 78.1 L336.4 73.7 L338.0 71.7 L339.7 69.6 L341.3 73.0 L342.9 79.6 L344.6 76.2 L346.2 72.9 L347.8 74.1 L349.5 82.9 L351.1 82.0 L352.7 80.5 L354.4 79.0 L356.0 75.2 L357.6 72.2 L359.3 77.5 L360.9 75.7 L362.5 72.0 L364.2 69.2 L365.8 75.4 L367.4 71.6 L369.1 70.5 L370.7 75.5 L372.3 72.7 L374.0 64.9 L375.6 65.9 L377.2 54.6 L378.9 55.0 L380.5 51.4 L382.1 59.0 L383.8 57.1 L385.4 51.8 L387.0 50.4 L388.7 39.3 L390.3 42.9 L391.9 43.1 L393.6 37.9 L395.2 51.0 L396.8 52.2 L398.5 48.8 L400.1 54.9 L401.7 61.7 L403.4 69.4 L405.0 69.5 L406.6 60.1 L408.3 59.9 L409.9 81.3 L411.5 93.8 L413.2 94.4 L414.8 88.5 L416.5 86.7 L418.1 83.8 L419.7 85.6 L421.4 95.2 L423.0 112.5 L424.6 114.8 L426.3 113.2 L427.9 106.0 L429.5 102.2 L431.2 105.4 L432.8 101.1 L434.4 109.9 L436.1 107.7 L437.7 103.9 L439.3 95.2 L441.0 94.0 L442.6 97.1 L444.2 101.9 L445.9 97.6 L447.5 96.4 L449.1 99.8 L450.8 104.1 L452.4 106.6 L454.0 102.9 L455.7 116.9 L457.3 119.1 L458.9 117.2 L460.6 132.0 L462.2 136.7 L463.8 136.8 L465.5 131.0 L467.1 122.7 L468.7 116.2 L470.4 114.8 L472.0 111.9 L473.6 110.7 L475.3 105.3 L476.9 101.9 L478.5 106.0 L480.2 104.9 L481.8 106.8 L483.4 103.9 L485.1 101.0 L486.7 96.6 L488.3 93.9 L490.0 96.6 L491.6 96.6 L493.2 93.8 L494.9 103.3 L496.5 100.0 L498.1 105.9 L499.8 105.4 L501.4 102.7 L503.0 98.7 L504.7 97.5 L506.3 98.2 L507.9 103.4 L509.6 102.3 L511.2 100.8 L512.8 98.3 L514.5 103.8 L516.1 103.9 L517.7 98.0 L519.4 94.6 L521.0 87.6 L522.6 76.4 L524.3 84.3 L525.9 83.9 L527.5 88.7 L529.2 87.5 L530.8 71.6 L532.5 61.7 L534.1 67.3 L535.7 62.7 L537.4 59.7 L539.0 66.1 L540.6 73.8 L542.3 81.1 L543.9 74.5 L545.5 67.9 L547.2 72.9 L548.8 92.4 L550.4 99.2 L552.1 92.4 L553.7 88.9 L555.3 88.7 L557.0 89.3 L558.6 83.4 L560.2 83.7 L561.9 76.7 L563.5 80.7 L565.1 75.9 L566.8 73.9 L568.4 50.9 L570.0 26.9 L571.7 35.0 L573.3 40.0 L574.9 24.0 L576.6 26.9 L578.2 43.3 L579.8 43.1 L581.5 36.3 L583.1 28.8 L584.7 25.3 L586.4 26.5 L588.0 33.1"/>
+              <g class="c-axis"><text x="596" y="182.2">130</text><text x="596" y="135.1">150</text><text x="596" y="88.1">170</text><text x="78.3" y="233" text-anchor="middle">Oct 23</text><text x="181.2" y="233" text-anchor="middle">Jan 24</text><text x="280.8" y="233" text-anchor="middle">Apr 24</text><text x="383.8" y="233" text-anchor="middle">Jul 24</text><text x="488.3" y="233" text-anchor="middle">Oct 24</text></g>
+              <g class="c-last"><line x1="588.0" y1="33.1" x2="590" y2="33.1"/><rect x="588" y="24.1" width="52" height="18" rx="2"/><text x="614" y="36.6" text-anchor="middle">191.87</text></g>
+            </svg>
+          </div>
+          <div class="chart-foot">
+            <ul class="legend">
+              <li><i class="sw sw-w" aria-hidden="true"></i>24 winning trades</li>
+              <li><i class="sw sw-l" aria-hidden="true"></i>11 losing trades</li>
+              <li><i class="sw sw-line" aria-hidden="true"></i>GOOGL close</li>
+            </ul>
+            <p class="chart-stats"><b>17.2%</b> annualised &middot; <b>Sharpe 1.02</b> &middot; net of 5 bps</p>
+          </div>
+        </section>
+
+        <section class="panel p-desks" aria-labelledby="desks-title">
+          <div class="panel-bar"><span class="fn">WCLK</span><span class="pt" id="desks-title">Desks I&rsquo;m open to</span></div>
+          <ul class="desks">
+            <li class="home"><span class="d-code">LDN</span><span class="d-city">London<small>Based here</small></span><span class="d-time" data-tz="Europe/London">&ndash;&ndash;:&ndash;&ndash;</span></li>
+            <li><span class="d-code">SGP</span><span class="d-city">Singapore<small>Studied here</small></span><span class="d-time" data-tz="Asia/Singapore">&ndash;&ndash;:&ndash;&ndash;</span></li>
+            <li><span class="d-code">HKG</span><span class="d-city">Hong Kong<small>Open to</small></span><span class="d-time" data-tz="Asia/Hong_Kong">&ndash;&ndash;:&ndash;&ndash;</span></li>
+          </ul>
+          <p class="desks-foot">Seeking <strong>2027 graduate roles</strong> in investment banking, markets and quantitative finance.</p>
+        </section>
+
       </div>
     </section>
 
-    <!-- ================= STATS ================= -->
-    <div class="container stats-wrap">
-      <div class="stats" data-reveal data-stagger>
-        <div class="stat">
-          <div class="stat-num"><span data-count="4.85" data-decimals="2">4.85</span><span class="suffix">/5.00</span></div>
-          <div class="stat-lbl">CGPA, First Class Honours, Electrical &amp; Electronic Engineering, NTU</div>
+    <!-- ================= ABOUT ================= -->
+    <section id="about" class="sec">
+      <div class="container">
+        <div class="sec-head"><span class="sec-no">01</span><span class="sec-label">About</span><span class="sec-rule" aria-hidden="true"></span><span class="sec-meta">Bio</span></div>
+        <div class="about-grid">
+          <h2 class="sec-title" data-reveal>Trained as an engineer. Drawn to <em>markets</em>.</h2>
+          <div class="about-copy" data-reveal>
+            <p>I grew up in Indonesia and came to NTU on the <strong>ASEAN Undergraduate Scholarship</strong>, graduating with First Class Honours in Electrical and Electronic Engineering.</p>
+            <p>The problems I enjoyed most turned out to be financial: <strong>pricing a deal, sizing a risk, testing whether a signal survives real costs.</strong> That led me to banking and credit in Jakarta, a final-year project on machine learning for trading, and now Imperial.</p>
+          </div>
         </div>
-        <div class="stat">
-          <div class="stat-num"><span data-count="3" data-decimals="0">3</span><span class="suffix">&times;</span></div>
-          <div class="stat-lbl">Dean&rsquo;s List, top 5% of the cohort, on the ASEAN Undergraduate Scholarship</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num"><span data-count="8" data-decimals="0">8</span><span class="suffix">+</span></div>
-          <div class="stat-lbl">Live capital-markets transactions supported as an Investment Banking Summer Analyst</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num"><span data-count="55.5" data-decimals="1">55.5</span><span class="suffix">%</span></div>
-          <div class="stat-lbl">Best next-day directional accuracy in my machine learning research across five large caps</div>
+        <ol class="edge" data-reveal data-stagger>
+          <li>
+            <span class="n">01</span>
+            <h3>Deal execution</h3>
+            <p>8+ live capital-markets deals at Aldiracita Securities: prospectuses, memoranda and tenders, with the financials reconciled line by line.</p>
+          </li>
+          <li>
+            <span class="n">02</span>
+            <h3>Quant research, end to end</h3>
+            <p>A 72-feature pipeline, four model architectures and a cost-aware backtester, built from scratch and benchmarked honestly.</p>
+          </li>
+          <li>
+            <span class="n">03</span>
+            <h3>Engineering habits</h3>
+            <p>Python, C++, SQL and PyTorch. Reproducible experiments, fixed seeds, chronological splits, no leakage.</p>
+          </li>
+        </ol>
+        <div class="offdesk" data-reveal>
+          <span class="offdesk-lbl">Off the desk</span>
+          <ul class="chips">
+            <li>Equities &amp; options</li>
+            <li>Poker</li>
+            <li>Badminton</li>
+            <li>Travel</li>
+            <li>English &middot; Bahasa Indonesia &middot; Mandarin</li>
+          </ul>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="thread">
-      <div class="spine" aria-hidden="true"><div class="spine-fill"></div></div>
+    <!-- ================= EXPERIENCE ================= -->
+    <section id="experience" class="sec">
+      <div class="container">
+        <div class="sec-head"><span class="sec-no">02</span><span class="sec-label">Experience</span><span class="sec-rule" aria-hidden="true"></span><span class="sec-meta">3 roles &middot; Jakarta &amp; Singapore</span></div>
+        <h2 class="sec-title" data-reveal>Deals, credit and the numbers behind them.</h2>
 
-      <!-- ================= ABOUT ================= -->
-      <section id="about" class="sec">
-        <div class="container sec-grid">
-          <div class="sec-aside">
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">01 &mdash; About</span>
-              <h2>Trained as an engineer. Drawn to <em>markets</em>.</h2>
-            </header>
-          </div>
-          <div>
-            <div class="lead" data-reveal data-stagger>
-              <p>
-                I grew up in Indonesia and took the <strong>ASEAN Undergraduate Scholarship</strong> to Nanyang Technological
-                University, where I graduated with First Class Honours in Electrical and Electronic Engineering and made the
-                Dean&rsquo;s List three times.
-              </p>
-              <p>
-                Along the way I found that the problems I enjoyed most were financial ones: <strong>pricing a deal, sizing a
-                risk, testing whether a signal survives contact with real costs.</strong> That took me to a summer in investment
-                banking and a winter in middle-market credit in Jakarta, to a final-year project on machine learning for
-                trading, and now to Imperial College London for an MSc in Risk Management and Financial Engineering.
-              </p>
-              <p>Outside work I invest in equities and options, play poker and badminton, and travel whenever term allows.</p>
+        <div class="panel blotter-panel" data-reveal>
+          <div class="panel-bar"><span class="fn">BLTR</span><span class="pt">Roles</span><span class="pm">Select a row for detail</span></div>
+          <div class="blotter-head" aria-hidden="true"><span>Period</span><span>Firm</span><span>Role</span><span>Desk</span><span>Location</span><span></span></div>
+          <ol class="blotter">
+            <li>
+              <details open>
+                <summary>
+                  <span class="b-date">Jun &ndash; Aug 2026</span>
+                  <span class="b-firm">Aldiracita Securities</span>
+                  <span class="b-role">Investment Banking Summer Analyst</span>
+                  <span class="b-desk"><span class="tag t-amber">Capital markets</span></span>
+                  <span class="b-loc">Jakarta</span>
+                  <span class="b-x" aria-hidden="true"></span>
+                </summary>
+                <div class="b-body">
+                  <p class="b-sum">Deal execution across corporate bonds, sukuk and rights issues.</p>
+                  <ul>
+                    <li>Supported 8+ live transactions: prospectuses, additional information documents, internal memoranda and underwriting tenders.</li>
+                    <li>Financial statement analysis, ratios, capital structure reviews and transaction benchmarking for credit assessment and investor materials.</li>
+                    <li>Reconciled offering terms, financials, shareholder data and disclosures across every document so nothing drifted between drafts.</li>
+                  </ul>
+                </div>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>
+                  <span class="b-date">Dec 2025</span>
+                  <span class="b-firm">Maybank Securities</span>
+                  <span class="b-role">Middle Market Intern</span>
+                  <span class="b-desk"><span class="tag t-cyan">Repo credit</span></span>
+                  <span class="b-loc">Jakarta</span>
+                  <span class="b-x" aria-hidden="true"></span>
+                </summary>
+                <div class="b-body">
+                  <p class="b-sum">Credit analysis for middle-market repo counterparties.</p>
+                  <ul>
+                    <li>Wrote repurchase-agreement credit reports using Altman Z-Score, DuPont analysis and ratio diagnostics.</li>
+                    <li>Analysed profitability, leverage, liquidity and cash flow to support collateral and counterparty risk decisions.</li>
+                  </ul>
+                </div>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>
+                  <span class="b-date">Jun &ndash; Dec 2024</span>
+                  <span class="b-firm">Singtel</span>
+                  <span class="b-role">Energy &amp; Sustainability Intern</span>
+                  <span class="b-desk"><span class="tag t-green">Capex analysis</span></span>
+                  <span class="b-loc">Singapore</span>
+                  <span class="b-x" aria-hidden="true"></span>
+                </summary>
+                <div class="b-body">
+                  <p class="b-sum">Cost-benefit analysis for a new data centre.</p>
+                  <ul>
+                    <li>Modelled the return on energy-saving initiatives at the new Tuas Data Centre with engineering, procurement and finance.</li>
+                    <li>Analysed temperature and humidity data to optimise climate control and cut operating costs.</li>
+                    <li>Reported sustainability and financial metrics to senior management to inform capital expenditure.</li>
+                  </ul>
+                </div>
+              </details>
+            </li>
+          </ol>
+        </div>
+
+        <div class="panel lead-panel" id="leadership" data-reveal>
+          <div class="panel-bar"><span class="fn">LEAD</span><span class="pt">Leadership</span></div>
+          <ul class="lead-rows">
+            <li>
+              <span class="b-date">Aug 2024 &ndash; Aug 2025</span>
+              <div><h3>NTU EEE Club <span class="role">Student Development Committee</span></h3>
+              <p>Organised industry visits and talks with Huawei, STMicroelectronics and Infineon.</p></div>
+            </li>
+            <li>
+              <span class="b-date">Aug 2023 &ndash; Aug 2024</span>
+              <div><h3>NTU Indonesian Students&rsquo; Association <span class="role">Public Relations Director</span></h3>
+              <p>Led a ten-person committee; campaigns lifted attendance at major events by <strong>57%</strong>.</p></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RESEARCH ================= -->
+    <section id="projects" class="sec">
+      <div class="container">
+        <div class="sec-head"><span class="sec-no">03</span><span class="sec-label">Research</span><span class="sec-rule" aria-hidden="true"></span><span class="sec-meta">Final-year project &middot; NTU EEE</span></div>
+        <h2 class="sec-title" data-reveal>Built end to end. Reported <em>honestly</em>.</h2>
+
+        <div class="research-grid">
+          <article class="panel p-note" data-reveal>
+            <div class="panel-bar"><span class="fn">RSCH</span><span class="pt">Research note</span><span class="pm">Aug 2025 &ndash; May 2026</span></div>
+            <div class="panel-body">
+              <h3 class="note-title">Can machine learning beat buy-and-hold <em>after costs</em>?</h3>
+              <p class="verdict"><span class="tag t-red">Verdict</span> Not against SPY&rsquo;s 23.4% over the 2023&ndash;24 rally, even at zero cost. The best strategy still made <strong>17.2% a year at a Sharpe of 1.02, net</strong>.</p>
+              <div class="qar">
+                <div>
+                  <h4>Question</h4>
+                  <p>Do next-day ML forecasts earn a better risk-adjusted return than holding SPY, once real costs are charged? AAPL, MSFT, GOOGL, JPM and XOM, 2015&ndash;2024.</p>
+                </div>
+                <div>
+                  <h4>Approach</h4>
+                  <p>72 features: technicals, macro, FinBERT sentiment, calendar. <strong>XGBoost, LSTM, TFT and PatchTST</strong> on identical chronological splits, 100 Optuna trials per ticker for XGBoost.</p>
+                </div>
+                <div>
+                  <h4>Backtest</h4>
+                  <p>Vectorised, with a 0.55 confidence gate, return-driven sizing, stop-loss and take-profit, and <strong>5 bps charged per side</strong> before any number is reported.</p>
+                </div>
+              </div>
             </div>
-            <ol class="bring" data-reveal data-stagger>
-              <li>
-                <span class="n">01</span>
-                <div>
-                  <h3>Deal execution</h3>
-                  <p>Eight-plus live capital-markets transactions at Aldiracita Securities: prospectuses, information documents, internal memoranda and underwriting tenders, with the financials reconciled line by line.</p>
-                </div>
-              </li>
-              <li>
-                <span class="n">02</span>
-                <div>
-                  <h3>Quant research, end to end</h3>
-                  <p>A 72-feature pipeline, four model architectures and a cost-aware backtester, built from scratch and benchmarked honestly against buy-and-hold.</p>
-                </div>
-              </li>
-              <li>
-                <span class="n">03</span>
-                <div>
-                  <h3>Engineering fundamentals</h3>
-                  <p>Python, C++, SQL and PyTorch, with the habits of an engineering degree: reproducible experiments, fixed seeds, chronological splits and no leakage.</p>
-                </div>
-              </li>
-            </ol>
-            <dl class="facts" data-reveal data-stagger>
-              <div class="fact"><dt class="mono">Based in</dt><dd>London, United Kingdom</dd></div>
-              <div class="fact"><dt class="mono">Currently</dt><dd>MSc Risk Management &amp; Financial Engineering, Imperial College London, 2026&ndash;27</dd></div>
-              <div class="fact"><dt class="mono">Open to</dt><dd>2027 graduate roles in investment banking, markets and quantitative finance, on London, Singapore or Hong Kong desks</dd></div>
-              <div class="fact"><dt class="mono">Languages</dt><dd>English, Bahasa Indonesia, Mandarin</dd></div>
+          </article>
+
+          <section class="panel p-models" data-reveal aria-labelledby="models-title">
+            <div class="panel-bar"><span class="fn">MDL</span><span class="pt" id="models-title">Directional accuracy by model</span><span class="pm">Mean of 5 tickers</span></div>
+            <div class="panel-body">
+              <table class="bars">
+                <caption class="sr-only">Mean next-day directional accuracy across five tickers, by model. 50% is a coin flip.</caption>
+                <thead><tr><th scope="col">Model</th><th scope="col"><span class="sr-only">Directional accuracy</span><span class="axis" aria-hidden="true"><span>40%</span><span>50%</span><span>60%</span></span></th><th scope="col" class="num">Acc.</th></tr></thead>
+                <tbody>
+                  <tr class="best"><th scope="row">XGBoost</th><td><span class="track"><span class="bar pos" style="--w:27.5%"></span></span></td><td class="num">55.5%</td></tr>
+                  <tr><th scope="row">TFT</th><td><span class="track"><span class="bar pos" style="--w:4%"></span></span></td><td class="num">50.8%</td></tr>
+                  <tr><th scope="row">LSTM</th><td><span class="track"><span class="bar neg" style="--w:3%"></span></span></td><td class="num">49.4%</td></tr>
+                  <tr><th scope="row">PatchTST</th><td><span class="track"><span class="bar neg" style="--w:25%"></span></span></td><td class="num">45.0%</td></tr>
+                </tbody>
+              </table>
+              <p class="note">Dashed line: a coin flip, 50%. Gradient boosting beat transformers with 60&times; more parameters.</p>
+            </div>
+          </section>
+
+          <section class="panel p-stats" data-reveal aria-labelledby="bt-title">
+            <div class="panel-bar"><span class="fn">BT</span><span class="pt" id="bt-title">By the numbers</span></div>
+            <dl class="figs">
+              <div><dt>Annualised, best strategy, net</dt><dd class="up">17.2%</dd></div>
+              <div><dt>Sharpe ratio, net of costs</dt><dd>1.02</dd></div>
+              <div><dt>SPY over the same window</dt><dd class="dn">23.4%</dd></div>
+              <div><dt>Features, four modalities</dt><dd>72</dd></div>
+              <div><dt>Models &times; tickers</dt><dd>4<small>&times;5</small></dd></div>
+              <div><dt>Strategies significant at 5%</dt><dd>6<small>/20</small></dd></div>
             </dl>
+          </section>
+
+          <div class="window panel spot" id="dash-window" data-reveal>
+            <div class="window-bar panel-bar">
+              <span class="fn">DASH</span>
+              <span class="pt">Alpha Analytics &mdash; market intelligence terminal</span>
+              <span class="live" hidden><b></b>Live</span>
+              <span class="right">Interactive</span>
+              <div class="window-tools" hidden>
+                <a href="dashboard/index.html" target="_blank" rel="noopener">Full screen &nearr;</a>
+                <button type="button" data-dash-close>Close</button>
+              </div>
+            </div>
+            <div class="window-media">
+              <div class="window-loading" aria-hidden="true"></div>
+              <img src="assets/fyp-dashboard.jpg" width="1600" height="1000" decoding="async" alt="Alpha Analytics dashboard showing an XGBoost forecast overlaid on AAPL price, top feature importances, an execution ledger and backtest risk metrics" loading="lazy">
+              <div class="window-launch">
+                <button class="btn btn-go" type="button" data-dash-launch aria-expanded="false" aria-controls="dash-frame">Launch the dashboard
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+                <span>Runs right here. Switch tickers and models, explore signals, backtests and features.</span>
+              </div>
+              <div class="window-frame" id="dash-frame"></div>
+              <div class="window-error">
+                <p class="mono">The dashboard could not load here</p>
+                <p>It may be blocked in this browser. You can open it in its own tab instead.</p>
+                <a class="btn" href="dashboard/index.html" target="_blank" rel="noopener">Open in a new tab
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
 
-      <!-- ================= EXPERIENCE ================= -->
-      <section id="experience" class="sec">
-        <div class="container sec-grid">
-          <div class="sec-aside">
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">02 &mdash; Experience</span>
-              <h2>Deals, credit and the numbers behind them.</h2>
-              <p class="sec-sub">Capital markets execution, counterparty credit and financial evaluation across Jakarta and Singapore.</p>
-            </header>
-          </div>
-          <div class="rows" data-reveal data-stagger>
-            <article class="row">
-              <div class="row-meta"><span class="mono">Jun &ndash; Aug 2026</span><span class="mono place">Jakarta, Indonesia</span></div>
-              <div class="row-title"><h3>Aldiracita Securities</h3><span class="row-role">Investment Banking Summer Analyst</span></div>
-              <p class="row-sum">Deal execution across corporate bonds, sukuk and rights issues.</p>
-              <ul>
-                <li>Supported 8+ live capital-markets transactions, contributing to prospectuses, additional information documents, internal memoranda and underwriting tender submissions.</li>
-                <li>Ran financial statement analysis, ratio work, capital structure reviews and transaction benchmarking to support credit assessment, deal structuring and investor materials.</li>
-                <li>Reconciled offering terms, historical financials, shareholder data and disclosures across every deal document so nothing drifted between drafts.</li>
+          <section class="panel p-wire" data-reveal aria-labelledby="wire-title">
+            <div class="panel-bar"><span class="fn">NEWS</span><span class="pt" id="wire-title">Four findings</span></div>
+            <ol class="wire">
+              <li><span class="w-n">01</span><p><strong>Simpler models won.</strong> On noisy daily data, gradient boosting&rsquo;s inductive bias beat raw capacity.</p></li>
+              <li><span class="w-n">02</span><p><strong>Signal is asset-specific.</strong> Feature importance split differently per ticker, so per-ticker tuning won.</p></li>
+              <li><span class="w-n">03</span><p><strong>News is priced in by the close.</strong> Daily sentiment and calendar features got 0% importance on all five names.</p></li>
+              <li><span class="w-n">04</span><p><strong>Regression beat classification.</strong> Predicting the log return gave a sharper signal than an up-or-down label.</p></li>
+            </ol>
+          </section>
+
+          <section class="panel p-limits" data-reveal aria-labelledby="limits-title">
+            <div class="panel-bar"><span class="fn">RISK</span><span class="pt" id="limits-title">Limitations, documented</span></div>
+            <div class="panel-body">
+              <ul class="limits">
+                <li>Five-ticker universe</li>
+                <li>Daily data only</li>
+                <li>Long-only strategies</li>
+                <li>No slippage model beyond 5 bps</li>
+                <li>A single chronological split</li>
               </ul>
-            </article>
-            <article class="row">
-              <div class="row-meta"><span class="mono">Dec 2025</span><span class="mono place">Jakarta, Indonesia</span></div>
-              <div class="row-title"><h3>Maybank Securities</h3><span class="row-role">Middle Market Intern</span></div>
-              <p class="row-sum">Repo credit analysis for middle-market counterparties.</p>
-              <ul>
-                <li>Prepared repurchase-agreement credit reports, assessing counterparty creditworthiness with Altman Z-Score, DuPont analysis and ratio diagnostics.</li>
-                <li>Analysed profitability, leverage, liquidity and cash flow to support collateral and counterparty risk decisions.</li>
-              </ul>
-            </article>
-            <article class="row">
-              <div class="row-meta"><span class="mono">Jun &ndash; Dec 2024</span><span class="mono place">Singapore</span></div>
-              <div class="row-title"><h3>Singtel</h3><span class="row-role">Energy &amp; Sustainability Intern</span></div>
-              <p class="row-sum">Cost-benefit analysis for a new data centre.</p>
-              <ul>
-                <li>Modelled the return on energy-saving initiatives at the new Tuas Data Centre with engineering, procurement and finance, to test budget feasibility.</li>
-                <li>Analysed temperature and humidity data to optimise climate-control strategy and identify operating-cost reductions.</li>
-                <li>Reported sustainability and financial metrics to senior management to inform capital expenditure decisions.</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= WORK ================= -->
-      <section id="projects" class="sec sec-invert">
-        <div class="container sec-grid">
-          <div class="sec-aside">
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">03 &mdash; Selected work</span>
-              <h2>Built end to end. Reported <em>honestly</em>.</h2>
-              <p class="sec-sub">A full quant research pipeline with a dashboard you can drive, and a market-making bot from a trading competition.</p>
-            </header>
-          </div>
-          <div class="case">
-            <div class="case-head" data-reveal>
-              <span class="mono">Final-year project &middot; NTU EEE &middot; Aug 2025 &ndash; May 2026</span>
-              <h3>Can machine learning beat buy-and-hold <em>after costs</em>?</h3>
-              <p class="case-intro">Five large-cap US stocks, ten years of data and one question answered with a 72-feature pipeline, four competing models and a backtester that charges friction before it reports a number.</p>
-            </div>
-
-            <div class="window spot" id="dash-window" data-reveal>
-              <div class="window-bar">
-                <i></i><i></i><i></i>
-                <span class="mono">alpha-analytics &mdash; market intelligence terminal</span>
-                <span class="mono live" hidden><b></b>Live</span>
-                <span class="mono right">Interactive</span>
-                <div class="window-tools" hidden>
-                  <a href="dashboard/index.html" target="_blank" rel="noopener">Full screen &nearr;</a>
-                  <button type="button" data-dash-close>Close</button>
-                </div>
-              </div>
-              <div class="window-media">
-                <div class="window-loading" aria-hidden="true"></div>
-                <img class="parallax" src="assets/fyp-dashboard.jpg" width="1600" height="1000" decoding="async" alt="Alpha Analytics dashboard showing an XGBoost forecast overlaid on AAPL price, top feature importances, an execution ledger and backtest risk metrics" loading="lazy">
-                <div class="window-launch">
-                  <button class="btn btn-primary" type="button" data-dash-launch aria-expanded="false" aria-controls="dash-frame">Launch the dashboard
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                  <span>Runs here on the page. Switch tickers and models, explore signals, backtests and features.</span>
-                </div>
-                <div class="window-frame" id="dash-frame" data-lenis-prevent></div>
-                <div class="window-error">
-                  <p class="mono">The dashboard could not load here</p>
-                  <p>It may be blocked in this browser. You can open it in its own tab instead.</p>
-                  <a class="btn" href="dashboard/index.html" target="_blank" rel="noopener">Open in a new tab
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
-                </div>
+              <p class="note">The report states these on the slide before its conclusions.</p>
+              <div class="case-links">
+                <a class="btn" href="https://github.com/KennethAW/Final-Year-Project-Rev-1.0" target="_blank" rel="noopener">Source code
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+                <a class="tlink" href="assets/FYP-Presentation.pdf" target="_blank" rel="noopener">Slides (PDF)</a>
+                <a class="tlink" href="assets/FYP-Dashboard.pdf" target="_blank" rel="noopener">Walkthrough (PDF)</a>
+                <a class="tlink" href="dashboard/index.html" target="_blank" rel="noopener">Dashboard, full screen</a>
               </div>
             </div>
+          </section>
 
-            <div class="case-cols" data-reveal data-stagger>
-              <div>
-                <h4 class="mono">The question</h4>
-                <p>Can next-day predictions from machine learning generate <strong>risk-adjusted profit that beats simply holding SPY</strong>, once realistic transaction costs are charged? Universe: AAPL, MSFT, GOOGL, JPM and XOM, 2015 to 2024.</p>
-              </div>
-              <div>
-                <h4 class="mono">The approach</h4>
-                <p>27 technical indicators, 32 macro series, 9 FinBERT sentiment features and 4 calendar effects, split chronologically 70/15/15. <strong>XGBoost, LSTM, a Temporal Fusion Transformer and PatchTST</strong> competed on identical data. A vectorised backtester traded the signals with a 0.55 confidence gate, return-driven sizing, stop-loss and take-profit rules, and 5 basis points per side.</p>
-              </div>
-              <div>
-                <h4 class="mono">The result</h4>
-                <p>XGBoost led on directional accuracy at 55.5%, beating transformers with 60&times; more parameters. The best strategy made <strong>17.2% annualised at a Sharpe of 1.02 net of costs</strong>. None beat SPY&rsquo;s 23.4% over the 2023&ndash;24 rally, a result that held even at zero cost and one I report straight.</p>
-              </div>
+          <section class="panel p-gallery gallery-wrap" data-reveal aria-labelledby="gallery-title">
+            <div class="panel-bar"><span class="fn">IMG</span><span class="pt" id="gallery-title">Screens from the dashboard and the deck</span>
+              <span class="gallery-nav">
+                <button class="icon-btn" type="button" data-gallery-prev aria-controls="case-gallery" aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
+                <button class="icon-btn" type="button" data-gallery-next aria-controls="case-gallery" aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+              </span>
             </div>
-
-            <div class="numbers" data-reveal data-stagger>
-              <div><div class="n">72</div><div class="l">features across four modalities</div></div>
-              <div><div class="n">4<b>&times;5</b></div><div class="l">architectures benchmarked over five tickers</div></div>
-              <div><div class="n">100</div><div class="l">Optuna trials per ticker for XGBoost</div></div>
-              <div><div class="n">6<b>/20</b></div><div class="l">strategies significant at the 5% level</div></div>
+            <div class="gallery" id="case-gallery" role="group" tabindex="0" aria-label="Screens from the dashboard and the presentation. Use the arrow keys to scroll.">
+              <figure><div class="frame"><img src="assets/dash-1.jpg" width="1400" height="875" decoding="async" alt="Dashboard overview with predictive overlay, signal drivers, execution ledger and risk assessment" loading="lazy"></div><figcaption><span>01</span>Forecast overlay, signal drivers, execution ledger</figcaption></figure>
+              <figure><div class="frame"><img src="assets/dash-4.jpg" width="1400" height="875" decoding="async" alt="Backtest results page with equity curve against buy and hold and a full trade log" loading="lazy"></div><figcaption><span>02</span>Equity curve against buy-and-hold, full trade log</figcaption></figure>
+              <figure><div class="frame"><img src="assets/dash-5.jpg" width="1400" height="875" decoding="async" alt="Feature analysis page ranking feature importance" loading="lazy"></div><figcaption><span>03</span>Feature importance per model and ticker</figcaption></figure>
+              <figure><div class="frame"><img src="assets/dash-2.jpg" width="1400" height="875" decoding="async" alt="Model comparison page with accuracy, directional accuracy and ROC AUC per model and ticker" loading="lazy"></div><figcaption><span>04</span>All twenty model-ticker pairs compared</figcaption></figure>
+              <figure><div class="frame"><img src="assets/deck-5.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide describing the end-to-end pipeline" loading="lazy"></div><figcaption><span>05</span>From the deck: the end-to-end pipeline</figcaption></figure>
+              <figure><div class="frame"><img src="assets/deck-14.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide showing profit across all strategies" loading="lazy"></div><figcaption><span>06</span>From the deck: profit across the board</figcaption></figure>
+              <figure><div class="frame"><img src="assets/deck-15.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide summarising four key findings" loading="lazy"></div><figcaption><span>07</span>From the deck: four key findings</figcaption></figure>
             </div>
+          </section>
 
-            <div data-reveal>
-              <h4 class="mono group-label">Four findings</h4>
-              <ul class="findings">
-                <li><strong>Simpler models won.</strong> On low signal-to-noise daily data, the inductive bias of gradient boosting beat raw capacity.</li>
-                <li><strong>Signal is asset-specific.</strong> Feature importance split differently per ticker, so per-ticker tuning beat one universal feature set.</li>
-                <li><strong>News is priced in by the close.</strong> Daily sentiment and calendar features received 0% importance across all five names.</li>
-                <li><strong>Regression beat classification.</strong> Predicting the continuous log return produced a sharper trading signal than a binary up-or-down label.</li>
-              </ul>
-            </div>
-
-            <div class="gallery-wrap" data-reveal>
-              <div class="gallery" id="case-gallery" role="group" tabindex="0" aria-label="Screens from the dashboard and the presentation. Use the arrow keys to scroll.">
-                <figure class="spot"><div class="frame"><img src="assets/dash-1.jpg" width="1400" height="875" decoding="async" alt="Dashboard overview with predictive overlay, signal drivers, execution ledger and risk assessment" loading="lazy"></div><figcaption><span class="mono">01</span>Dashboard: forecast overlay, signal drivers, execution ledger</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/dash-4.jpg" width="1400" height="875" decoding="async" alt="Backtest results page with equity curve against buy and hold and a full trade log" loading="lazy"></div><figcaption><span class="mono">02</span>Backtest results: equity curve against buy-and-hold, full trade log</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/dash-5.jpg" width="1400" height="875" decoding="async" alt="Feature analysis page ranking feature importance" loading="lazy"></div><figcaption><span class="mono">03</span>Feature analysis: importance rankings per model and ticker</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/dash-2.jpg" width="1400" height="875" decoding="async" alt="Model comparison page with accuracy, directional accuracy and ROC AUC per model and ticker" loading="lazy"></div><figcaption><span class="mono">04</span>Model comparison across all twenty model-ticker pairs</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/deck-5.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide describing the end-to-end pipeline" loading="lazy"></div><figcaption><span class="mono">05</span>From the deck: the end-to-end pipeline</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/deck-14.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide showing profit across all strategies" loading="lazy"></div><figcaption><span class="mono">06</span>From the deck: profit across the board</figcaption></figure>
-                <figure class="spot"><div class="frame"><img src="assets/deck-15.jpg" class="slide" width="1400" height="788" decoding="async" alt="Presentation slide summarising four key findings" loading="lazy"></div><figcaption><span class="mono">07</span>From the deck: four key findings</figcaption></figure>
-              </div>
-              <div class="gallery-nav">
-                <button class="icon-btn" type="button" data-gallery-prev aria-controls="case-gallery" aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
-                <button class="icon-btn" type="button" data-gallery-next aria-controls="case-gallery" aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
-              </div>
-            </div>
-
-            <p class="limits" data-reveal><strong>Limitations I documented:</strong> a five-ticker universe, daily data only, long-only strategies, no slippage model beyond the 5 bps charge, and a single chronological split. The report says so on the slide before the conclusions.</p>
-
-            <div class="case-links" data-reveal>
-              <a class="btn" href="https://github.com/KennethAW/Final-Year-Project-Rev-1.0" target="_blank" rel="noopener">Source code
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
-              <a class="tlink" href="dashboard/index.html" target="_blank" rel="noopener">Open the dashboard full screen</a>
-              <a class="tlink" href="assets/FYP-Presentation.pdf" target="_blank" rel="noopener">Slides (PDF)</a>
-              <a class="tlink" href="assets/FYP-Dashboard.pdf" target="_blank" rel="noopener">Dashboard walkthrough (PDF)</a>
-            </div>
-
-            <div class="project" data-reveal>
-              <div class="project-art" aria-hidden="true">
+          <article class="panel p-mm" data-reveal>
+            <div class="panel-bar"><span class="fn">MM</span><span class="pt">Optiver Ready Trader Go</span><span class="pm">Mar &ndash; May 2023</span></div>
+            <div class="panel-body mm">
+              <div class="mm-art" aria-hidden="true">
                 <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg">
                   <g class="ob-line">
                     <line x1="40" y1="30" x2="40" y2="270"/>
@@ -389,190 +532,179 @@
                     <line x1="40" y1="180" x2="380" y2="180"/><line x1="40" y1="220" x2="380" y2="220"/><line x1="40" y1="260" x2="380" y2="260"/>
                   </g>
                   <g class="ob-ask">
-                    <rect x="42" y="48" width="150" height="24" rx="3"/><rect x="42" y="88" width="110" height="24" rx="3"/><rect x="42" y="128" width="70" height="24" rx="3"/>
+                    <rect x="42" y="48" width="150" height="24" rx="2"/><rect x="42" y="88" width="110" height="24" rx="2"/><rect x="42" y="128" width="70" height="24" rx="2"/>
                   </g>
                   <g class="ob-bid">
-                    <rect x="42" y="168" width="80" height="24" rx="3"/><rect x="42" y="208" width="125" height="24" rx="3"/><rect x="42" y="248" width="165" height="24" rx="3"/>
+                    <rect x="42" y="168" width="80" height="24" rx="2"/><rect x="42" y="208" width="125" height="24" rx="2"/><rect x="42" y="248" width="165" height="24" rx="2"/>
                   </g>
                   <g class="ob-mid-g"><line class="ob-mid" x1="40" y1="152" x2="380" y2="152"/><text class="ob-text" x="386" y="156">mid</text></g>
-                  <g class="ob-q1"><rect class="ob-quote" x="220" y="96" width="120" height="30" rx="15"/><text class="ob-text" x="248" y="116">ASK QUOTE</text></g>
-                  <g class="ob-q2"><rect class="ob-quote" x="220" y="176" width="120" height="30" rx="15"/><text class="ob-text" x="252" y="196">BID QUOTE</text></g>
+                  <g class="ob-q1"><rect class="ob-quote" x="220" y="96" width="120" height="30" rx="3"/><text class="ob-text ob-qt" x="280" y="116" text-anchor="middle">ASK QUOTE</text></g>
+                  <g class="ob-q2"><rect class="ob-quote" x="220" y="176" width="120" height="30" rx="3"/><text class="ob-text ob-qt" x="280" y="196" text-anchor="middle">BID QUOTE</text></g>
                   <text class="ob-text" x="12" y="64">A3</text><text class="ob-text" x="12" y="104">A2</text><text class="ob-text" x="12" y="144">A1</text>
                   <text class="ob-text" x="12" y="184">B1</text><text class="ob-text" x="12" y="224">B2</text><text class="ob-text" x="12" y="264">B3</text>
                   <text class="ob-text ob-cap" x="40" y="286">RESERVATION PRICE SHIFTS WITH INVENTORY</text>
                   <text class="ob-text ob-cap" x="40" y="298">SPREAD WIDENS WITH VOLATILITY AND RISK AVERSION</text>
                 </svg>
               </div>
-              <div>
-                <span class="mono">Optiver Ready Trader Go &middot; Mar &ndash; May 2023</span>
+              <div class="mm-copy">
                 <h3>Market making under <em>inventory risk</em>.</h3>
-                <p>A Python auto-trader built on the Avellaneda&ndash;Stoikov model for a simulated ETF market. The bot quotes around a reservation price that shifts with its inventory, widens its spread with volatility and risk aversion, and re-quotes as the book moves, earning the spread while keeping inventory near zero.</p>
-                <ul>
+                <p>A Python auto-trader on the Avellaneda&ndash;Stoikov model for a simulated ETF market. It quotes around a reservation price that shifts with inventory, widens its spread with volatility, and re-quotes as the book moves.</p>
+                <ul class="ticks">
                   <li>Reservation price adjusted continuously for inventory</li>
                   <li>Spread set from volatility and risk aversion, not a fixed tick</li>
                   <li>Consistent positive returns across the simulated sessions</li>
                 </ul>
-                <span class="mono">Python &middot; Market making &middot; High-frequency execution</span>
+                <ul class="chips small"><li>Python</li><li>Market making</li><li>High-frequency execution</li></ul>
               </div>
             </div>
+          </article>
 
-            <ul class="also" data-reveal data-stagger>
-              <li><div><span class="t">Cat vs Dog image classifier</span><br><span class="d">Deep learning classifier for NTU&rsquo;s Artificial Intelligence and Data Mining module, 2025.</span></div><a class="tlink quiet" href="https://github.com/KennethAW/AIDM-Cat-vs-Dog" target="_blank" rel="noopener">GitHub</a></li>
-              <li><div><span class="t">AI virtual mouse</span><br><span class="d">Real-time hand tracking with OpenCV mapped to cursor control, 2023.</span></div><a class="tlink quiet" href="https://github.com/KennethAW/AI-Virtual-Mouse-Hand-Tracking" target="_blank" rel="noopener">GitHub</a></li>
+          <section class="panel p-also" data-reveal aria-labelledby="also-title">
+            <div class="panel-bar"><span class="fn">GIT</span><span class="pt" id="also-title">Also on GitHub</span></div>
+            <ul class="also">
+              <li><div><span class="t">Cat vs Dog image classifier</span><span class="d">Deep learning for NTU&rsquo;s AI and Data Mining module, 2025</span></div><a class="tlink" href="https://github.com/KennethAW/AIDM-Cat-vs-Dog" target="_blank" rel="noopener">GitHub</a></li>
+              <li><div><span class="t">AI virtual mouse</span><span class="d">Real-time OpenCV hand tracking mapped to cursor control, 2023</span></div><a class="tlink" href="https://github.com/KennethAW/AI-Virtual-Mouse-Hand-Tracking" target="_blank" rel="noopener">GitHub</a></li>
             </ul>
-          </div>
+          </section>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ================= EDUCATION ================= -->
-      <section id="education" class="sec">
-        <div class="container sec-grid">
-          <div class="sec-aside">
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">04 &mdash; Education</span>
-              <h2>Singapore, then London.</h2>
-            </header>
-          </div>
-          <div class="rows" data-reveal data-stagger>
-            <article class="row">
-              <div class="row-meta"><span class="mono">2026 &ndash; 2027</span><span class="mono place">London, United Kingdom</span></div>
-              <div class="row-title"><h3>Imperial College London</h3></div>
-              <p class="row-sum">MSc Risk Management and Financial Engineering</p>
-              <p>Stochastic Calculus, Private Equity &amp; Venture Capital, Financial Statistics, Market Microstructure and Portfolio Management.</p>
-            </article>
-            <article class="row">
-              <div class="row-meta"><span class="mono">2022 &ndash; 2026</span><span class="mono place">Singapore</span></div>
-              <div class="row-title"><h3>Nanyang Technological University</h3></div>
-              <p class="row-sum">BEng (Hons) Electrical &amp; Electronic Engineering, specialising in Computing &amp; Intelligent Systems</p>
-              <p>First Class Honours, CGPA 4.85/5.00. ASEAN Undergraduate Scholarship. Dean&rsquo;s List in 2022/23, 2024/25 and 2025/26. Modules included Business Finance, Data Structures &amp; Algorithms, and Artificial Intelligence &amp; Data Mining.</p>
-            </article>
-            <article class="row compact">
-              <div class="row-meta"><span class="mono">Dec 2024</span><span class="mono place">Guangzhou, China</span></div>
-              <div class="row-title"><h3>Sun Yat-sen University</h3></div>
-              <p>Winter exchange programme in economics.</p>
-            </article>
-            <article class="row compact">
-              <div class="row-meta"><span class="mono">Further coursework</span></div>
-              <p>Portfolio Optimisation with the Markowitz Model (Coursera), DCF Modelling (Coursera), DeFi Infrastructure (Duke University).</p>
-            </article>
-          </div>
+    <!-- ================= EDUCATION ================= -->
+    <section id="education" class="sec">
+      <div class="container">
+        <div class="sec-head"><span class="sec-no">04</span><span class="sec-label">Education</span><span class="sec-rule" aria-hidden="true"></span><span class="sec-meta">SGP &rarr; LDN</span></div>
+        <h2 class="sec-title" data-reveal>Singapore, then London.</h2>
+        <div class="edu-grid" data-reveal data-stagger>
+          <article class="panel edu">
+            <div class="panel-bar"><span class="fn">MSc</span><span class="pt">2026 &ndash; 2027</span><span class="pm">London</span></div>
+            <div class="panel-body">
+              <span class="tag t-violet">In progress</span>
+              <h3>Imperial College London</h3>
+              <p class="edu-deg">MSc Risk Management and Financial Engineering</p>
+              <ul class="chips small">
+                <li>Stochastic Calculus</li><li>Market Microstructure</li><li>Portfolio Management</li><li>Financial Statistics</li><li>Private Equity &amp; VC</li>
+              </ul>
+            </div>
+          </article>
+          <article class="panel edu">
+            <div class="panel-bar"><span class="fn">BEng</span><span class="pt">2022 &ndash; 2026</span><span class="pm">Singapore</span></div>
+            <div class="panel-body">
+              <span class="tag t-green">First Class Honours</span>
+              <h3>Nanyang Technological University</h3>
+              <p class="edu-deg">BEng (Hons) Electrical &amp; Electronic Engineering, Computing &amp; Intelligent Systems</p>
+              <dl class="edu-figs">
+                <div><dt>CGPA</dt><dd>4.85<small>/5.00</small></dd></div>
+                <div><dt>Dean&rsquo;s List</dt><dd>3&times;<small>22/23 &middot; 24/25 &middot; 25/26</small></dd></div>
+                <div><dt>Scholarship</dt><dd class="word">ASEAN</dd></div>
+              </dl>
+              <ul class="chips small">
+                <li>Business Finance</li><li>Data Structures &amp; Algorithms</li><li>AI &amp; Data Mining</li>
+              </ul>
+            </div>
+          </article>
+          <article class="panel edu edu-sm">
+            <div class="panel-bar"><span class="fn">EXCH</span><span class="pt">Dec 2024</span><span class="pm">Guangzhou</span></div>
+            <div class="panel-body">
+              <h3>Sun Yat-sen University</h3>
+              <p class="edu-deg">Winter exchange programme in economics</p>
+            </div>
+          </article>
+          <article class="panel edu edu-sm">
+            <div class="panel-bar"><span class="fn">CERT</span><span class="pt">Further coursework</span></div>
+            <div class="panel-body">
+              <ul class="chips small">
+                <li>Markowitz Portfolio Optimisation &middot; Coursera</li><li>DCF Modelling &middot; Coursera</li><li>DeFi Infrastructure &middot; Duke</li>
+              </ul>
+            </div>
+          </article>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ================= SKILLS ================= -->
-      <section id="skills" class="sec sec-wide">
-        <div class="container sec-grid">
-          <div class="sec-aside">
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">05 &mdash; Skills</span>
-              <h2>The toolkit.</h2>
-            </header>
-          </div>
-          <div class="skills" data-reveal data-stagger>
-            <div>
-              <h3 class="mono">Programming &amp; tools</h3>
-              <ul><li>Python</li><li>C++</li><li>SQL</li><li>PyTorch</li><li>XGBoost &amp; Optuna</li><li>pandas</li><li>React &amp; TypeScript</li><li>Git</li><li>Bloomberg Terminal</li></ul>
-            </div>
-            <div>
-              <h3 class="mono">Finance</h3>
-              <ul><li>Financial statement analysis</li><li>Credit analysis</li><li>Capital markets execution</li><li>DCF modelling</li><li>Portfolio optimisation</li><li>Backtesting</li><li>Market making</li></ul>
-            </div>
-            <div>
-              <h3 class="mono">Languages</h3>
-              <ul><li>English, full professional</li><li>Bahasa Indonesia, native</li><li>Mandarin, limited working</li></ul>
-            </div>
-            <div class="now">
-              <h3 class="mono">Studying now at Imperial</h3>
-              <ul><li>Stochastic Calculus</li><li>Market Microstructure</li><li>Portfolio Management</li><li>Financial Statistics</li><li>Private Equity &amp; VC</li></ul>
-            </div>
-          </div>
+    <!-- ================= SKILLS ================= -->
+    <section id="skills" class="sec">
+      <div class="container">
+        <div class="sec-head"><span class="sec-no">05</span><span class="sec-label">Skills</span><span class="sec-rule" aria-hidden="true"></span><span class="sec-meta">Map</span></div>
+        <h2 class="sec-title" data-reveal>The toolkit.</h2>
+        <div class="skillmap" data-reveal data-stagger>
+          <section class="panel sk sk-code">
+            <div class="panel-bar"><span class="fn">01</span><h3 class="pt">Programming &amp; tools</h3></div>
+            <ul class="tiles"><li>Python</li><li>C++</li><li>SQL</li><li>PyTorch</li><li>XGBoost &amp; Optuna</li><li>pandas</li><li>React &amp; TypeScript</li><li>Git</li><li>Bloomberg Terminal</li></ul>
+          </section>
+          <section class="panel sk sk-fin">
+            <div class="panel-bar"><span class="fn">02</span><h3 class="pt">Finance</h3></div>
+            <ul class="tiles"><li>Financial statement analysis</li><li>Credit analysis</li><li>Capital markets execution</li><li>DCF modelling</li><li>Portfolio optimisation</li><li>Backtesting</li><li>Market making</li></ul>
+          </section>
+          <section class="panel sk sk-lang">
+            <div class="panel-bar"><span class="fn">03</span><h3 class="pt">Languages</h3></div>
+            <ul class="tiles"><li>English <small>Full professional</small></li><li>Bahasa Indonesia <small>Native</small></li><li>Mandarin <small>Limited working</small></li></ul>
+          </section>
+          <section class="panel sk sk-now">
+            <div class="panel-bar"><span class="fn">04</span><h3 class="pt">Studying now at Imperial</h3></div>
+            <ul class="tiles"><li>Stochastic Calculus</li><li>Market Microstructure</li><li>Portfolio Management</li><li>Financial Statistics</li><li>Private Equity &amp; VC</li></ul>
+          </section>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ================= LEADERSHIP ================= -->
-      <section id="leadership" class="sec">
-        <div class="container sec-grid">
-          <div class="sec-aside">
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">06 &mdash; Leadership</span>
-              <h2>Beyond the classroom.</h2>
-            </header>
+    <!-- ================= CONTACT ================= -->
+    <section id="contact" class="sec contact">
+      <div class="container">
+        <div class="sec-head"><span class="sec-no">06</span><span class="sec-label">Contact</span><span class="sec-rule" aria-hidden="true"></span><span class="sec-meta">Replies to everything</span></div>
+        <div class="contact-grid">
+          <div class="contact-intro" data-reveal>
+            <h2 class="sec-title">Start a <em>conversation</em>.</h2>
+            <p class="contact-sub">Graduate roles, quant research, or anything on this page. Email is the fastest way to reach me.</p>
           </div>
-          <div class="rows" data-reveal data-stagger>
-            <article class="row compact">
-              <div class="row-meta"><span class="mono">Aug 2024 &ndash; Aug 2025</span></div>
-              <div class="row-title"><h3>NTU EEE Club</h3><span class="row-role">Student Development Committee</span></div>
-              <p>Organised industry visits and talks with Huawei, STMicroelectronics and Infineon, connecting students with corporate representatives.</p>
-            </article>
-            <article class="row compact">
-              <div class="row-meta"><span class="mono">Aug 2023 &ndash; Aug 2024</span></div>
-              <div class="row-title"><h3>NTU Indonesian Students&rsquo; Association</h3><span class="row-role">Public Relations Director</span></div>
-              <p>Led a ten-person committee and ran the promotional campaigns that lifted attendance at major association events by 57%.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= CONTACT ================= -->
-      <section id="contact" class="sec contact">
-        <div class="container contact-grid">
-          <div>
-            <header class="sec-head" data-reveal>
-              <span class="sec-node" aria-hidden="true"></span>
-              <span class="sec-index mono">07 &mdash; Contact</span>
-              <h2>Start a <em>conversation</em>.</h2>
-            </header>
-            <div data-reveal data-stagger>
-              <p class="contact-sub">Graduate opportunities, quant research, or anything on this page. Email is the fastest way to reach me, and I reply to everything.</p>
-              <div class="contact-row">
-                <a class="tlink contact-email" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
-                <button class="icon-btn" type="button" data-copy="w.kennethanthony@gmail.com" aria-label="Copy w.kennethanthony@gmail.com to clipboard">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
-                  <span class="copied" aria-hidden="true">OK</span>
-                </button>
-                <!-- The tick inside the button is visible feedback only. This
-                     says the same thing to a screen reader (WCAG 4.1.3). -->
-                <span class="sr-only" role="status" data-copy-status></span>
-              </div>
-              <div class="contact-links">
-                <a class="tlink quiet" href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">LinkedIn</a>
-                <a class="tlink quiet" href="https://github.com/KennethAW" target="_blank" rel="noopener">GitHub</a>
-                <a class="tlink quiet" href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
-              </div>
+          <div class="panel console" data-reveal>
+            <div class="panel-bar"><span class="fn">MSG</span><span class="pt">kw@london</span><span class="pm">London &middot; <span class="clock" id="clock">&ndash;&ndash;:&ndash;&ndash;</span></span></div>
+            <div class="console-body">
+              <p class="c-line"><span class="c-ps">kw@london:~$</span> contact --all</p>
+              <dl class="c-out">
+                <div>
+                  <dt>email</dt>
+                  <dd class="contact-row">
+                    <a class="contact-email" href="mailto:w.kennethanthony@gmail.com">w.kennethanthony@gmail.com</a>
+                    <button class="icon-btn copy-btn" type="button" data-copy="w.kennethanthony@gmail.com" aria-label="Copy w.kennethanthony@gmail.com to clipboard">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                      <span class="copied" aria-hidden="true">OK</span>
+                    </button>
+                    <!-- The tick inside the button is visible feedback only. This
+                         says the same thing to a screen reader (WCAG 4.1.3). -->
+                    <span class="sr-only" role="status" data-copy-status></span>
+                  </dd>
+                </div>
+                <div><dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/kenneth-anthony-wijaya" target="_blank" rel="noopener">in/kenneth-anthony-wijaya &nearr;</a></dd></div>
+                <div><dt>github</dt><dd><a href="https://github.com/KennethAW" target="_blank" rel="noopener">github.com/KennethAW &nearr;</a></dd></div>
+                <div><dt>resume</dt><dd><a href="assets/Kenneth_Wijaya_Resume.pdf" target="_blank" rel="noopener">Kenneth_Wijaya_Resume.pdf &nearr;</a></dd></div>
+              </dl>
+              <p class="c-line"><span class="c-ps">kw@london:~$</span> <span class="caret" aria-hidden="true"></span></p>
             </div>
           </div>
-          <dl class="facts contact-facts" data-reveal data-stagger>
-            <div class="fact"><dt class="mono">Where</dt><dd>London &middot; <span class="clock" id="clock">&ndash;&ndash;:&ndash;&ndash;</span></dd></div>
-            <div class="fact"><dt class="mono">Status</dt><dd><span class="status"><i aria-hidden="true"></i>Open to 2027 graduate roles</span></dd></div>
-            <div class="fact"><dt class="mono">Looking for</dt><dd>Investment banking, markets and quantitative finance. Open to London, Singapore and Hong Kong desks.</dd></div>
-            <div class="fact"><dt class="mono">Right to work</dt><dd>UK student visa now, and eligible for the Graduate Route after the MSc. Also eligible for Singapore&rsquo;s Work Holiday Pass and Hong Kong&rsquo;s Top Talent Pass Scheme.</dd></div>
-            <div class="fact"><dt class="mono">Languages</dt><dd>English, Bahasa Indonesia, Mandarin</dd></div>
+          <dl class="facts" data-reveal data-stagger>
+            <div class="fact"><dt>Status</dt><dd><span class="status"><i aria-hidden="true"></i>Open to 2027 graduate roles</span></dd></div>
+            <div class="fact"><dt>Looking for</dt><dd>Investment banking, markets and quantitative finance. London, Singapore or Hong Kong desks.</dd></div>
+            <div class="fact"><dt>Right to work</dt><dd>UK student visa now, eligible for the Graduate Route after the MSc. Also eligible for Singapore&rsquo;s Work Holiday Pass and Hong Kong&rsquo;s Top Talent Pass Scheme.</dd></div>
+            <div class="fact"><dt>Languages</dt><dd>English, Bahasa Indonesia, Mandarin</dd></div>
           </dl>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <footer>
     <div class="container footer-inner">
-      <span class="mono">&copy; <span id="year">2026</span> Kenneth Anthony Wijaya &middot; Updated Sep 2026</span>
-      <span class="mono">Built by hand in London</span>
+      <span><span class="status"><i aria-hidden="true"></i>Connected</span></span>
+      <span>&copy; <span id="year">2026</span> Kenneth Anthony Wijaya &middot; Updated Sep 2026</span>
+      <span>Built by hand in London</span>
     </div>
   </footer>
 
-  <button class="to-top" type="button" aria-label="Back to top">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+  <button class="to-top icon-btn" type="button" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
   </button>
 
-  <!-- Vendored locally so the page makes no third-party requests and cannot be
-       broken by a CDN outage. defer keeps all three out of the parser's way
-       while preserving execution order, so anime and Lenis are defined before
-       script.js runs. anime.js 4.5.0 and Lenis 1.3.26, both MIT. -->
-  <script defer src="assets/vendor/anime-4.5.0.umd.min.js"></script>
-  <script defer src="assets/vendor/lenis-1.3.26.min.js"></script>
   <script defer src="script.js"></script>
 </body>
 </html>
