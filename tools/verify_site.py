@@ -103,7 +103,7 @@ def check(name, got, want):
 
 call("Page.enable"); call("Runtime.enable"); call("Log.enable")
 
-STATS = ["4.85/5.00", "3\u00d7", "8+", "55.5%"]
+STATS = ["4.85/5.00", "3\u00d7", "10firms", "55.5%"]
 STATS_JS = "JSON.stringify([...document.querySelectorAll('.stat-num')].map(e => e.textContent.trim()))"
 # On a phone the key figures sit below the profile panel, so they are the one
 # viewport where a counter is still waiting to be scrolled to.
